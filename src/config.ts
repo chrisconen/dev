@@ -61,15 +61,14 @@ export const EVIDENCE: Evidence[] = [
     linkLabel: 'Visit the site',
   },
   {
-    title: 'Bella Camila',
-    transition: 'Unas storefront to Astro',
-    metric: 'Mobile PageSpeed 99',
+    title: 'NEXUS AI',
+    transition: 'AI-powered website builder',
+    metric: 'Fast, responsive website',
     detail:
-      'E-commerce frontend rebuilt for speed. Reproducible by anyone ' +
-      'with the URL and thirty seconds.',
-    // TODO: live URL for the Bella Camila storefront.
-    href: 'https://bellacamila.com/',
-    linkLabel: 'Visit the site',
+      'AI-powered website builder that creates responsive, fast websites from simple prompts. Built with Astro and React.',
+    // TODO: live URL for the NEXUS AI project.
+    href: 'https://app.conendigital.hu',
+    linkLabel: 'Visit the project',
   },
   {
     title: 'ECO Clean',
