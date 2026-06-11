@@ -1,0 +1,139 @@
+---
+import Base from '../layouts/Base.astro';
+import Entry from '../components/Entry.astro';
+import { SITE } from '../config';
+---
+
+<Base
+  current="axr"
+  title="AXR — Agent Execution Receipts | Chris Conen"
+  description="AXR is an open-source accountability layer for AI agents: Ed25519-signed, tamper-evident execution receipts, built to line up with EU AI Act record-keeping and NIST's AI Agent Standards Initiative."
+>
+  <div class="shell hero">
+    <p class="kicker">
+      AXR<span class="sep">/</span>Agent Execution Receipts<span class="sep">/</span>Open source
+    </p>
+    <h1>Make the agent show its <em>receipts.</em></h1>
+    <p class="lede">
+      AXR is an open-source accountability layer for AI agents:
+      cryptographically signed execution receipts that turn "trust me" into
+      "verify me".
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href={SITE.axrRepo} rel="noopener">AXR on GitHub</a>
+      <a class="btn btn-ghost" href="/receipt/">See the primitive live</a>
+    </div>
+  </div>
+
+  <Entry label="The problem">
+    <h2>Logs can be edited. That used to be <em>fine.</em></h2>
+    <p>
+      AI agents now take consequential actions: they call tools, change
+      records, move money, send messages on someone's behalf. The audit trail
+      for all of that is usually a log file owned by whoever ran the agent.
+      Mutable, deletable, and unverifiable by anyone outside the operator's
+      own infrastructure.
+    </p>
+    <p>
+      Regulators have noticed. The EU AI Act makes automatic event logging a
+      design requirement for high-risk AI systems (Article 12), obliges
+      deployers to retain those logs for at least six months (Article 26), and
+      its high-risk obligations apply from 2 August 2026. In the US, NIST's
+      Center for AI Standards and Innovation launched the AI Agent Standards
+      Initiative in February 2026, with agent security and identity as core
+      research pillars. The common thread: when an agent acts, someone must be
+      able to establish what happened — and the record has to hold up.
+    </p>
+    <p>
+      A log you can rewrite is a story. A receipt you can verify is a record.
+    </p>
+  </Entry>
+
+  <Entry label="The design">
+    <h2>One receipt per consequential <em>action.</em></h2>
+    <p>
+      For each action that matters, AXR emits a receipt: the action taken,
+      hashes of its inputs and outputs, a timestamp, the identity of the
+      agent, and an Ed25519 signature over the canonicalised record. These are
+      the design goals the project is built around:
+    </p>
+    <dl class="def-rows">
+      <div class="def-row">
+        <dt>Signed</dt>
+        <dd>
+          Ed25519 over a canonical serialisation of the receipt. Re-signing a
+          tampered record requires the private key; without it, edits are
+          visible.
+        </dd>
+      </div>
+      <div class="def-row">
+        <dt>Self-contained</dt>
+        <dd>
+          A receipt verifies offline with nothing but the public key. No
+          access to the operator's infrastructure, no trust in their database.
+        </dd>
+      </div>
+      <div class="def-row">
+        <dt>Tamper-evident</dt>
+        <dd>
+          Any change to the receipt breaks the signature. That is the whole
+          trick, and it is enough.
+        </dd>
+      </div>
+      <div class="def-row">
+        <dt>Boring on purpose</dt>
+        <dd>
+          Standard primitives only: SHA-256, Ed25519, canonical JSON. No novel
+          cryptography. Assurance work should be auditable by people who did
+          not write it.
+        </dd>
+      </div>
+    </dl>
+  </Entry>
+
+  <Entry label="Standards">
+    <h2>Built toward where the rules are <em>going.</em></h2>
+    <p>
+      AXR is designed to map onto the record-keeping duties that are arriving,
+      not to claim certified compliance with any of them. Concretely: the EU
+      AI Act's Article 12 requires high-risk systems to automatically record
+      events for traceability, and Article 26 puts log retention on deployers.
+      NIST's AI Agent Standards Initiative is shaping the US side, with
+      identity, security and auditability of agents on the table. Signed,
+      independently verifiable receipts are a primitive both directions can
+      build on.
+    </p>
+    <p class="small muted">
+      Precision matters here: "designed to map onto" is the claim, and the
+      mapping itself is part of the project's open work.
+    </p>
+  </Entry>
+
+  <Entry label="Status">
+    <h2>Early, open, and honest about <em>both.</em></h2>
+    <p>
+      AXR is open source and developed in public. The receipt schema and the
+      signing flow are the foundation; the threat modelling, hardening and
+      formal standards mapping are the current work. That ordering is
+      deliberate — it is exactly the security depth I am building, in the
+      open, where it can be inspected.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href={SITE.axrRepo} rel="noopener">Follow the repository</a>
+    </div>
+  </Entry>
+
+  <Entry label="Proof">
+    <h2>This site runs on the same <em>primitive.</em></h2>
+    <p>
+      Every deploy of chrisconen.dev publishes a manifest of every file on the
+      site, hashed with SHA-256 and signed with Ed25519. Your browser can
+      verify the signature and re-hash any file against the manifest. It is
+      AXR's core idea applied to a build pipeline instead of an agent — same
+      receipt, different actor.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="/receipt/">Verify this site</a>
+    </div>
+  </Entry>
+</Base>

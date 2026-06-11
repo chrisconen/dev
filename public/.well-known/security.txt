@@ -1,0 +1,5 @@
+# Security contact for chrisconen.dev
+Contact: mailto:hello@chrisconen.dev
+Expires: 2026-12-31T23:59:59.000Z
+Preferred-Languages: en, hu, de
+Canonical: https://chrisconen.dev/.well-known/security.txt

@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="404 — Not in manifest | Chris Conen" description="This route is not part of the signed manifest.">
+  <div class="shell notfound">
+    <p class="kicker">404<span class="sep">/</span>Not in manifest</p>
+    <h1>No receipt for this <em>route.</em></h1>
+    <p class="lede">
+      The page you asked for is not part of this site's signed manifest.
+      Either the address changed or it never existed.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="/">Back to the ledger</a>
+      <a class="btn btn-ghost" href="/receipt/">See what is in the manifest</a>
+    </div>
+  </div>
+</Base>

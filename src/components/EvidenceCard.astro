@@ -1,0 +1,21 @@
+---
+import type { Evidence } from '../config';
+
+interface Props {
+  item: Evidence;
+}
+
+const { item } = Astro.props;
+---
+
+<article class="evidence-card">
+  <p class="transition">{item.transition}</p>
+  <h3>{item.title}</h3>
+  <p class="metric">{item.metric}</p>
+  <p class="detail">{item.detail}</p>
+  {item.href && (
+    <a class="card-link" href={item.href} rel="noopener">
+      {item.linkLabel}
+    </a>
+  )}
+</article>

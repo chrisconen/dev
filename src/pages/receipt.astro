@@ -1,0 +1,315 @@
+---
+import Base from '../layouts/Base.astro';
+import Entry from '../components/Entry.astro';
+import { SITE } from '../config';
+---
+
+<Base
+  current="receipt"
+  title="Build receipt — verify this site | Chris Conen"
+  description="Every deploy of chrisconen.dev publishes an Ed25519-signed manifest of every file on the site. Verify the signature and re-hash any file, in your browser."
+>
+  <div class="shell hero">
+    <p class="kicker">
+      Live<span class="sep">/</span>This deployment<span class="sep">/</span>Ed25519
+    </p>
+    <h1>This page can prove <em>itself.</em></h1>
+    <p class="lede">
+      Every deploy of this site publishes <code>receipt.json</code>: a
+      manifest of every file, hashed with SHA-256, signed with Ed25519. Your
+      browser can check the signature and the files. No server trust required.
+    </p>
+  </div>
+
+  <Entry label="This deploy" id="verify">
+    <div class="receipt-card" id="receipt-root" data-pinned-key={SITE.receiptPublicKey}>
+      <dl class="receipt-meta">
+        <div class="row">
+          <dt>Status</dt>
+          <dd id="r-status-dd"><span class="stamp unsigned" id="r-stamp">Loading</span></dd>
+        </div>
+        <div class="row">
+          <dt>Built at</dt>
+          <dd id="r-built">&mdash;</dd>
+        </div>
+        <div class="row">
+          <dt>Commit</dt>
+          <dd id="r-commit">&mdash;</dd>
+        </div>
+        <div class="row">
+          <dt>Files covered</dt>
+          <dd id="r-files">&mdash;</dd>
+        </div>
+        <div class="row">
+          <dt>Manifest SHA-256</dt>
+          <dd>
+            <span id="r-mhash">&mdash;</span>
+            <span class="match-note" id="r-mhash-note"></span>
+          </dd>
+        </div>
+        <div class="row">
+          <dt>Public key</dt>
+          <dd>
+            <span id="r-pubkey">&mdash;</span>
+            <span class="match-note" id="r-pin-note"></span>
+          </dd>
+        </div>
+        <div class="row">
+          <dt>Signature</dt>
+          <dd id="r-sig">&mdash;</dd>
+        </div>
+      </dl>
+
+      <div class="stamp-row">
+        <button class="btn btn-primary" id="r-verify-btn" type="button" disabled>
+          Verify signature
+        </button>
+      </div>
+      <p class="status-line" id="r-status-line">Fetching receipt.json from this origin.</p>
+
+      <hr class="rule mt-lg" />
+
+      <h3 class="mt-md">Spot-check a file</h3>
+      <p class="small muted">
+        Pick any file from the manifest. Your browser fetches it from this
+        origin, hashes it with SHA-256 and compares the result against the
+        signed manifest.
+      </p>
+      <div class="file-check">
+        <select id="r-file-select" aria-label="File to check" disabled>
+          <option>Waiting for receipt</option>
+        </select>
+        <button class="btn btn-ghost" id="r-file-btn" type="button" disabled>
+          Hash and compare
+        </button>
+      </div>
+      <div class="file-result" id="r-file-result" aria-live="polite"></div>
+    </div>
+  </Entry>
+
+  <Entry label="Method" id="method">
+    <h2>How verification <em>works.</em></h2>
+    <ol class="steps">
+      <li>
+        <span>
+          The build walks the output directory and records the path, size and
+          SHA-256 hash of every file into a manifest.
+        </span>
+      </li>
+      <li>
+        <span>
+          The manifest is serialised canonically (recursively sorted keys, no
+          whitespace) and signed with an Ed25519 private key that exists only as
+          a deployment secret.
+        </span>
+      </li>
+      <li>
+        <span>
+          The receipt — manifest, public key, signature — is published next to
+          the site as <a href="/receipt.json">receipt.json</a>.
+        </span>
+      </li>
+      <li>
+        <span>
+          You verify: the signature against the canonical manifest bytes, and
+          any file by re-hashing what this origin actually serves. Edit a file
+          and its hash breaks. Re-sign without the key and you cannot.
+        </span>
+      </li>
+    </ol>
+    <p class="small muted mt-md measure-narrow">
+      Scope, stated honestly: this proves the files you receive are exactly
+      what the key holder built and signed. Binding that key to a person is a
+      separate problem — that is what pinning the key in the site source and
+      publishing it out-of-band are for.
+    </p>
+    <pre class="code-block">{`# verify from your own machine, against production
+git clone ${SITE.siteRepo} && cd dev
+npm install
+npm run verify -- ${SITE.url} --deep`}</pre>
+  </Entry>
+
+  <Entry label="Context" id="context">
+    <h2>The same primitive, pointed at <em>agents.</em></h2>
+    <p>
+      A build pipeline is just a very boring agent: it acts, it produces
+      artefacts, and you want a record that holds up. AXR applies this exact
+      receipt — canonical record, SHA-256, Ed25519 — to AI agent actions,
+      where the stakes and the regulatory pressure are considerably higher.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="/axr/">Read about AXR</a>
+      <a class="btn btn-ghost" href={SITE.axrRepo} rel="noopener">AXR on GitHub</a>
+    </div>
+  </Entry>
+</Base>
+
+<script>
+  import * as ed from '@noble/ed25519';
+  import { sha512 } from '@noble/hashes/sha512';
+  import { stableStringify } from '../lib/canonical.js';
+
+  ed.etc.sha512Sync = (...m) => sha512(ed.etc.concatBytes(...m));
+
+  const enc = new TextEncoder();
+  const $ = (id: string) => document.getElementById(id) as HTMLElement;
+
+  const b64ToBytes = (b64: string) =>
+    Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+
+  const bytesToHex = (bytes: ArrayBuffer | Uint8Array) =>
+    [...new Uint8Array(bytes)].map((b) => b.toString(16).padStart(2, '0')).join('');
+
+  const sha256Hex = async (data: BufferSource) =>
+    bytesToHex(await crypto.subtle.digest('SHA-256', data));
+
+  const setStamp = (state: 'verified' | 'failed' | 'unsigned', text: string) => {
+    const stamp = $('r-stamp');
+    stamp.className = `stamp ${state} just-stamped`;
+    stamp.textContent = text;
+  };
+
+  const setStatus = (text: string, bad = false) => {
+    const line = $('r-status-line');
+    line.textContent = text;
+    line.className = `status-line${bad ? ' bad' : ''}`;
+  };
+
+  async function init() {
+    const root = $('receipt-root');
+    const pinned = root.dataset.pinnedKey || '';
+
+    let receipt: any;
+    try {
+      const res = await fetch('/receipt.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      receipt = await res.json();
+    } catch (err) {
+      setStamp('unsigned', 'No receipt');
+      setStatus(
+        'No receipt.json is published at this origin. Receipts are generated ' +
+          'at build time (npm run build); the dev server does not produce one.'
+      );
+      return;
+    }
+
+    const m = receipt.manifest;
+    $('r-built').textContent = m.built_at;
+    $('r-commit').textContent = m.commit === 'local' ? 'local (untracked build)' : m.commit;
+    $('r-files').textContent = `${m.file_count} files, ${(m.total_bytes / 1024).toFixed(1)} KB`;
+    $('r-mhash').textContent = receipt.manifest_sha256;
+    $('r-pubkey').textContent = receipt.public_key || 'none (unsigned build)';
+    $('r-sig').textContent = receipt.signature || 'none (unsigned build)';
+
+    // Recompute the manifest hash from the canonical bytes, locally.
+    const manifestBytes = enc.encode(stableStringify(m));
+    const recomputed = await sha256Hex(manifestBytes);
+    const mNote = $('r-mhash-note');
+    if (recomputed === receipt.manifest_sha256) {
+      mNote.textContent = ' recomputed locally: match';
+      mNote.className = 'match-note ok';
+    } else {
+      mNote.textContent = ' recomputed locally: MISMATCH';
+      mNote.className = 'match-note bad';
+    }
+
+    // Key pinning status.
+    const pinNote = $('r-pin-note');
+    if (!receipt.public_key) {
+      pinNote.textContent = '';
+    } else if (!pinned) {
+      pinNote.textContent = ' no key pinned in source yet; verifying against the key the receipt carries';
+      pinNote.className = 'match-note';
+    } else if (pinned === receipt.public_key) {
+      pinNote.textContent = ' matches the key pinned in the site source';
+      pinNote.className = 'match-note ok';
+    } else {
+      pinNote.textContent = ' DIFFERS from the key pinned in the site source';
+      pinNote.className = 'match-note bad';
+    }
+
+    // Populate the file checker.
+    const select = $('r-file-select') as HTMLSelectElement;
+    select.innerHTML = '';
+    for (const f of m.files) {
+      const opt = document.createElement('option');
+      opt.value = f.path;
+      opt.textContent = `${f.path} (${f.bytes} B)`;
+      select.appendChild(opt);
+    }
+    select.disabled = false;
+    ($('r-file-btn') as HTMLButtonElement).disabled = false;
+
+    const fileByPath = new Map(m.files.map((f: any) => [f.path, f]));
+    $('r-file-btn').addEventListener('click', async () => {
+      const path = select.value;
+      const expected = fileByPath.get(path);
+      const out = $('r-file-result');
+      out.textContent = `Fetching ${path}`;
+      try {
+        const res = await fetch(path, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const buf = await res.arrayBuffer();
+        const got = await sha256Hex(buf);
+        const ok = got === expected.sha256;
+        out.innerHTML =
+          `PATH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${path}<br>` +
+          `EXPECTED&nbsp;${expected.sha256}<br>` +
+          `COMPUTED&nbsp;${got}<br>` +
+          `RESULT&nbsp;&nbsp;&nbsp;<span class="${ok ? 'ok' : 'bad'}">${ok ? 'PASS' : 'FAIL'}</span>`;
+      } catch (err) {
+        out.textContent = `Could not fetch ${path}: ${err}. If a Cloudflare feature rewrites HTML (Rocket Loader, email obfuscation), hashes will not match; see the README.`;
+      }
+    });
+
+    // Signature verification.
+    if (!receipt.signature) {
+      setStamp('unsigned', 'Unsigned');
+      setStatus(
+        'This build was produced without a signing key, so there is nothing ' +
+          'to verify. Production deploys are signed; if you are seeing this ' +
+          'on chrisconen.dev, that is a real finding — tell me.'
+      );
+      return;
+    }
+
+    setStamp('unsigned', 'Signed, unverified');
+    setStatus('Signature present. Verify it locally — the button runs Ed25519 in your browser.');
+    const btn = $('r-verify-btn') as HTMLButtonElement;
+    btn.disabled = false;
+    btn.addEventListener('click', () => {
+      btn.disabled = true;
+      btn.textContent = 'Verifying';
+      setTimeout(() => {
+        try {
+          const ok = ed.verify(
+            b64ToBytes(receipt.signature),
+            manifestBytes,
+            b64ToBytes(receipt.public_key)
+          );
+          if (ok) {
+            setStamp('verified', 'Verified');
+            setStatus(
+              `Ed25519 signature verifies over the canonical manifest bytes. ` +
+                `${m.file_count} files are covered; spot-check any of them below.`
+            );
+          } else {
+            setStamp('failed', 'Failed');
+            setStatus(
+              'The signature does not verify over this manifest. Either the ' +
+                'receipt was altered or it was signed with a different key.',
+              true
+            );
+          }
+        } catch (err) {
+          setStamp('failed', 'Failed');
+          setStatus(`Verification error: ${err}`, true);
+        }
+        btn.textContent = 'Verify signature';
+        btn.disabled = false;
+      }, 30);
+    });
+  }
+
+  init();
+</script>

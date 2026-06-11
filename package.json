@@ -1,0 +1,25 @@
+{
+  "name": "chrisconen.dev",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && node scripts/build-receipt.mjs",
+    "preview": "astro preview",
+    "keygen": "node scripts/keygen.mjs",
+    "verify": "node scripts/verify-receipt.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.3.0",
+    "@fontsource-variable/public-sans": "^5.2.5",
+    "@fontsource/ibm-plex-mono": "^5.2.5",
+    "@fontsource/libre-caslon-text": "^5.2.5",
+    "@noble/ed25519": "^2.2.3",
+    "@noble/hashes": "^1.7.1",
+    "astro": "^5.7.0"
+  }
+}

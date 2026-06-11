@@ -1,0 +1,142 @@
+---
+import Base from '../layouts/Base.astro';
+import Entry from '../components/Entry.astro';
+import ReceiptStrip from '../components/ReceiptStrip.astro';
+import EvidenceCard from '../components/EvidenceCard.astro';
+import { SITE, EVIDENCE } from '../config';
+
+const lastUpdated = new Date().toISOString().slice(0, 10);
+---
+
+<Base current="home">
+  <div class="shell hero">
+    <p class="kicker">
+      Chris Conen<span class="sep">/</span>Builder and operator<span class="sep">/</span
+      >Budapest, relocating to Australia
+    </p>
+    <h1>Proof over <em>promises.</em></h1>
+    <p class="lede">
+      I have shipped web products for fourteen years. Now I am building the
+      accountability layer for AI agents: open-source, Ed25519-signed execution
+      receipts that make what an agent did independently verifiable — the
+      direction the EU AI Act's record-keeping rules and NIST's new agent
+      standards work are already pointing.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="/receipt/">Verify this site</a>
+      <a class="btn btn-ghost" href="/axr/">Read about AXR</a>
+    </div>
+    <div class="chips">
+      <span class="chip">Google Cybersecurity Certificate <strong>in progress</strong></span>
+      <span class="chip">Open to sponsored roles <strong>security / GRC / AI assurance, AU</strong></span>
+    </div>
+  </div>
+
+  <div class="shell">
+    <ReceiptStrip />
+  </div>
+
+  <Entry label="The wedge" id="axr">
+    <h2>AI agents act. AXR makes them show <em>receipts.</em></h2>
+    <p>
+      Agent logs are just files: editable after the fact, silent about what
+      went missing. AXR, short for Agent Execution Receipts, is my open-source
+      answer. Consequential agent actions emit a signed, tamper-evident receipt
+      of what ran, on which inputs, with what outcome. Anyone holding the
+      public key can verify a receipt; nobody holding the log can quietly
+      rewrite it.
+    </p>
+    <p>
+      The timing is not academic. The EU AI Act makes automatic event logging a
+      design requirement for high-risk systems, with obligations applying from
+      2 August 2026, and NIST launched its AI Agent Standards Initiative in
+      February 2026 with agent security and identity as core pillars. AXR is
+      built to line up with where both are heading.
+    </p>
+    <p>
+      This site eats its own cooking: every deploy publishes a signed build
+      receipt you can check in your browser, right now.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-ghost" href={SITE.axrRepo} rel="noopener">AXR on GitHub</a>
+      <a class="btn btn-ghost" href="/axr/">How it works</a>
+    </div>
+  </Entry>
+
+  <Entry label="Evidence" id="evidence">
+    <h2>Numbers someone else can <em>check.</em></h2>
+    <p>
+      Self-reported claims are cheap. These are externally measurable outcomes
+      from things I have shipped and run.
+    </p>
+    <div class="evidence-grid">
+      {EVIDENCE.map((item) => <EvidenceCard item={item} />)}
+    </div>
+    <p class="footnote">
+      PageSpeed scores drift a few points run to run. Check them yourself —
+      that is the point.
+    </p>
+  </Entry>
+
+  <Entry label="Approach" id="approach">
+    <h2>Builder first. Security depth, earned in <em>public.</em></h2>
+    <p>
+      I am a Hungarian-German builder and operator. For fourteen years I have
+      designed, shipped and maintained web products, lately with heavily
+      AI-assisted workflows. That is exactly why agent accountability matters
+      to me: I rely on these systems every day, and I want them auditable.
+    </p>
+    <p>
+      Running ECO Clean taught me the unglamorous half of assurance — process
+      discipline, risk, and keeping promises to hundreds of customers. Those
+      are the same muscles governance and compliance work runs on.
+    </p>
+    <p>
+      To be precise about what I am not: I am not selling myself as a senior
+      security engineer. I am a builder moving deliberately into security
+      governance and AI assurance, with the Google Cybersecurity Certificate
+      in progress and AXR as my working lab. Everything on this page is
+      checkable, and that is by design.
+    </p>
+  </Entry>
+
+  <Entry label="Now" id="now">
+    <h2>Current <em>ledger.</em></h2>
+    <ul class="now-list">
+      <li>
+        <span class="tag">Studying</span>
+        <span>Google Cybersecurity Professional Certificate, in progress.</span>
+      </li>
+      <li>
+        <span class="tag">Building</span>
+        <span>AXR, in public. Schema, signing flow and threat model are the current work.</span>
+      </li>
+      <li>
+        <span class="tag">Moving</span>
+        <span>
+          Relocating to Australia. Open to employer-sponsored roles in
+          security, GRC and AI assurance.
+        </span>
+      </li>
+    </ul>
+    <p class="footnote mono">Entry date {lastUpdated}, set at build time.</p>
+  </Entry>
+
+  <Entry label="Contact" id="contact">
+    <h2>Hiring in <em>Australia?</em></h2>
+    <p>
+      If you are hiring for security, GRC or AI assurance and sponsorship is on
+      the table, I will make the conversation worth your time. The fastest way
+      to evaluate me is the <a href="/receipt/">receipt page</a> and the
+      <a href={SITE.axrRepo} rel="noopener">AXR repository</a> — both are live.
+    </p>
+    <p>
+      <a class="contact-mail" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    </p>
+    <p class="small muted">
+      Also on <a href={SITE.github} rel="me noopener">GitHub</a>{SITE.linkedin && (
+        <> and <a href={SITE.linkedin} rel="me noopener">LinkedIn</a></>
+      )}.
+    </p>
+  </Entry>
+</Base>

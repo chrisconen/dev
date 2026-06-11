@@ -1,0 +1,31 @@
+---
+import { SITE } from '../config';
+---
+
+<footer class="site-footer">
+  <div class="shell">
+    <div class="cols">
+      <div>
+        <p class="small mb-xs">
+          Static Astro build on Cloudflare Pages. No analytics, no cookies, no
+          third-party scripts.
+        </p>
+        <p class="small muted">
+          Every deploy publishes an Ed25519-signed manifest of this site.
+          <a href="/receipt/">Verify it</a> or read the raw
+          <a href="/receipt.json">receipt.json</a>.
+        </p>
+      </div>
+      <nav class="links" aria-label="Footer">
+        <a href="/axr/">AXR</a>
+        <a href={SITE.github} rel="me noopener">GitHub</a>
+        {SITE.linkedin && <a href={SITE.linkedin} rel="me noopener">LinkedIn</a>}
+        <a href={SITE.webWork} rel="noopener">Web work</a>
+        <a href="/.well-known/security.txt">security.txt</a>
+      </nav>
+    </div>
+    <p class="fineprint">
+      {new Date().getFullYear()} Chris Conen. Budapest, for now.
+    </p>
+  </div>
+</footer>

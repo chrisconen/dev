@@ -1,0 +1,22 @@
+---
+// The receipt tape: a fragment of the site's own audit trail, printed in
+// the hero. Commit and date are resolved at build time; the signed manifest
+// itself is generated right after the build and verified on /receipt/.
+
+const sha =
+  import.meta.env.CF_PAGES_COMMIT_SHA ||
+  process.env.CF_PAGES_COMMIT_SHA ||
+  process.env.GITHUB_SHA ||
+  'local';
+const shortSha = sha === 'local' ? 'LOCAL' : sha.slice(0, 7);
+const builtOn = new Date().toISOString().slice(0, 10);
+---
+
+<div class="tape-wrap">
+  <div class="tape" role="note" aria-label="Build receipt summary">
+    <span class="item">BUILD <strong>{shortSha}</strong></span>
+    <span class="item">{builtOn}</span>
+    <span class="item">MANIFEST <strong>ED25519-SIGNED</strong> ON DEPLOY</span>
+    <a class="verify-link" href="/receipt/">Verify this site</a>
+  </div>
+</div>
