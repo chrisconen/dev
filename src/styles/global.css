@@ -302,6 +302,86 @@ hr.rule {
 }
 .chip strong { color: var(--accent-deep); font-weight: 600; }
 
+/* ---- hero image --------------------------------------------------- */
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  text-align: center;
+}
+
+.hero-content {
+  flex: 1;
+}
+
+.hero-image-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.hero-image {
+  width: 100%;
+  height: auto;
+  border-radius: 0;
+}
+
+/* Desktop layout */
+@media (min-width: 768px) {
+  .hero {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: 3rem;
+    padding-top: 2rem;
+  }
+  
+  .hero-content {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .hero-image-container {
+    flex: 1;
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .desktop-only {
+    display: block;
+  }
+  
+  .mobile-only {
+    display: none;
+  }
+}
+
+/* Mobile layout */
+@media (max-width: 767px) {
+  .hero-image-container {
+    order: -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+  }
+  
+  .desktop-only {
+    display: none;
+  }
+  
+  .mobile-only {
+    display: block;
+  }
+}
+
 /* ---- buttons -------------------------------------------------------- */
 
 .btn-row { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 1.9rem; }

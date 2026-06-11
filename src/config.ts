@@ -23,7 +23,7 @@ export const SITE = {
   siteRepo: 'https://github.com/chrisconen/dev',
 
   // TODO: add LinkedIn profile URL. Leave empty to hide the link.
-  linkedin: '',
+  linkedin: 'https://www.linkedin.com/in/chris-conen/',
 
   // TODO: confirm the exact repository URL for AXR.
   axrRepo: 'https://github.com/chrisconen/axr',
@@ -36,7 +36,7 @@ export const SITE = {
 
   // Ed25519 public key (base64, 32 bytes) pinned in source after `npm run keygen`.
   // Empty string means "not pinned yet" — the receipt page will say so honestly.
-  receiptPublicKey: '',
+  receiptPublicKey: 'bJhdRfZNqbLJeyeLeRux1uZixDsNiJy3VIrquhjkZoU=',
 };
 
 export type Evidence = {
@@ -57,7 +57,7 @@ export const EVIDENCE: Evidence[] = [
       'Full replatform of a live business site. The score is produced by ' +
       "Google's public tooling, not by me.",
     // TODO: live URL for the Motyán site.
-    href: '',
+    href: 'https://motyanarnyekolas.hu/',
     linkLabel: 'Visit the site',
   },
   {
@@ -68,7 +68,7 @@ export const EVIDENCE: Evidence[] = [
       'E-commerce frontend rebuilt for speed. Reproducible by anyone ' +
       'with the URL and thirty seconds.',
     // TODO: live URL for the Bella Camila storefront.
-    href: '',
+    href: 'https://bellacamila.com/',
     linkLabel: 'Visit the site',
   },
   {
@@ -79,7 +79,7 @@ export const EVIDENCE: Evidence[] = [
       'A services business I own and run: pricing, delivery, customer ' +
       'trust. The reviews are public record.',
     // TODO: Google Business Profile reviews URL for ECO Clean.
-    href: '',
+    href: 'https://ecocleantisztito.hu',
     linkLabel: 'Read the reviews',
   },
 ];

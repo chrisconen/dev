@@ -72,6 +72,34 @@ kattintotta végig — a screenshotokon valódi futás látszik.
    receiptPublicKey mezőjébe. A repóban most ÜRES a pin — a
    screenshotokon látott kulcs eldobható tesztkulcs volt, nem szállítom.
 
+## Keygen funkció
+
+A projekt egy Ed25519 aláíró kulcspárt használ a build receipt aláírásához.
+A kulcs generálása a következő parancs segítségével történik:
+
+```
+npm run keygen
+```
+
+Ez a következőket teszi:
+- Létrehoz egy új Ed25519 kulcspárt
+- Kinyomtatja a privát kulcsot (ezt csak egyszer kell, és soha ne commitoljuk)
+- Kinyomtatja a publikus kulcsot (ezt be kell illeszteni a src/config.ts fájlba)
+
+A privát kulcsot a következőképp kell beállítani:
+1. A Cloudflare Pages környezeti változóban (Settings → Environment variables)
+   hozz létre egy RECEIPT_PRIVATE_KEY nevű titkosított változót
+2. A publikus kulcsot illeszd be a src/config.ts fájlba a receiptPublicKey mezőbe
+
+Fontos tudnivalók:
+- A kulcsot csak egyszer kell generálni, ha újra generálod, akkor
+  mindkét helyet frissíteni kell
+- A privát kulcs elvesztése csak azt jelenti, hogy új kulcsra van szükség a
+  jövőbeli build-ekhez, de a már közzétett build-ek nem romlanak el
+- Bárki aki rendelkezik a privát kulccsal, aláírhatja a receipteket helyetted
+
+A keygen script a scripts/keygen.mjs fájlban található.
+
 ## Repo és első push
 
 A github.com/chrisconen/dev be van kötve a kódba: a /receipt/ oldal
