@@ -4,13 +4,13 @@ import Entry from '../components/Entry.astro';
 import { SITE } from '../config';
 
 // Live numbers, kept in one place so the prose and the stat band can never
-// drift apart. Sourced from the AXR repository README / CHANGELOG (1.0.0).
+// drift apart. Sourced from the AXR repository README / CHANGELOG (1.4.0).
 const STATS = [
-  { num: '8', lbl: 'Maturity layers, one repo — core to witness cosigning' },
-  { num: '35', lbl: 'Test suites green, incl. JS↔Python cross-impl parity' },
+  { num: '9', lbl: 'Maturity layers, one repo — core to the witness lifecycle + SDK' },
+  { num: '40', lbl: 'Test suites green, incl. JS↔Python cross-impl parity' },
   { num: '15 / 15', lbl: 'Tamper mutations rejected by the verifier' },
   { num: '2', lbl: 'Independent verifiers (Node + pure-Python) agree byte-for-byte' },
-  { num: '11', lbl: 'Security findings caught by multi-agent review before release' },
+  { num: '15', lbl: 'Security findings caught by multi-agent review before release' },
   { num: '0', lbl: 'Runtime dependencies — standard crypto only' },
 ];
 
@@ -65,11 +65,18 @@ const MATURITY = [
     note: 'Closes the out-of-band withholding gap; wire format untouched.',
   },
   {
-    layer: 'Witness cosigning — preventive equivocation defence (stateful witnesses gate STH acceptance)',
-    ver: '0.8',
+    layer: 'Witness lifecycle — cosigning, emergency revocation, temporary auto-expiring suspension',
+    ver: '0.8 – 1.4',
     state: 'stable',
     label: 'Stable',
-    note: 'Cross-impl parity; preventive under --require-witnesses + a durable witness state.',
+    note: 'Preventive equivocation defence; the full slow-revoke → revoke → suspend lifecycle, cross-impl.',
+  },
+  {
+    layer: 'Library SDK — require(\'axr\'): a frozen public API surface + programmatic verify()',
+    ver: '1.2 – 1.3',
+    state: 'stable',
+    label: 'Stable',
+    note: 'Surface pinned by a test; axr.verify() runs the canonical verifier, so it can never diverge.',
   },
 ];
 
@@ -174,7 +181,7 @@ const FINDINGS = [
     </div>
     <div class="chips">
       <span class="chip">Status <strong>Live in production</strong></span>
-      <span class="chip">Version <strong>1.0.0</strong></span>
+      <span class="chip">Version <strong>1.4.0</strong></span>
       <span class="chip">Dependencies <strong>Zero</strong></span>
     </div>
 
@@ -557,10 +564,12 @@ python3 axr_verify.py receipts.jsonl public-key.pem sth.jsonl anchors.jsonl`}</p
   <Entry label="Status & limits">
     <h2>Live, open, and honest about <em>both.</em></h2>
     <p>
-      AXR is open source, MIT-licensed, and developed in public. At 1.0 the
-      wire format and the CLI/verifier contract are frozen for 1.x. The core and
+      AXR is open source, MIT-licensed, and developed in public. Since 1.0 the
+      wire format and the CLI/verifier contract are frozen for 1.x; 1.1–1.4 added
+      only backward-compatible records and a frozen library SDK. The core and
       anchoring layers run in production; the higher layers — key succession,
-      quorum roots, the control log, witness cosigning — are tested, cross-impl
+      quorum roots, the control log, and the full witness lifecycle (cosigning,
+      emergency revocation, temporary suspension) — are tested, cross-impl
       verified, and additive, but not yet exercised by the live pilot. The
       project stays honest about its own gaps:
     </p>
