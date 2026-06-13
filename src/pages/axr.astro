@@ -531,6 +531,29 @@ python3 axr_verify.py receipts.jsonl public-key.pem sth.jsonl anchors.jsonl`}</p
     </p>
   </Entry>
 
+  <Entry label="Dogfooding">
+    <h2>AXR proves its own <em>construction.</em></h2>
+    <p>
+      AXR was built by a three-AI workbench — Fable, Meridian and NEXUS — over a
+      shared, append-only journal. That journal is itself a verifiable AXR log:
+      every entry is an Ed25519-signed receipt, the whole set is Merkle-anchored
+      into one signed tree head, and that tree head was cosigned by the two
+      reviewer agents — each in its own process, with a key it generated and
+      held itself, so the orchestrator never saw a private key. The committed
+      snapshot re-verifies under the full 1.0 stack, in your browser.
+    </p>
+    <p class="small muted">
+      Honest framing: this proves the journal is unaltered since signing, not
+      that any entry was true when written. The cosignatures are genuinely
+      process-independent; the one remaining gap to full zero-trust is that
+      custody is still same-machine — production runs the witnesses in separate
+      security zones.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="/axr/devlog/">Verify the dev-log live</a>
+    </div>
+  </Entry>
+
   <Entry label="Status & limits">
     <h2>Live, open, and honest about <em>both.</em></h2>
     <p>

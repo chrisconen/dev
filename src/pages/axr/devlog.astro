@@ -1,0 +1,550 @@
+---
+import Base from '../../layouts/Base.astro';
+import Entry from '../../components/Entry.astro';
+import { SITE } from '../../config';
+---
+
+<Base
+  current="axr"
+  title="AXR dev-log — verify it in your browser | Chris Conen"
+  description="AXR records and verifies the integrity of its own development journal. Every entry is an Ed25519-signed receipt, Merkle-anchored into a tree head that two independent reviewer agents cosigned — re-verify the whole chain here, in your browser."
+>
+  <div class="shell hero">
+    <p class="kicker">
+      AXR<span class="sep">/</span>Dev-log<span class="sep">/</span>Self-verifying
+    </p>
+    <h1>AXR proves its own <em>construction.</em></h1>
+    <p class="lede">
+      AXR was built by a three-AI workbench (Fable, Meridian, NEXUS) over a
+      shared, append-only journal. That journal <em>is</em> a verifiable AXR
+      log: every entry is an Ed25519-signed receipt, the whole set is
+      Merkle-anchored into one signed tree head, and that tree head was
+      cosigned by the two reviewer agents — each in its own process, with a key
+      it generated and held itself. Your browser can re-check all of it below.
+    </p>
+  </div>
+
+  <Entry label="The whole chain" id="verify">
+    <div class="receipt-card" id="dl-root">
+      <dl class="receipt-meta">
+        <div class="row">
+          <dt>Status</dt>
+          <dd><span class="stamp unsigned" id="dl-stamp">Loading</span></dd>
+        </div>
+        <div class="row">
+          <dt>Log</dt>
+          <dd id="dl-log">&mdash;</dd>
+        </div>
+        <div class="row">
+          <dt>Entries</dt>
+          <dd id="dl-entries">&mdash;</dd>
+        </div>
+        <div class="row">
+          <dt>Tree size</dt>
+          <dd id="dl-treesize">&mdash;</dd>
+        </div>
+        <div class="row">
+          <dt>Merkle root (STH)</dt>
+          <dd>
+            <span id="dl-root-hash">&mdash;</span>
+            <span class="match-note" id="dl-root-note"></span>
+          </dd>
+        </div>
+        <div class="row">
+          <dt>Tree-head signature</dt>
+          <dd>
+            <span id="dl-sth-sig">&mdash;</span>
+            <span class="match-note" id="dl-sth-note"></span>
+          </dd>
+        </div>
+        <div class="row">
+          <dt>Witness cosignatures</dt>
+          <dd id="dl-witness">&mdash;</dd>
+        </div>
+      </dl>
+
+      <div class="stamp-row">
+        <button class="btn btn-primary" id="dl-verify-btn" type="button" disabled>
+          Verify the whole log
+        </button>
+        <button class="btn btn-ghost" id="dl-tamper-btn" type="button" disabled>
+          Tamper test
+        </button>
+      </div>
+      <p class="status-line" id="dl-status">Fetching the dev-log snapshot from this origin.</p>
+    </div>
+  </Entry>
+
+  <Entry label="The journal" id="journal">
+    <h2>Every entry, <em>individually signed.</em></h2>
+    <p class="small muted measure-narrow">
+      Each row is one journal-entry receipt: who acted, what they did, why, and
+      which files. The stamp shows whether that single receipt's Ed25519
+      signature verifies against the log's public key — run
+      <em>Verify the whole log</em> above to stamp them all.
+    </p>
+    <div class="dl-entries" id="dl-list">
+      <p class="status-line">Waiting for the snapshot.</p>
+    </div>
+  </Entry>
+
+  <Entry label="Honest framing" id="framing">
+    <h2>What this proves — and what it <em>does not.</em></h2>
+    <ul class="now-list">
+      <li>
+        <span class="tag">Proves</span>
+        <span>
+          The journal has not been altered since signing, the entries sit in a
+          fixed order under one anchored tree, and the tree head carries a
+          threshold of independent witness cosignatures. If an AI wrote a
+          mistake, this proves it <em>really wrote that, then</em> — and nobody
+          edited it out afterwards.
+        </span>
+      </li>
+      <li>
+        <span class="tag">Does not</span>
+        <span>
+          Prove that any entry was <em>true</em> when written. AXR is an
+          integrity layer, not an oracle (limit N1).
+        </span>
+      </li>
+      <li>
+        <span class="tag">Real</span>
+        <span>
+          The two cosignatures are genuinely process-independent: Meridian
+          (Codex) and NEXUS (Gemini) each generated their own key and cosigned
+          the tree head in their own process. The orchestrator never saw either
+          private key — it only assembled the finished cosignatures.
+        </span>
+      </li>
+      <li>
+        <span class="tag">Gap</span>
+        <span>
+          Custody is still same-machine. In production the witnesses run in
+          separate security zones — that is what makes the zero-trust property
+          fully real. The mechanism shown here is genuine; the cross-zone
+          separation is what the deployment adds.
+        </span>
+      </li>
+    </ul>
+    <pre class="code-block">{`# verify the same snapshot from your own machine
+git clone ${SITE.axrRepo} && cd axr
+node axr-verify.js devlog/receipts.jsonl devlog/op.pubkey.pem \\
+  devlog/sth.jsonl devlog/anchors.jsonl \\
+  --trust-root devlog/trust-root.json --control devlog/control.jsonl \\
+  --require-witnesses`}</pre>
+    <div class="btn-row">
+      <a class="btn btn-primary" href={SITE.axrRepo} rel="noopener">AXR on GitHub</a>
+      <a class="btn btn-ghost" href="/axr/">Back to AXR</a>
+    </div>
+  </Entry>
+</Base>
+
+<style>
+  .dl-entries {
+    margin-top: 1rem;
+    border-top: 1px solid var(--rule, #d9d8cf);
+  }
+  .dl-entry {
+    display: grid;
+    grid-template-columns: 2.5rem 6rem 1fr auto;
+    gap: 0.5rem 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--rule, #d9d8cf);
+    align-items: baseline;
+  }
+  .dl-entry .seq {
+    font-family: var(--mono, monospace);
+    font-size: 0.8rem;
+    color: var(--muted, #6b6b63);
+  }
+  .dl-entry .agent {
+    font-family: var(--mono, monospace);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .dl-entry .what {
+    font-weight: 500;
+  }
+  .dl-entry .why {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--muted, #6b6b63);
+    margin-top: 0.15rem;
+  }
+  .dl-entry .refs {
+    display: block;
+    font-family: var(--mono, monospace);
+    font-size: 0.72rem;
+    color: var(--muted, #6b6b63);
+    margin-top: 0.2rem;
+    word-break: break-word;
+  }
+  .dl-entry .ts {
+    display: block;
+    font-family: var(--mono, monospace);
+    font-size: 0.72rem;
+    color: var(--muted, #6b6b63);
+    margin-top: 0.2rem;
+  }
+  .dl-wmap {
+    display: block;
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+  }
+  @media (max-width: 38rem) {
+    .dl-entry {
+      grid-template-columns: 2.5rem 1fr;
+    }
+    .dl-entry .stamp {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+</style>
+
+<script>
+  import * as ed from '@noble/ed25519';
+  import { sha512 } from '@noble/hashes/sha512';
+  import { stableStringify } from '../../lib/canonical.js';
+
+  ed.etc.sha512Sync = (...m) => sha512(ed.etc.concatBytes(...m));
+
+  const enc = new TextEncoder();
+  const $ = (id: string) => document.getElementById(id) as HTMLElement;
+
+  const b64ToBytes = (b64: string) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  const bytesToHex = (b: ArrayBuffer | Uint8Array) =>
+    [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join('');
+  const hexToBytes = (hex: string) => {
+    const out = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
+    return out;
+  };
+  const sha256Raw = async (data: BufferSource) =>
+    new Uint8Array(await crypto.subtle.digest('SHA-256', data));
+
+  // SPKI PEM -> raw 32-byte Ed25519 public key (the key is the trailing 32 bytes).
+  const pemToRaw = (pem: string) => {
+    const body = pem.replace(/-----[^-]+-----/g, '').replace(/\s+/g, '');
+    const der = b64ToBytes(body);
+    return der.slice(der.length - 32);
+  };
+  // Key fingerprint, byte-identical to axr-succession.keyFingerprint:
+  // sha256 of the PEM body with headers and whitespace stripped.
+  const fingerprint = async (pem: string) => {
+    const body = pem.replace(/-----[^-]+-----/g, '').replace(/\s+/g, '');
+    return 'sha256:' + bytesToHex(await sha256Raw(enc.encode(body)));
+  };
+
+  // Volatile fields are written after signing and are never covered by the
+  // signature or the chain/leaf hash (mirrors axr-core.signablePart).
+  const VOLATILE = ['signature', 'anchor_ref', 'redactable', 'witness_cosignatures'];
+  const signablePart = (rec: any) => {
+    const c = { ...rec };
+    for (const k of VOLATILE) delete c[k];
+    return c;
+  };
+  const verifySig = (body: any, sigB64: string, rawPub: Uint8Array) =>
+    ed.verify(b64ToBytes(sigB64), enc.encode(stableStringify(body)), rawPub);
+
+  // RFC 6962 leaf: sha256(0x00 || canonical(receipt without anchor_ref/redactable)).
+  const leafHash = async (rec: any) => {
+    const c = { ...rec };
+    delete c.anchor_ref;
+    delete c.redactable;
+    const body = enc.encode(stableStringify(c));
+    const pre = new Uint8Array(1 + body.length);
+    pre[0] = 0x00;
+    pre.set(body, 1);
+    return sha256Raw(pre);
+  };
+  const nodeHash = async (l: Uint8Array, r: Uint8Array) => {
+    const pre = new Uint8Array(1 + l.length + r.length);
+    pre[0] = 0x01;
+    pre.set(l, 1);
+    pre.set(r, 1 + l.length);
+    return sha256Raw(pre);
+  };
+  // RFC 6962 Merkle Tree Hash over [lo, hi); split at the largest power of two < n.
+  const mth = async (leaves: Uint8Array[], lo: number, hi: number): Promise<Uint8Array> => {
+    const n = hi - lo;
+    if (n === 1) return leaves[lo];
+    let k = 1;
+    while (k * 2 < n) k *= 2;
+    const left = await mth(leaves, lo, lo + k);
+    const right = await mth(leaves, lo + k, hi);
+    return nodeHash(left, right);
+  };
+
+  const setStamp = (el: HTMLElement, state: string, text: string) => {
+    el.className = `stamp ${state} just-stamped`;
+    el.textContent = text;
+  };
+  const setStatus = (text: string, bad = false) => {
+    const line = $('dl-status');
+    line.textContent = text;
+    line.className = `status-line${bad ? ' bad' : ''}`;
+  };
+
+  const fetchText = async (p: string) => {
+    const r = await fetch(p, { cache: 'no-store' });
+    if (!r.ok) throw new Error(`HTTP ${r.status} for ${p}`);
+    return r.text();
+  };
+  const parseJsonl = (t: string) =>
+    t.trim().split('\n').filter(Boolean).map((l) => JSON.parse(l));
+
+  const BASE = '/axr/devlog/';
+
+  // module-level state for the tamper button
+  let RECEIPTS: any[] = [];
+  let STH: any = null;
+  let OP_RAW: Uint8Array;
+
+  async function init() {
+    let receipts: any[], sths: any[], control: any, opPem: string;
+    let mPem: string, nPem: string;
+    try {
+      [opPem, mPem, nPem] = await Promise.all([
+        fetchText(BASE + 'op.pubkey.pem'),
+        fetchText(BASE + 'meridian.pubkey.pem'),
+        fetchText(BASE + 'nexus.pubkey.pem'),
+      ]);
+      receipts = parseJsonl(await fetchText(BASE + 'receipts.jsonl'));
+      sths = parseJsonl(await fetchText(BASE + 'sth.jsonl'));
+      control = parseJsonl(await fetchText(BASE + 'control.jsonl')).find(
+        (r) => r.record_type === 'witness_set'
+      );
+    } catch (err) {
+      setStamp($('dl-stamp'), 'failed', 'No snapshot');
+      setStatus(`Could not load the dev-log snapshot: ${err}`, true);
+      return;
+    }
+
+    RECEIPTS = receipts;
+    OP_RAW = pemToRaw(opPem);
+    STH = sths.filter((s) => s.record_type === 'sth').sort((a, b) => a.tree_size - b.tree_size).pop();
+
+    const steps = receipts.filter((r) => r.receipt_type === 'step');
+    const wf = receipts.find((r) => r.receipt_type === 'workflow');
+
+    $('dl-log').textContent = STH.log_id;
+    $('dl-entries').textContent =
+      `${receipts.length} receipts (${steps.length} steps + ${wf ? 1 : 0} workflow)`;
+    $('dl-treesize').textContent = String(STH.tree_size);
+    $('dl-root-hash').textContent = STH.root_hash;
+    $('dl-sth-sig').textContent = (STH.signature || '').slice(0, 32) + '…';
+
+    // Witness rows: map each declared witness pubkey -> fingerprint -> name.
+    const witByFp = new Map<string, { name: string; raw: Uint8Array; pem: string }>();
+    for (const w of control.witnesses) {
+      witByFp.set(await fingerprint(w.public_key), {
+        name: w.name,
+        raw: pemToRaw(w.public_key),
+        pem: w.public_key,
+      });
+    }
+    const cosigs = Array.isArray(STH.witness_cosignatures) ? STH.witness_cosignatures : [];
+    const wd = $('dl-witness');
+    wd.textContent = '';
+    for (const c of cosigs) {
+      const w = witByFp.get(c.witness_fingerprint);
+      const span = document.createElement('span');
+      span.className = 'dl-wmap';
+      span.textContent = `${w ? w.name : 'UNKNOWN'} · ${c.witness_fingerprint.slice(0, 24)}… `;
+      const st = document.createElement('span');
+      st.className = 'stamp unsigned';
+      st.textContent = 'unverified';
+      st.id = `dl-w-${c.witness_fingerprint.slice(7, 19)}`;
+      span.appendChild(st);
+      wd.appendChild(span);
+    }
+    const threshold = control.witness_threshold;
+    const tNote = document.createElement('span');
+    tNote.className = 'small muted';
+    tNote.textContent = ` threshold ${cosigs.length}/${threshold}`;
+    wd.appendChild(tNote);
+
+    // Render the journal list.
+    renderList(steps, wf);
+
+    setStamp($('dl-stamp'), 'unsigned', 'Loaded, unverified');
+    setStatus(
+      `Loaded ${receipts.length} receipts, one tree head and ${cosigs.length} witness ` +
+        `cosignatures. Verify the whole log — Ed25519 and the Merkle root run in your browser.`
+    );
+    ($('dl-verify-btn') as HTMLButtonElement).disabled = false;
+    ($('dl-tamper-btn') as HTMLButtonElement).disabled = false;
+
+    $('dl-verify-btn').addEventListener('click', () => verifyAll(witByFp));
+    $('dl-tamper-btn').addEventListener('click', () => tamperTest());
+  }
+
+  function renderList(steps: any[], wf: any) {
+    const list = $('dl-list');
+    list.textContent = '';
+    const ordered = steps.slice().sort((a, b) => a.sequence - b.sequence);
+    for (const r of ordered) {
+      list.appendChild(entryRow(r, String(r.sequence), r.step.node_name, r.io.input_summary));
+    }
+    if (wf) {
+      list.appendChild(
+        entryRow(wf, '∑', 'workflow', {
+          what: wf.outcome.decision_summary || 'workflow wrapper',
+          why: `final status: ${wf.outcome.final_status}`,
+          refs: [],
+        })
+      );
+    }
+  }
+
+  function entryRow(rec: any, seq: string, agent: string, summary: any) {
+    const row = document.createElement('div');
+    row.className = 'dl-entry';
+    row.id = `dl-row-${rec.receipt_id}`;
+
+    const seqEl = document.createElement('span');
+    seqEl.className = 'seq';
+    seqEl.textContent = seq;
+
+    const agentEl = document.createElement('span');
+    agentEl.className = 'agent';
+    agentEl.textContent = agent;
+
+    const mid = document.createElement('span');
+    const what = document.createElement('span');
+    what.className = 'what';
+    what.textContent = summary.what || '';
+    mid.appendChild(what);
+    if (summary.why) {
+      const why = document.createElement('span');
+      why.className = 'why';
+      why.textContent = summary.why;
+      mid.appendChild(why);
+    }
+    if (summary.refs && summary.refs.length) {
+      const refs = document.createElement('span');
+      refs.className = 'refs';
+      refs.textContent = summary.refs.join('  ·  ');
+      mid.appendChild(refs);
+    }
+    const ts = document.createElement('span');
+    ts.className = 'ts';
+    ts.textContent = rec.timestamp || (rec.workflow && rec.workflow.completion_timestamp) || '';
+    mid.appendChild(ts);
+
+    const stamp = document.createElement('span');
+    stamp.className = 'stamp unsigned';
+    stamp.textContent = '—';
+    stamp.id = `dl-sig-${rec.receipt_id}`;
+
+    row.append(seqEl, agentEl, mid, stamp);
+    return row;
+  }
+
+  async function verifyAll(witByFp: Map<string, any>) {
+    const btn = $('dl-verify-btn') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Verifying…';
+    setStatus('Verifying every signature and recomputing the Merkle root locally…');
+
+    // 1. Per-receipt Ed25519 signatures.
+    let sigOk = 0;
+    for (const r of RECEIPTS) {
+      const ok = !!r.signature && verifySig(signablePart(r), r.signature, OP_RAW);
+      if (ok) sigOk++;
+      const el = document.getElementById(`dl-sig-${r.receipt_id}`);
+      if (el) setStamp(el, ok ? 'verified' : 'failed', ok ? 'signed' : 'BAD SIG');
+    }
+
+    // 2. Tree-head signature.
+    const sthOk = !!STH.signature && verifySig(signablePart(STH), STH.signature, OP_RAW);
+    const sthNote = $('dl-sth-note');
+    sthNote.textContent = sthOk ? ' verifies (Ed25519)' : ' FAILS';
+    sthNote.className = `match-note ${sthOk ? 'ok' : 'bad'}`;
+
+    // 3. Merkle root recomputed from the receipts, compared to the STH root.
+    const leaves = await Promise.all(RECEIPTS.map(leafHash));
+    const root = 'sha256:' + bytesToHex(await mth(leaves, 0, leaves.length));
+    const rootOk = root === STH.root_hash;
+    const rootNote = $('dl-root-note');
+    rootNote.textContent = rootOk ? ' recomputed locally: match' : ' recomputed locally: MISMATCH';
+    rootNote.className = `match-note ${rootOk ? 'ok' : 'bad'}`;
+
+    // 4. Witness cosignatures over the canonical STH (without the cosignatures).
+    const witnessBody = { ...STH };
+    delete witnessBody.witness_cosignatures;
+    const cosigs = Array.isArray(STH.witness_cosignatures) ? STH.witness_cosignatures : [];
+    let witOk = 0;
+    let prevFp: string | null = null;
+    let anomaly = false;
+    for (const c of cosigs) {
+      const w = witByFp.get(c.witness_fingerprint);
+      const ordered = prevFp === null || c.witness_fingerprint > prevFp;
+      prevFp = c.witness_fingerprint;
+      let ok = false;
+      if (w && ordered) ok = verifySig(witnessBody, c.signature, w.raw);
+      if (!w || !ordered) anomaly = true;
+      if (ok) witOk++;
+      const el = document.getElementById(`dl-w-${c.witness_fingerprint.slice(7, 19)}`);
+      if (el) setStamp(el, ok ? 'verified' : 'failed', ok ? `${w ? w.name : ''} ✓` : 'BAD');
+    }
+    const allOk =
+      sigOk === RECEIPTS.length && sthOk && rootOk && witOk >= 2 && !anomaly;
+    setStamp(
+      $('dl-stamp'),
+      allOk ? 'verified' : 'failed',
+      allOk ? 'Verified' : 'Failed'
+    );
+    setStatus(
+      allOk
+        ? `Full chain verified locally: ${sigOk}/${RECEIPTS.length} receipt signatures, ` +
+            `the tree-head signature, the Merkle root, and ${witOk} independent witness ` +
+            `cosignatures (threshold 2). Nothing was altered since signing.`
+        : `Verification did not fully pass: ${sigOk}/${RECEIPTS.length} signatures, ` +
+            `root ${rootOk ? 'match' : 'MISMATCH'}, tree-head ${sthOk ? 'ok' : 'FAIL'}, ` +
+            `${witOk} valid cosignatures${anomaly ? ', witness anomaly' : ''}.`,
+      !allOk
+    );
+    btn.textContent = 'Verify the whole log';
+    btn.disabled = false;
+  }
+
+  // Tamper test: flip one journal entry in memory, re-verify its signature and
+  // the Merkle root — both break. Demonstrates content-binding. Reload restores.
+  async function tamperTest() {
+    const target = RECEIPTS.find((r) => r.receipt_type === 'step');
+    if (!target) return;
+    const original = target.io.input_summary.what;
+    target.io.input_summary.what = original + ' [TAMPERED]';
+
+    const sigOk = !!target.signature && verifySig(signablePart(target), target.signature, OP_RAW);
+    const leaves = await Promise.all(RECEIPTS.map(leafHash));
+    const root = 'sha256:' + bytesToHex(await mth(leaves, 0, leaves.length));
+    const rootOk = root === STH.root_hash;
+
+    // reflect in the UI
+    const el = document.getElementById(`dl-sig-${target.receipt_id}`);
+    if (el) setStamp(el, sigOk ? 'verified' : 'failed', sigOk ? 'signed' : 'BAD SIG');
+    const rowWhat = document.querySelector(`#dl-row-${target.receipt_id} .what`);
+    if (rowWhat) rowWhat.textContent = target.io.input_summary.what;
+    const rootNote = $('dl-root-note');
+    rootNote.textContent = rootOk ? ' recomputed locally: match' : ' recomputed locally: MISMATCH';
+    rootNote.className = `match-note ${rootOk ? 'ok' : 'bad'}`;
+    setStamp($('dl-stamp'), 'failed', 'Tampered');
+    setStatus(
+      `Tamper test: appended "[TAMPERED]" to entry #${target.sequence} in memory. Its ` +
+        `signature now ${sigOk ? 'still verifies (unexpected!)' : 'fails'} and the Merkle root ` +
+        `${rootOk ? 'still matches (unexpected!)' : 'no longer matches the signed tree head'}. ` +
+        `Reload the page to restore the genuine snapshot.`,
+      true
+    );
+
+    // restore in-memory value so a subsequent "Verify the whole log" is clean
+    target.io.input_summary.what = original;
+  }
+
+  init();
+</script>
