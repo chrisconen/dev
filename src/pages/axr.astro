@@ -447,10 +447,11 @@ python3 axr_verify.py receipts.jsonl public-key.pem sth.jsonl anchors.jsonl`}</p
     <h2>An honest receipt makes silent failures <em>loud.</em></h2>
     <p>
       AXR runs in production on a live booking workflow for ECO Clean HU — six
-      of the workflow's twenty nodes are receipt-bearing, and the log has been
-      anchored hourly since June 2026. Standing up that accountability layer did
-      something its operator did not expect: it surfaced four real bugs that
-      pre-dated AXR, and two defects in AXR's own tooling.
+      of the workflow's twenty nodes are receipt-bearing, and the log — now past
+      227 signed receipts — has been anchored hourly into one Merkle tree since
+      June 2026. Standing up that accountability layer did something its operator
+      did not expect: it surfaced four real bugs that pre-dated AXR, and two
+      defects in AXR's own tooling.
     </p>
     <div class="findings">
       {FINDINGS.map((f) => (
