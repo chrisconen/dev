@@ -14,10 +14,16 @@ interface Props {
   title?: string;
   description?: string;
   current?: string;
+  jsonLd?: Record<string, unknown>[];
 }
 
-const { title = SITE.title, description = SITE.description, current = '' } = Astro.props;
+const { title = SITE.title, description = SITE.description, current = '', jsonLd = [] } = Astro.props;
 const canonical = new URL(Astro.url.pathname, SITE.url).href;
+
+// Serialise JSON-LD as a data block. Escaping '<' keeps the literal "</script>"
+// from ever closing the element early; the block is data, not executable
+// script, so it is exempt from the strict script-src CSP.
+const ldBlocks = jsonLd.map((b) => JSON.stringify(b).replace(/</g, '\\u003c'));
 ---
 
 <!doctype html>
@@ -40,6 +46,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href;
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="color-scheme" content="light" />
     <meta name="theme-color" content="#f3f4ef" />
+    {ldBlocks.map((b) => <script type="application/ld+json" set:html={b} />)}
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

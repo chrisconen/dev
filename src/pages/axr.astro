@@ -125,6 +125,39 @@ const PERSONAS = [
   },
 ];
 
+// JSON-LD: AXR as an open-source software project, so the searchable problem
+// terms ("tamper-evident audit trail", "n8n") and the entity (Chris Conen)
+// are machine-legible. Claims here mirror the visible page — nothing extra.
+const JSONLD = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareSourceCode',
+    name: 'AXR — Agent Execution Receipts',
+    alternateName: 'AXR',
+    description:
+      'Open-source, Ed25519-signed, tamper-evident execution receipts for AI ' +
+      'agents and automated workflows (including n8n). A verifiable audit trail ' +
+      'anyone can check offline from a public key.',
+    url: 'https://chrisconen.dev/axr/',
+    codeRepository: SITE.axrRepo,
+    programmingLanguage: ['JavaScript', 'Python'],
+    license: 'https://opensource.org/licenses/MIT',
+    keywords: [
+      'tamper-evident audit trail for AI agents',
+      'verifiable agent logs',
+      'n8n audit log',
+      'AI agent accountability',
+      'EU AI Act Article 12 logging',
+      'Ed25519 signed receipts',
+    ],
+    author: {
+      '@type': 'Person',
+      name: 'Chris Conen',
+      url: SITE.url,
+    },
+  },
+];
+
 const FINDINGS = [
   {
     inward: false,
@@ -161,8 +194,9 @@ const FINDINGS = [
 
 <Base
   current="axr"
-  title="AXR — Agent Execution Receipts | Chris Conen"
+  title="Tamper-evident audit trail for AI agents and n8n — AXR"
   description="AXR is an open-source accountability layer for AI agents: Ed25519-signed, tamper-evident execution receipts. Live in production with hourly Merkle anchoring, two independent verifiers, and an EU AI Act / GDPR control mapping."
+  jsonLd={JSONLD}
 >
   <div class="shell axr-hero">
     <p class="kicker">
@@ -178,6 +212,7 @@ const FINDINGS = [
     <div class="btn-row">
       <a class="btn btn-primary" href={SITE.axrRepo} rel="noopener">AXR on GitHub</a>
       <a class="btn btn-ghost" href="/receipt/">See the primitive live</a>
+      <a class="btn btn-ghost" href="/axr/n8n/">Using n8n?</a>
     </div>
     <div class="chips">
       <span class="chip">Protocol contract <strong>1.5.1 (frozen 1.x)</strong></span>

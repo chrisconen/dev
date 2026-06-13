@@ -6,9 +6,47 @@ import EvidenceCard from '../components/EvidenceCard.astro';
 import { SITE, EVIDENCE } from '../config';
 
 const lastUpdated = new Date().toISOString().slice(0, 10);
+
+// JSON-LD: Chris Conen as a person entity, so a recruiter's search and Google's
+// knowledge graph can resolve the name to this site, AXR, and the relocation
+// intent. Only claims already visible on the page.
+const JSONLD = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Chris Conen',
+    url: SITE.url,
+    description:
+      'Builder and operator moving into security governance and AI assurance; ' +
+      'creator of AXR, open-source signed execution receipts for AI agents.',
+    knowsAbout: [
+      'AI assurance',
+      'security governance',
+      'GRC',
+      'tamper-evident audit trails',
+      'n8n automation',
+      'EU AI Act compliance',
+    ],
+    sameAs: [SITE.github, SITE.linkedin].filter(Boolean),
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Budapest',
+      addressCountry: 'HU',
+    },
+    makesOffer: {
+      '@type': 'Offer',
+      itemOffered: {
+        '@type': 'SoftwareSourceCode',
+        name: 'AXR — Agent Execution Receipts',
+        url: 'https://chrisconen.dev/axr/',
+        codeRepository: SITE.axrRepo,
+      },
+    },
+  },
+];
 ---
 
-<Base current="home">
+<Base current="home" jsonLd={JSONLD}>
   <div class="shell hero">
     <div class="hero-content">
       <p class="kicker">

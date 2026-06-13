@@ -1,0 +1,235 @@
+---
+import Base from '../../layouts/Base.astro';
+import Entry from '../../components/Entry.astro';
+import { SITE } from '../../config';
+
+// A query-targeted page for "n8n audit log" / "tamper-evident audit trail for
+// n8n". Every claim mirrors what is already stated and verifiable on /axr/ —
+// this page narrows the framing to n8n, it does not add new assertions.
+const JSONLD = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareSourceCode',
+    name: 'AXR for n8n — tamper-evident audit log',
+    description:
+      'Add a tamper-evident, cryptographically signed audit trail to an n8n ' +
+      'workflow with a single Code node. Ed25519-signed execution receipts, ' +
+      'verifiable offline by anyone holding the public key. Open source, MIT.',
+    url: 'https://chrisconen.dev/axr/n8n/',
+    codeRepository: SITE.axrRepo,
+    programmingLanguage: ['JavaScript', 'Python'],
+    license: 'https://opensource.org/licenses/MIT',
+    keywords: [
+      'n8n audit log',
+      'n8n audit trail',
+      'tamper-evident audit trail for n8n',
+      'verifiable n8n workflow logs',
+      'sign n8n workflow output',
+    ],
+    isPartOf: {
+      '@type': 'SoftwareSourceCode',
+      name: 'AXR — Agent Execution Receipts',
+      url: 'https://chrisconen.dev/axr/',
+    },
+    author: { '@type': 'Person', name: 'Chris Conen', url: SITE.url },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How do I add a tamper-evident audit log to an n8n workflow?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text:
+            'Place one AXR Code node at the end of the workflow, before the ' +
+            'response. It reads the outputs of the decision-relevant nodes and ' +
+            'emits an Ed25519-signed receipt per consequential action, appended ' +
+            'to a tamper-evident JSON Lines log. Anyone with the public key can ' +
+            'verify it offline.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Does AXR slow down or risk breaking the n8n workflow?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text:
+            'No. Receipt generation is fail-open: a missing key degrades to a ' +
+            'loud error and never breaks the business process it attests. ' +
+            'Anchoring and monitoring run outside the workflow, so the live hot ' +
+            'path gains no latency and no new runtime dependency.',
+        },
+      },
+    ],
+  },
+];
+---
+
+<Base
+  current="axr"
+  title="n8n audit log — tamper-evident, signed receipts for n8n — AXR"
+  description="Add a tamper-evident audit trail to any n8n workflow with one Code node. AXR emits Ed25519-signed execution receipts you can verify offline from a public key. Open source, zero runtime dependencies, live in production."
+  jsonLd={JSONLD}
+>
+  <div class="shell hero">
+    <p class="kicker">
+      AXR<span class="sep">/</span>n8n<span class="sep">/</span>Open source · MIT
+    </p>
+    <h1>A tamper-evident audit log for your <em>n8n workflow.</em></h1>
+    <p class="lede">
+      n8n runs the automation; the only record of what it did is a log you own
+      and could edit. AXR adds a second, independent account: one Code node at
+      the end of your workflow emits a cryptographically signed receipt of each
+      consequential action — verifiable by anyone holding the public key, with
+      no access to your n8n instance.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href={SITE.axrRepo} rel="noopener">AXR on GitHub</a>
+      <a class="btn btn-ghost" href="/receipt/">See the primitive live</a>
+    </div>
+    <div class="chips">
+      <span class="chip">Integration <strong>One Code node</strong></span>
+      <span class="chip">Hot-path latency <strong>None (anchoring is out-of-band)</strong></span>
+      <span class="chip">Runtime dependencies <strong>Zero</strong></span>
+    </div>
+  </div>
+
+  <Entry label="The gap">
+    <h2>n8n logs the run. It can't <em>prove</em> it.</h2>
+    <p>
+      An n8n execution log answers "what happened" only as long as you trust the
+      operator who holds it. It is a record you can edit, prune, or lose — and
+      nobody outside your infrastructure can confirm it was not altered after
+      the fact. For a workflow that books, prices, messages, moves money, or
+      changes records on someone's behalf, that is exactly the record an auditor,
+      a customer, or a regulator cannot take on trust.
+    </p>
+    <p>
+      The EU AI Act makes automatic event logging a design requirement for
+      high-risk systems (Article 12) and puts retention on deployers (Article
+      26), with obligations applying from 2 August 2026. A mutable execution log
+      is not designed for that question. A signed receipt is.
+    </p>
+    <p class="pullquote">
+      An n8n execution you can rewrite is a story. A receipt anyone can verify is
+      a <em>record.</em>
+    </p>
+  </Entry>
+
+  <Entry label="How it fits n8n">
+    <h2>One Code node, at the end of the <em>workflow.</em></h2>
+    <p>
+      AXR is not an n8n replacement or a fork — it is a thin accountability layer
+      that sits inside the workflow you already have. The receipt generator is a
+      single Code node placed before the response. It reads the outputs of the
+      decision-relevant nodes and produces every receipt in one pass. Anchoring
+      and monitoring run <em>outside</em> the workflow, so the live hot path
+      gains no latency and no new dependency.
+    </p>
+    <ol class="steps">
+      <li>
+        <span>
+          <strong>Mark the decision nodes.</strong> Each decision-relevant node
+          attaches the exact input it consumed, so the receipt hashes what the
+          step actually saw — not a uniform proxy.
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>Drop in the AXR Code node.</strong> One node at the end emits
+          the step and workflow receipts, each signed with Ed25519 over a
+          canonical (RFC 8785) serialisation. Generation is fail-open: a missing
+          key degrades to a loud error, it never breaks the business process.
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>Append to an immutable log.</strong> Receipts are written one
+          per line to an append-only JSON Lines file that survives restarts.
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>Anchor and verify independently.</strong> A sidecar batches
+          receipt hashes into a Merkle tree and commits signed tree heads to an
+          external backend; a standalone, zero-dependency script verifies a whole
+          chain offline, in any language, from nothing but the public key.
+        </span>
+      </li>
+    </ol>
+
+    <div class="receipt-sample">
+      <p class="caption">Illustrative step receipt from an n8n booking node</p>
+      <pre class="code-block">{`{
+  "axr_version": "0.2.1",
+  "agent_id":    "axr:agent:eco-clean:v5.1",
+  "step": { "name": "Create Booking", "kind": "side_effecting" },
+  "io": {
+    "input_hash":  "sha256:9f2c…b41a",
+    "output_hash": "sha256:1d7e…0c88",
+    "decision":    "BOOKING_CONFIRMED"
+  },
+  "logic_version": "5.1",
+  "logic_hash":    "sha256:a3b9…77e2",
+  "previous_receipt_hash": "sha256:5c10…d9f3",
+  "timestamp":  "2026-06-13T09:14:22Z",
+  "signature":  "ed25519:K8f…/Qb2Aw=="
+}`}</pre>
+      <div class="verdict">
+        <span class="stamp verified">Signature valid</span>
+        <span class="note">
+          Change one byte of any field and the signature no longer verifies.
+          That is the whole trick — and it is enough.
+        </span>
+      </div>
+    </div>
+  </Entry>
+
+  <Entry label="Proof in production">
+    <h2>Already running on a live <em>n8n workflow.</em></h2>
+    <p>
+      AXR runs in production on a live booking workflow for ECO Clean HU, built
+      in n8n. Six of the workflow's twenty nodes are receipt-bearing, and the
+      log — now past 227 signed receipts — has been anchored hourly into one
+      Merkle tree since June 2026. Standing up that accountability layer did
+      something its operator did not expect: it surfaced four real bugs that
+      pre-dated AXR.
+    </p>
+    <ul class="now-list">
+      <li>
+        <span class="tag">Bug B</span>
+        <span>Every run fired all three response branches at once — a rejection still sent a success email. The receipt's final_status made the contradiction immediate.</span>
+      </li>
+      <li>
+        <span class="tag">Bug C</span>
+        <span>Rejections returned "unknown_error" with the customer's own message echoed back; the real reason was lost. The receipt recorded the correct status on every run.</span>
+      </li>
+      <li>
+        <span class="tag">Bug D</span>
+        <span>A recheck conflict produced an HTTP 200 with an empty body, while the receipt was a complete, signed 5-step SLOT_TAKEN chain — exactly the gap AXR is built to surface.</span>
+      </li>
+      <li>
+        <span class="tag">Bug E</span>
+        <span>After a bugfix bumped the logic to v5.1, receipts kept attesting v5.0. Code-hash fingerprints now replace hand-written labels, and CI fails on drift.</span>
+      </li>
+    </ul>
+  </Entry>
+
+  <Entry label="Next">
+    <h2>Read the full design, or verify a log <em>yourself.</em></h2>
+    <p>
+      This page is the n8n-shaped view of a general primitive. The full design —
+      the threat model, the maturity layers, the EU AI Act / GDPR control
+      mapping, and the adversarial 15/15 tamper test — lives on the main AXR
+      page. And AXR proves its own construction: its build journal is itself a
+      signed, anchored AXR log you can re-verify in your browser.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="/axr/">The full AXR design</a>
+      <a class="btn btn-ghost" href="/axr/devlog/">Verify a real log live</a>
+      <a class="btn btn-ghost" href={SITE.axrRepo} rel="noopener">AXR on GitHub</a>
+    </div>
+  </Entry>
+</Base>
