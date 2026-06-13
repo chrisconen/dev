@@ -1,13 +1,13 @@
 ---
-title: "Building a Cryptographically Signed, Tamper-Evident Audit Log for n8n"
-seoTitle: "n8n Audit Log: Tamper-Evident, Offline Verification — Chris Conen"
-description: "A practical guide to securing n8n workflows. Learn how to add an independent, cryptographically signed audit log to n8n with a single Code node."
-pubDate: 2026-06-14
-primaryKeyword: "n8n audit log"
+title: "How to Add a Tamper-Evident Audit Trail to n8n (Step by Step)"
+seoTitle: "How to Add an Audit Trail to n8n — Step-by-Step Tutorial — Chris Conen"
+description: "A step-by-step tutorial: add an independent, cryptographically signed audit trail to any n8n workflow with one Code node, verifiable offline from a public key."
+pubDate: 2026-06-10
+primaryKeyword: "how to add an audit trail to n8n"
 keywords:
-  - "n8n audit trail"
+  - "n8n audit trail tutorial"
+  - "log n8n workflow executions tamper-evident"
   - "sign n8n workflow output"
-  - "verifiable workflow logging"
 tags:
   - n8n
   - AI assurance
@@ -15,7 +15,7 @@ tags:
 draft: false
 ---
 
-If you are running business-critical automations, you probably rely on the execution logs of your integration engine. But in n8n, those logs are stored on a mutable database or server file that can be modified, deleted, or falsified. To protect your operations, you need a true **n8n audit log** — one that is cryptographically signed, independent, and verifiable offline. This guide walks you through adding a tamper-evident audit layer to your n8n workflows using a single, lightweight Code node.
+If you are running business-critical automations, you probably rely on the execution logs of your integration engine. But in n8n, those logs are stored on a mutable database or server file that can be modified, deleted, or falsified. This tutorial walks you through **how to add a tamper-evident audit trail to n8n** — one that is cryptographically signed, independent, and verifiable offline — using a single, lightweight Code node. (For a higher-level overview of the approach, see [AXR for n8n](/axr/n8n/).)
 
 By the end of this guide, your workflow will generate verifiable execution receipts that any external partner can audit without giving them access to your n8n instance.
 
@@ -132,7 +132,7 @@ Because AXR avoids proprietary formats, a fully independent verifier exists in p
 python3 axr_verify.py receipts.jsonl public-key.pem sth.jsonl anchors.jsonl
 ```
 
-This is the power of "proof over promises." By handing your stakeholders a public key and a raw log file, you give them the tools to verify your system's integrity independently — in either implementation.
+This is the power of "proof over promises" — and the deeper reason [agent logs aren't evidence](/writing/agent-logs-arent-evidence/). By handing your stakeholders a public key and a raw log file, you give them the tools to verify your system's integrity independently. For the full mechanics, see the [offline verification walkthrough](/writing/verify-agent-log-offline/).
 
 ---
 
@@ -140,4 +140,5 @@ This is the power of "proof over promises." By handing your stakeholders a publi
 * Learn more about the core [AXR cryptographic specification](/axr/).
 * [Verify a log in your browser](/axr/verify/) — drop in receipts and a public key, nothing is uploaded.
 * Read our real-world case study on how [introducing AXR surfaced four silent production bugs](/writing/audit-layer-found-four-bugs/).
+* Understand what the [EU AI Act Article 12 logging](/writing/eu-ai-act-article-12-logging/) rules actually require.
 * Explore the dedicated [AXR for n8n](/axr/n8n/) overview.

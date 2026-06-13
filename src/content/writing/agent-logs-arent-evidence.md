@@ -2,7 +2,7 @@
 title: "Storytelling vs. Evidence: Why Agent Logs Aren't Evidence"
 seoTitle: "Tamper-Evident Audit Trail for AI Agents — Chris Conen"
 description: "A conceptual exploration of why traditional application logs aren't evidence, what a tamper-evident audit trail for AI agents requires, and why signatures matter."
-pubDate: 2026-06-16
+pubDate: 2026-06-03
 primaryKeyword: "tamper-evident audit trail for AI agents"
 keywords:
   - "verifiable agent logging"
@@ -106,7 +106,7 @@ With a cryptographic audit trail, the security is **intrinsic to the data**. Bec
 
 ## Designing for the Skeptical Auditor
 
-When you present your AI agent's execution logs to a client, regulator, or partner, you should expect them to be skeptical. 
+When you present your AI agent's execution logs to a client, regulator, or partner, you should expect them to be skeptical — and for high-risk systems, [EU AI Act Article 12](/writing/eu-ai-act-article-12-logging/) increasingly makes that scrutiny a legal expectation, not just a courtesy. 
 
 If your audit process requires them to log into your custom dashboard, you are asking them to trust you. If your audit process requires them to trust a proprietary compliance platform, you are asking them to trust a third party.
 
@@ -124,5 +124,5 @@ That is the transition from **promises** to **proof**.
 ### Step Up to Verifiable Assurance
 * Read how we [exposed four silent production bugs](/writing/audit-layer-found-four-bugs/) the moment we turned on verifiable logging.
 * Explore the open-source [AXR cryptographic specification](/axr/) and protocol design.
-* Walk through our step-by-step guide to [integrating verifiable logs into n8n](/writing/n8n-audit-log/).
+* Walk through our step-by-step guide to [integrating verifiable logs into n8n](/writing/n8n-audit-trail-tutorial/).
 * Inspect our live, cryptographically anchored audit trail on the [AXR Devlog](/axr/devlog/).

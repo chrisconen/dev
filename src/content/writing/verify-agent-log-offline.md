@@ -2,7 +2,7 @@
 title: "How to Verify an Agent Log Offline with Only a Public Key"
 seoTitle: "Verify Agent Log Offline: Zero-Dependency Walkthrough — Chris Conen"
 description: "A complete step-by-step technical guide on how to verify agent log offline using the open-source AXR CLI and standard Ed25519 cryptography."
-pubDate: 2026-06-17
+pubDate: 2026-05-30
 primaryKeyword: "verify agent log offline"
 keywords:
   - "verifiable agent logs"
@@ -122,5 +122,5 @@ Both use the standard Web Cryptography APIs and the exact same verification code
 ### Verify the Truth for Yourself
 * Visit the [AXR Devlog](/axr/devlog/) to inspect and verify our live production receipts in real-time.
 * See the cryptographic details of the [AXR Core Specification](/axr/).
-* Read how we added a signed audit trail to an [n8n workflow](/writing/n8n-audit-log/) with a single Code node.
+* Read how we added a signed audit trail to an [n8n workflow](/writing/n8n-audit-trail-tutorial/) with a single Code node.
 * Review our case study on how [verifiable agent logs surfaced four active production bugs](/writing/audit-layer-found-four-bugs/).

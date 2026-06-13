@@ -2,7 +2,7 @@
 title: "EU AI Act Article 12: Demystifying Event Logging for AI Agents"
 seoTitle: "EU AI Act Article 12 Logging: Compliance & Tech — Chris Conen"
 description: "An explainer on EU AI Act Article 12 logging requirements for AI agents, Article 26 deployer obligations, and how to address the GDPR Article 17 tension."
-pubDate: 2026-06-15
+pubDate: 2026-06-06
 primaryKeyword: "EU AI Act Article 12 logging"
 keywords:
   - "AI Act agent audit trail"
@@ -125,4 +125,4 @@ Adding a signed audit layer is no longer just a technical nice-to-have; it is a 
 ### Deepen Your Understanding of AI Governance
 * See how a live production system uses [verifiable agent logs](/writing/audit-layer-found-four-bugs/) to catch silent execution failures in real-time.
 * Explore the open-source [AXR Cryptographic Specification](/axr/) to understand how our receipt verification primitive works.
-* Read our step-by-step technical guide on [integrating tamper-evident logging into n8n workflows](/writing/n8n-audit-log/).
+* Read our step-by-step technical guide on [integrating tamper-evident logging into n8n workflows](/writing/n8n-audit-trail-tutorial/).

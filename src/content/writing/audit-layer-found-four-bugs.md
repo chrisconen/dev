@@ -153,9 +153,9 @@ In a traditional setup, we only monitor the external narrative. We write tests t
 
 When you introduce **verifiable agent logs**, you pin the execution reality to a cryptographic anchor. AXR forces each decision-relevant step to output a signed receipt. Because these receipts are signed with a private key only the execution node holds, they cannot be backdated, modified, or forged after the fact — not even by the database administrator.
 
-The gap between what the system *says* happened and what the signed receipts *prove* happened is exactly where silent bugs and governance failures are exposed.
+The gap between what the system *says* happened and what the signed receipts *prove* happened is exactly where silent bugs and governance failures are exposed. This is the deeper reason [agent logs aren't evidence](/writing/agent-logs-arent-evidence/) — a log you can edit is testimony, not proof.
 
-Today, the ECO Clean HU booking engine has anchored **past 227 signed receipts** into an append-only Merkle tree, anchored **hourly since June 2026**. The log's integrity is checked by two independent verifiers — one in Node.js, one in pure Python — that agree byte-for-byte.
+Today, the ECO Clean HU booking engine has anchored **past 227 signed receipts** into an append-only Merkle tree, anchored **hourly since June 2026**. The log's integrity is checked by two independent verifiers — one in Node.js, one in pure Python — that agree byte-for-byte. You can [verify an AXR log offline yourself](/writing/verify-agent-log-offline/) with nothing but a public key.
 
 If you are running n8n workflows, LLM agents, or automated decision engines, you are currently trusting a mutable, unverified narrative. It is time to start demanding proof.
 
@@ -164,4 +164,4 @@ If you are running n8n workflows, LLM agents, or automated decision engines, you
 ### Ready to secure your workflows?
 * Learn how the [AXR cryptographic protocol](/axr/) provides tamper-evident receipts for automated systems.
 * Inspect our live, verifiable audit log on the [AXR Devlog](/axr/devlog/), or [verify a log yourself](/axr/verify/) in the browser.
-* Read the step-by-step guide to [integrating AXR with n8n](/writing/n8n-audit-log/) to secure your own workflows.
+* Read the step-by-step guide to [integrating AXR with n8n](/writing/n8n-audit-trail-tutorial/) to secure your own workflows.
