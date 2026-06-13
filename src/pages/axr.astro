@@ -4,13 +4,13 @@ import Entry from '../components/Entry.astro';
 import { SITE } from '../config';
 
 // Live numbers, kept in one place so the prose and the stat band can never
-// drift apart. Sourced from the AXR repository README / CHANGELOG (0.7.1).
+// drift apart. Sourced from the AXR repository README / CHANGELOG (1.0.0).
 const STATS = [
-  { num: '7', lbl: 'Maturity layers, one repo — core to control log' },
-  { num: '227+', lbl: 'Receipts anchored in the production Merkle tree' },
+  { num: '8', lbl: 'Maturity layers, one repo — core to witness cosigning' },
+  { num: '35', lbl: 'Test suites green, incl. JS↔Python cross-impl parity' },
   { num: '15 / 15', lbl: 'Tamper mutations rejected by the verifier' },
   { num: '2', lbl: 'Independent verifiers (Node + pure-Python) agree byte-for-byte' },
-  { num: '6', lbl: 'Real bugs surfaced — 4 in the pilot, 2 in AXR itself' },
+  { num: '11', lbl: 'Security findings caught by multi-agent review before release' },
   { num: '0', lbl: 'Runtime dependencies — standard crypto only' },
 ];
 
@@ -30,39 +30,46 @@ const MATURITY = [
     note: 'Hourly anchoring cron live in production; separate STH key.',
   },
   {
-    layer: 'Redactable receipts, side-effect attestation, trust root',
+    layer: 'Redactable receipts, side-effect attestation, trust root, key-role separation',
     ver: '0.4',
-    state: 'hardening',
-    label: 'Hardening',
-    note: 'Tested and evolving; some APIs may still change.',
+    state: 'stable',
+    label: 'Stable',
+    note: 'Tested; frozen in the 1.0 contract.',
   },
   {
     layer: 'Key succession — root-anchored rotation, distinguishable from compromise',
     ver: '0.5',
-    state: 'fresh',
-    label: 'New',
-    note: 'Tested incl. cross-impl parity and adversarial review.',
+    state: 'stable',
+    label: 'Stable',
+    note: 'Cross-impl parity + adversarial review; not yet exercised by the pilot.',
   },
   {
     layer: 'SIEM export — OCSF Detection Finding mapping + generic webhook',
     ver: '0.6',
-    state: 'fresh',
-    label: 'New',
+    state: 'stable',
+    label: 'Stable',
     note: 'OCSF-shaped output; best-effort delivery by design.',
   },
   {
     layer: 'Root-lifecycle hardening — quorum (M-of-N) root, rotation, revocation, ceremony CLI',
     ver: '0.6',
-    state: 'fresh',
-    label: 'New',
-    note: '92 assertions across five suites, Python cross-impl agreement.',
+    state: 'stable',
+    label: 'Stable',
+    note: 'Cross-impl parity; quorum policy is part of the threat model.',
   },
   {
     layer: 'Control log — anchored, append-only distribution of governance records',
     ver: '0.7',
-    state: 'fresh',
-    label: 'New',
+    state: 'stable',
+    label: 'Stable',
     note: 'Closes the out-of-band withholding gap; wire format untouched.',
+  },
+  {
+    layer: 'Witness cosigning — preventive equivocation defence (stateful witnesses gate STH acceptance)',
+    ver: '0.8',
+    state: 'stable',
+    label: 'Stable',
+    note: 'Cross-impl parity; preventive under --require-witnesses + a durable witness state.',
   },
 ];
 
@@ -167,7 +174,7 @@ const FINDINGS = [
     </div>
     <div class="chips">
       <span class="chip">Status <strong>Live in production</strong></span>
-      <span class="chip">Version <strong>0.7.1</strong></span>
+      <span class="chip">Version <strong>1.0.0</strong></span>
       <span class="chip">Dependencies <strong>Zero</strong></span>
     </div>
 
@@ -527,11 +534,12 @@ python3 axr_verify.py receipts.jsonl public-key.pem sth.jsonl anchors.jsonl`}</p
   <Entry label="Status & limits">
     <h2>Live, open, and honest about <em>both.</em></h2>
     <p>
-      AXR is open source, MIT-licensed, and developed in public. The core and
-      anchoring layers are running in production; the higher layers — key
-      succession, quorum roots, the control log — are tested and additive but
-      not yet exercised by the live pilot. The current frontier is honest about
-      its own gaps:
+      AXR is open source, MIT-licensed, and developed in public. At 1.0 the
+      wire format and the CLI/verifier contract are frozen for 1.x. The core and
+      anchoring layers run in production; the higher layers — key succession,
+      quorum roots, the control log, witness cosigning — are tested, cross-impl
+      verified, and additive, but not yet exercised by the live pilot. The
+      project stays honest about its own gaps:
     </p>
     <ul class="now-list">
       <li>
