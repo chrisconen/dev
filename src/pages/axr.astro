@@ -4,10 +4,10 @@ import Entry from '../components/Entry.astro';
 import { SITE } from '../config';
 
 // Live numbers, kept in one place so the prose and the stat band can never
-// drift apart. Sourced from the AXR repository README / CHANGELOG (1.4.0).
+// drift apart. Sourced from the AXR repository README / CHANGELOG (1.5.1).
 const STATS = [
   { num: '9', lbl: 'Maturity layers, one repo — core to the witness lifecycle + SDK' },
-  { num: '40', lbl: 'Test suites green, incl. JS↔Python cross-impl parity' },
+  { num: '41', lbl: 'Test suites green, incl. JS↔Python cross-impl parity (core + governance)' },
   { num: '15 / 15', lbl: 'Tamper mutations rejected by the verifier' },
   { num: '2', lbl: 'Independent verifiers (Node + pure-Python) agree byte-for-byte' },
   { num: '15', lbl: 'Security findings caught by multi-agent review before release' },
@@ -58,11 +58,11 @@ const MATURITY = [
     note: 'Cross-impl parity; quorum policy is part of the threat model.',
   },
   {
-    layer: 'Control log — anchored, append-only distribution of governance records',
-    ver: '0.7',
+    layer: 'Control log — anchored governance distribution + partial disclosure',
+    ver: '0.7 – 1.5',
     state: 'stable',
     label: 'Stable',
-    note: 'Closes the out-of-band withholding gap; wire format untouched.',
+    note: 'Closes the out-of-band withholding gap; 1.5 adds off-wire inclusion proof for a single record (prove one, reveal none of the rest).',
   },
   {
     layer: 'Witness lifecycle — cosigning, emergency revocation, temporary auto-expiring suspension',
@@ -180,8 +180,8 @@ const FINDINGS = [
       <a class="btn btn-ghost" href="/receipt/">See the primitive live</a>
     </div>
     <div class="chips">
-      <span class="chip">Status <strong>Live in production</strong></span>
-      <span class="chip">Version <strong>1.4.0</strong></span>
+      <span class="chip">Protocol contract <strong>1.5.1 (frozen 1.x)</strong></span>
+      <span class="chip">Live profile <strong>0.2.1 core · hourly anchoring</strong></span>
       <span class="chip">Dependencies <strong>Zero</strong></span>
     </div>
 
