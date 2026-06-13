@@ -2,26 +2,182 @@
 import Base from '../layouts/Base.astro';
 import Entry from '../components/Entry.astro';
 import { SITE } from '../config';
+
+// Live numbers, kept in one place so the prose and the stat band can never
+// drift apart. Sourced from the AXR repository README / CHANGELOG (0.7.1).
+const STATS = [
+  { num: '7', lbl: 'Maturity layers, one repo — core to control log' },
+  { num: '227+', lbl: 'Receipts anchored in the production Merkle tree' },
+  { num: '15 / 15', lbl: 'Tamper mutations rejected by the verifier' },
+  { num: '2', lbl: 'Independent verifiers (Node + pure-Python) agree byte-for-byte' },
+  { num: '6', lbl: 'Real bugs surfaced — 4 in the pilot, 2 in AXR itself' },
+  { num: '0', lbl: 'Runtime dependencies — standard crypto only' },
+];
+
+const MATURITY = [
+  {
+    layer: 'Core — signing, chaining, per-step input hashing, canonical JSON, cross-impl parity',
+    ver: '0.2.1',
+    state: 'stable',
+    label: 'Stable',
+    note: 'Production-tested, frozen wire format; hardened n8n node.',
+  },
+  {
+    layer: 'Anchoring — Merkle batching, Signed Tree Heads, monitor, external timestamping',
+    ver: '0.3',
+    state: 'deployed',
+    label: 'Deployed',
+    note: 'Hourly anchoring cron live in production; separate STH key.',
+  },
+  {
+    layer: 'Redactable receipts, side-effect attestation, trust root',
+    ver: '0.4',
+    state: 'hardening',
+    label: 'Hardening',
+    note: 'Tested and evolving; some APIs may still change.',
+  },
+  {
+    layer: 'Key succession — root-anchored rotation, distinguishable from compromise',
+    ver: '0.5',
+    state: 'fresh',
+    label: 'New',
+    note: 'Tested incl. cross-impl parity and adversarial review.',
+  },
+  {
+    layer: 'SIEM export — OCSF Detection Finding mapping + generic webhook',
+    ver: '0.6',
+    state: 'fresh',
+    label: 'New',
+    note: 'OCSF-shaped output; best-effort delivery by design.',
+  },
+  {
+    layer: 'Root-lifecycle hardening — quorum (M-of-N) root, rotation, revocation, ceremony CLI',
+    ver: '0.6',
+    state: 'fresh',
+    label: 'New',
+    note: '92 assertions across five suites, Python cross-impl agreement.',
+  },
+  {
+    layer: 'Control log — anchored, append-only distribution of governance records',
+    ver: '0.7',
+    state: 'fresh',
+    label: 'New',
+    note: 'Closes the out-of-band withholding gap; wire format untouched.',
+  },
+];
+
+const PERSONAS = [
+  {
+    who: 'Teams running AI agents',
+    title: 'You ship agents that take real actions',
+    body:
+      'They book, price, message, move money or change records on someone’s behalf. Today the only account of what happened is a log file you own and could edit.',
+    gain: 'A signed receipt per consequential action — proof, not an editable story.',
+  },
+  {
+    who: 'Compliance & GRC',
+    title: 'You answer for the EU AI Act',
+    body:
+      'Article 12 makes automatic event logging a design requirement for high-risk systems; Article 26 puts retention on deployers, applying from 2 August 2026.',
+    gain: 'Records designed to map onto those duties, with an auditor-ready report.',
+  },
+  {
+    who: 'Auditors & investigators',
+    title: 'You need to verify, not to trust',
+    body:
+      'After the fact you have to establish which agent did what, on which input, and whether the record was altered — without taking the operator’s word for it.',
+    gain: 'Offline verification from nothing but a public key. No operator access needed.',
+  },
+  {
+    who: 'Platform & infra builders',
+    title: 'You want an accountability primitive',
+    body:
+      'AXR is not an agent framework or an observability platform. It is the thin, boring layer those tools can sit on — standard crypto, zero dependencies, MIT.',
+    gain: 'A frozen wire format and two independent verifiers to build against.',
+  },
+  {
+    who: 'Privacy officers',
+    title: 'You owe the right to erasure',
+    body:
+      'GDPR Article 17 erasure appears to fight an append-only log: how do you delete personal data from a record whose whole point is that it cannot change?',
+    gain: 'Field-level salted Merkle commitments — erase the cleartext, signatures still hold.',
+  },
+  {
+    who: 'Security operations',
+    title: 'You watch for tampering',
+    body:
+      'An independent monitor turns latent protection into active detection: equivocation, truncation, history rewrites and unauthorized key swaps.',
+    gain: 'OCSF-shaped Detection Findings and webhook delivery into your SIEM.',
+  },
+];
+
+const FINDINGS = [
+  {
+    inward: false,
+    tag: 'Pilot — Bug B',
+    text:
+      'Every run was firing all three response branches at once: a ZONE_INCOMPATIBLE rejection still sent a success email. The receipt’s final_status made the contradiction immediate. Fixed with a Switch routing on the receipt outcome.',
+  },
+  {
+    inward: false,
+    tag: 'Pilot — Bug C',
+    text:
+      'Rejections returned "unknown_error" with the customer’s own message echoed back — the real reason was lost. The receipt recorded the correct status on every run, contradicting what customers received.',
+  },
+  {
+    inward: false,
+    tag: 'Pilot — Bug D',
+    text:
+      'A recheck conflict produced an HTTP 200 with an empty body, while the receipt was a complete, signed 5-step SLOT_TAKEN chain. The gap between a correct receipt and an empty response is exactly what AXR is built to surface.',
+  },
+  {
+    inward: false,
+    tag: 'Pilot — Bug E',
+    text:
+      'After a bugfix bumped the logic to v5.1, every receipt kept attesting v5.0 — valid signatures over a false claim about which code decided. Now code-hash fingerprints replace hand-written labels, and CI fails on drift. Version labels are testimony; code hashes are evidence.',
+  },
+  {
+    inward: true,
+    tag: 'In AXR itself',
+    text:
+      'A sandbox dry-run of the anchoring rollout caught two of AXR’s own defects before they touched the live log: cross-version anchoring would have invalidated every legacy signature, and the Python verifier silently ignored the separate-key flag. Both fixed before the first production anchor was cut. A dry-run that breaks in a sandbox is a feature.',
+  },
+];
 ---
 
 <Base
   current="axr"
   title="AXR — Agent Execution Receipts | Chris Conen"
-  description="AXR is an open-source accountability layer for AI agents: Ed25519-signed, tamper-evident execution receipts, built to line up with EU AI Act record-keeping and NIST's AI Agent Standards Initiative."
+  description="AXR is an open-source accountability layer for AI agents: Ed25519-signed, tamper-evident execution receipts. Live in production with hourly Merkle anchoring, two independent verifiers, and an EU AI Act / GDPR control mapping."
 >
-  <div class="shell hero">
+  <div class="shell hero" style="display:block; text-align:left;">
     <p class="kicker">
-      AXR<span class="sep">/</span>Agent Execution Receipts<span class="sep">/</span>Open source
+      AXR<span class="sep">/</span>Agent Execution Receipts<span class="sep">/</span>Open source · MIT
     </p>
     <h1>Make the agent show its <em>receipts.</em></h1>
     <p class="lede">
-      AXR is an open-source accountability layer for AI agents:
-      cryptographically signed execution receipts that turn "trust me" into
-      "verify me".
+      AXR is an open-source accountability layer for AI agents and automated
+      workflows: cryptographically signed, tamper-evident execution receipts
+      that turn "trust me" into "verify me". It is live in production today,
+      anchored hourly, and verifiable by anyone holding the public key.
     </p>
     <div class="btn-row">
       <a class="btn btn-primary" href={SITE.axrRepo} rel="noopener">AXR on GitHub</a>
       <a class="btn btn-ghost" href="/receipt/">See the primitive live</a>
+    </div>
+    <div class="chips">
+      <span class="chip">Status <strong>Live in production</strong></span>
+      <span class="chip">Version <strong>0.7.1</strong></span>
+      <span class="chip">Dependencies <strong>Zero</strong></span>
+    </div>
+
+    <div class="stat-band">
+      {STATS.map((s) => (
+        <div class="stat">
+          <div class="num">{s.num}</div>
+          <div class="lbl">{s.lbl}</div>
+        </div>
+      ))}
     </div>
   </div>
 
@@ -30,32 +186,181 @@ import { SITE } from '../config';
     <p>
       AI agents now take consequential actions: they call tools, change
       records, move money, send messages on someone's behalf. The audit trail
-      for all of that is usually a log file owned by whoever ran the agent.
-      Mutable, deletable, and unverifiable by anyone outside the operator's
-      own infrastructure.
+      for all of that is usually a log file owned by whoever ran the agent —
+      mutable, deletable, and unverifiable by anyone outside the operator's own
+      infrastructure.
+    </p>
+    <p>
+      After the fact, there is no reliable way to answer the questions that
+      matter: <em>which</em> agent did this, what did it receive as input, what
+      did it decide and on what basis, was the record altered afterwards, and
+      why was a customer told "no"?
     </p>
     <p>
       Regulators have noticed. The EU AI Act makes automatic event logging a
       design requirement for high-risk AI systems (Article 12), obliges
-      deployers to retain those logs for at least six months (Article 26), and
-      its high-risk obligations apply from 2 August 2026. In the US, NIST's
-      Center for AI Standards and Innovation launched the AI Agent Standards
-      Initiative in February 2026, with agent security and identity as core
-      research pillars. The common thread: when an agent acts, someone must be
-      able to establish what happened — and the record has to hold up.
+      deployers to retain those logs (Article 26), and its high-risk
+      obligations apply from 2 August 2026. In the US, NIST's Center for AI
+      Standards and Innovation launched the AI Agent Standards Initiative in
+      February 2026, with agent security and identity as core pillars.
     </p>
-    <p>
-      A log you can rewrite is a story. A receipt you can verify is a record.
+    <p class="pullquote">
+      A log you can rewrite is a story. A receipt you can verify is a
+      <em>record.</em>
     </p>
   </Entry>
 
-  <Entry label="The design">
+  <Entry label="What it is">
     <h2>One receipt per consequential <em>action.</em></h2>
     <p>
       For each action that matters, AXR emits a receipt: the action taken,
-      hashes of its inputs and outputs, a timestamp, the identity of the
-      agent, and an Ed25519 signature over the canonicalised record. These are
-      the design goals the project is built around:
+      hashes of its inputs and outputs, a timestamp, the identity of the agent,
+      and an Ed25519 signature over the canonicalised record. It proves one
+      thing precisely — that a given workflow, on a given input, made a given
+      decision, and that the record has not changed since.
+    </p>
+    <p>
+      It is deliberately <em>not</em> a workflow builder, an agent framework, or
+      an observability platform. It is the thin accountability layer that sits
+      underneath those tools. Two receipt types carry the load: a
+      <strong>step receipt</strong> records a single decision-relevant node, and
+      a <strong>workflow receipt</strong> ties one run's steps into a signed,
+      chained record. Steps chain within a run; runs chain across an agent's
+      history — so deleting any receipt breaks the chain, and altering any
+      receipt breaks the signature.
+    </p>
+
+    <div class="receipt-sample">
+      <p class="caption">Illustrative step receipt — the shape of one signed action</p>
+      <pre class="code-block">{`{
+  "axr_version": "0.2.1",
+  "agent_id":    "axr:agent:eco-clean:v5.1",
+  "step": { "name": "Create Booking", "kind": "side_effecting" },
+  "io": {
+    "input_hash":  "sha256:9f2c…b41a",
+    "output_hash": "sha256:1d7e…0c88",
+    "decision":    "BOOKING_CONFIRMED"
+  },
+  "logic_version": "5.1",
+  "logic_hash":    "sha256:a3b9…77e2",
+  "previous_receipt_hash": "sha256:5c10…d9f3",
+  "timestamp":  "2026-06-13T09:14:22Z",
+  "signature":  "ed25519:K8f…/Qb2Aw=="
+}`}</pre>
+      <div class="verdict">
+        <span class="stamp verified">Signature valid</span>
+        <span class="note">
+          Change one byte of any field and the signature no longer verifies.
+          That is the whole trick — and it is enough.
+        </span>
+      </div>
+    </div>
+  </Entry>
+
+  <Entry label="Who it is for">
+    <h2>Built for the people who have to <em>answer for it.</em></h2>
+    <p>
+      AXR earns its keep wherever an automated decision can be questioned later
+      and someone has to stand behind the answer.
+    </p>
+    <div class="persona-grid">
+      {PERSONAS.map((p) => (
+        <article class="persona">
+          <span class="who">{p.who}</span>
+          <h3>{p.title}</h3>
+          <p>{p.body}</p>
+          <p class="gain"><strong>What you get:</strong> {p.gain}</p>
+        </article>
+      ))}
+    </div>
+  </Entry>
+
+  <Entry label="How it works">
+    <h2>Mark the steps. Sign the record. Anchor it where you can't <em>rewrite it.</em></h2>
+    <p>
+      The receipt generator is a single Code node placed at the end of a
+      workflow, before the response. It reads the outputs of the
+      decision-relevant nodes and produces all receipts in one pass. Anchoring
+      and monitoring run <em>outside</em> the workflow, so the live hot path
+      gains no latency and no new dependency.
+    </p>
+
+    <div class="pipeline" role="img" aria-label="AXR lifecycle: mark, sign, append, anchor, verify, monitor">
+      <span class="node">Mark steps</span>
+      <span class="arrow">&rarr;</span>
+      <span class="node">Sign receipts</span>
+      <span class="arrow">&rarr;</span>
+      <span class="node">Append to JSONL</span>
+      <span class="arrow">&rarr;</span>
+      <span class="node external">Anchor (Merkle / STH)</span>
+      <span class="arrow">&rarr;</span>
+      <span class="node">Verify offline</span>
+      <span class="arrow">&rarr;</span>
+      <span class="node external">Monitor over time</span>
+    </div>
+
+    <ol class="steps">
+      <li>
+        <span>
+          <strong>Mark the decision nodes.</strong> Each decision-relevant node
+          attaches the exact input it consumed, so the receipt hashes what the
+          step actually saw — not a uniform proxy.
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>Generate &amp; sign.</strong> One pass emits the step and
+          workflow receipts, each signed with Ed25519 over a canonical (RFC
+          8785) serialisation. Generation is fail-open: a missing key degrades
+          to a loud error, it never breaks the business process it attests.
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>Append to an immutable log.</strong> Receipts are written one
+          per line to an append-only JSON Lines file that survives restarts.
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>Anchor independently.</strong> A sidecar batches receipt
+          hashes into an RFC 6962 Merkle tree and commits Signed Tree Heads to
+          an external, append-only backend (OpenTimestamps/Bitcoin, Rekor, RFC
+          3161). This introduces a party the operator does not control — the
+          honest analogy is Certificate Transparency, not self-signed HTTPS.
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>Verify, by anyone.</strong> A standalone, zero-dependency
+          script verifies a whole chain offline. Exit code 0 means valid, 1
+          means a problem was found.
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>Monitor, over time.</strong> An independent monitor keeps its
+          own journal of the tree heads it has witnessed and raises an alarm
+          when a new view contradicts the old one — catching equivocation,
+          truncation, history rewrites and unauthorized key swaps.
+        </span>
+      </li>
+    </ol>
+
+    <p class="mt-lg"><strong>Verify a log yourself — the whole command:</strong></p>
+    <pre class="code-block">{`# offline, zero dependencies, exit 0 = valid
+node axr-verify.js receipts.jsonl public-key.pem sth.jsonl anchors.jsonl
+
+# the same log, checked by a fully independent Python implementation
+python3 axr_verify.py receipts.jsonl public-key.pem sth.jsonl anchors.jsonl`}</pre>
+  </Entry>
+
+  <Entry label="The design">
+    <h2>Boring primitives, on <em>purpose.</em></h2>
+    <p>
+      Assurance work should be auditable by people who did not write it. So AXR
+      uses only standard, well-understood building blocks — and states its goals
+      plainly:
     </p>
     <dl class="def-rows">
       <div class="def-row">
@@ -69,55 +374,183 @@ import { SITE } from '../config';
       <div class="def-row">
         <dt>Self-contained</dt>
         <dd>
-          A receipt verifies offline with nothing but the public key. No
-          access to the operator's infrastructure, no trust in their database.
+          A receipt verifies offline with nothing but the public key. No access
+          to the operator's infrastructure, no trust in their database.
         </dd>
       </div>
       <div class="def-row">
         <dt>Tamper-evident</dt>
         <dd>
-          Any change to the receipt breaks the signature. That is the whole
-          trick, and it is enough.
+          Any change to a receipt breaks its signature; deleting one breaks the
+          chain. Anchoring then makes silent rewriting detectable, not just
+          evident.
         </dd>
       </div>
       <div class="def-row">
         <dt>Boring on purpose</dt>
         <dd>
-          Standard primitives only: SHA-256, Ed25519, canonical JSON. No novel
-          cryptography. Assurance work should be auditable by people who did
-          not write it.
+          SHA-256, Ed25519, canonical JSON, RFC 6962 Merkle trees. No novel
+          cryptography, and zero runtime dependencies.
         </dd>
       </div>
     </dl>
   </Entry>
 
-  <Entry label="Standards">
+  <Entry label="Maturity">
+    <h2>One repository, layered by how far each part has <em>earned trust.</em></h2>
+    <p>
+      AXR ships as a single repo spanning several maturity levels. The point of
+      this table is honesty: read a feature's level before you depend on it. The
+      0.2 wire format is frozen — older logs verify byte-for-byte under the
+      current verifier, and all later work is additive.
+    </p>
+    <div class="table-scroll">
+      <table class="ledger-table">
+        <thead>
+          <tr>
+            <th scope="col">Layer</th>
+            <th scope="col">Version</th>
+            <th scope="col">Maturity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {MATURITY.map((m) => (
+            <tr>
+              <td>
+                {m.layer}
+                <br /><span class="small muted">{m.note}</span>
+              </td>
+              <td class="ver">{m.ver}</td>
+              <td><span class={`maturity-tag ${m.state}`}>{m.label}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </Entry>
+
+  <Entry label="Proof in production">
+    <h2>An honest receipt makes silent failures <em>loud.</em></h2>
+    <p>
+      AXR runs in production on a live booking workflow for ECO Clean HU — six
+      of the workflow's twenty nodes are receipt-bearing, and the log has been
+      anchored hourly since June 2026. Standing up that accountability layer did
+      something its operator did not expect: it surfaced four real bugs that
+      pre-dated AXR, and two defects in AXR's own tooling.
+    </p>
+    <div class="findings">
+      {FINDINGS.map((f) => (
+        <div class={f.inward ? 'finding inward' : 'finding'}>
+          <span class="tag">{f.tag}</span>
+          <p>{f.text}</p>
+        </div>
+      ))}
+    </div>
+  </Entry>
+
+  <Entry label="Adversarial proof">
+    <h2>The "tamper-evident" claim, tested like an <em>attacker would.</em></h2>
+    <p>
+      A claim of integrity is worth only as much as the attempts to break it.
+      AXR proves its central claim systematically rather than rhetorically:
+    </p>
+    <dl class="def-rows">
+      <div class="def-row">
+        <dt>15 / 15 rejected</dt>
+        <dd>
+          A single valid, anchored, generative receipt log is subjected to 15
+          distinct mutations — body tampering, step deletion, signature swaps,
+          dropped tree heads, tampered inclusion proofs, wrong-key re-signing,
+          and more. The verifier rejects all fifteen; the untouched control
+          passes.
+        </dd>
+      </div>
+      <div class="def-row">
+        <dt>Two implementations</dt>
+        <dd>
+          Credibility, the way Certificate Transparency earned it: a second,
+          fully independent verifier in pure Python — its own canonicalizer, a
+          pure-Python Ed25519 validated against the RFC 8032 test vectors, and
+          the RFC 6962 Merkle logic. It must agree with the Node verifier on
+          every accept and every reject.
+        </dd>
+      </div>
+      <div class="def-row">
+        <dt>Byte-identical</dt>
+        <dd>
+          The "anyone can verify, in any language" promise rests on
+          deterministic canonicalization. The serializer follows RFC 8785 and
+          throws on NaN / Infinity / undefined rather than silently corrupting
+          them. Cross-language byte vectors are pinned as the conformance
+          contract.
+        </dd>
+      </div>
+      <div class="def-row">
+        <dt>CI on every push</dt>
+        <dd>
+          The full suite — including JS&#8596;Python parity — runs across Node
+          18 / 20 / 22 and Python 3.10 / 3.11 / 3.12 on every change.
+        </dd>
+      </div>
+    </dl>
+  </Entry>
+
+  <Entry label="Standards & compliance">
     <h2>Built toward where the rules are <em>going.</em></h2>
     <p>
-      AXR is designed to map onto the record-keeping duties that are arriving,
-      not to claim certified compliance with any of them. Concretely: the EU
-      AI Act's Article 12 requires high-risk systems to automatically record
-      events for traceability, and Article 26 puts log retention on deployers.
-      NIST's AI Agent Standards Initiative is shaping the US side, with
-      identity, security and auditability of agents on the table. Signed,
-      independently verifiable receipts are a primitive both directions can
-      build on.
+      AXR is designed to map onto the record-keeping duties that are arriving —
+      not to claim certified compliance with any of them. The EU AI Act's
+      Article 12 requires high-risk systems to automatically record events for
+      traceability, and Article 26 puts retention on deployers. GDPR Article 17
+      pulls the other way, toward erasure. NIST's AI Agent Standards Initiative
+      is shaping the US side around identity and auditability. Signed,
+      independently verifiable receipts are a primitive every one of those
+      directions can build on.
+    </p>
+    <p>
+      Two pieces make that concrete. <strong>Redactable receipts</strong>
+      resolve the GDPR-versus-append-only tension: sensitive fields are
+      committed through a salted field-level Merkle tree, so the cleartext can
+      be erased later while the signature, the chain, and the already-anchored
+      proof all still hold. And the <strong>Compliance Report Generator</strong>
+      turns a raw log into an auditor-ready HTML report — integrity, the
+      key-governance timeline, anchoring status, and an EU AI Act Art. 12 / GDPR
+      control mapping.
     </p>
     <p class="small muted">
-      Precision matters here: "designed to map onto" is the claim, and the
-      mapping itself is part of the project's open work.
+      Precision matters here: "designed to map onto" is the claim. The report is
+      a view over the verifier's verdict, not a replacement for it, and it
+      asserts nothing it did not check.
     </p>
   </Entry>
 
-  <Entry label="Status">
-    <h2>Early, open, and honest about <em>both.</em></h2>
+  <Entry label="Status & limits">
+    <h2>Live, open, and honest about <em>both.</em></h2>
     <p>
-      AXR is open source and developed in public. The receipt schema and the
-      signing flow are the foundation; the threat modelling, hardening and
-      formal standards mapping are the current work. That ordering is
-      deliberate — it is exactly the security depth I am building, in the
-      open, where it can be inspected.
+      AXR is open source, MIT-licensed, and developed in public. The core and
+      anchoring layers are running in production; the higher layers — key
+      succession, quorum roots, the control log — are tested and additive but
+      not yet exercised by the live pilot. The current frontier is honest about
+      its own gaps:
     </p>
+    <ul class="now-list">
+      <li>
+        <span class="tag">Next</span>
+        <span>Switch the production anchor backend from local to OpenTimestamps (Bitcoin) — a single flag, once the cadence has run stably.</span>
+      </li>
+      <li>
+        <span class="tag">Next</span>
+        <span>Run the independent monitor at a party outside the operator, turning split-view / equivocation detection from latent into active.</span>
+      </li>
+      <li>
+        <span class="tag">Next</span>
+        <span>Exercise generative (LLM) step receipts on a live workflow — supported and tested end-to-end, not yet in production.</span>
+      </li>
+      <li>
+        <span class="tag">Open</span>
+        <span>Self-declared agent identity, and PEM-file (not hardware-grade) key storage — both deliberately out of the current scope.</span>
+      </li>
+    </ul>
     <div class="btn-row">
       <a class="btn btn-primary" href={SITE.axrRepo} rel="noopener">Follow the repository</a>
     </div>
@@ -127,10 +560,10 @@ import { SITE } from '../config';
     <h2>This site runs on the same <em>primitive.</em></h2>
     <p>
       Every deploy of chrisconen.dev publishes a manifest of every file on the
-      site, hashed with SHA-256 and signed with Ed25519. Your browser can
-      verify the signature and re-hash any file against the manifest. It is
-      AXR's core idea applied to a build pipeline instead of an agent — same
-      receipt, different actor.
+      site, hashed with SHA-256 and signed with Ed25519. Your browser can verify
+      the signature and re-hash any file against the manifest. It is AXR's core
+      idea applied to a build pipeline instead of an agent — same receipt,
+      different actor.
     </p>
     <div class="btn-row">
       <a class="btn btn-primary" href="/receipt/">Verify this site</a>

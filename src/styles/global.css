@@ -699,6 +699,220 @@ hr.rule {
   padding-top: 0.2rem;
 }
 
+/* ====================================================================== */
+/* AXR page components — same "Ledger & Stamp" vocabulary, richer blocks   */
+/* ====================================================================== */
+
+/* ---- live stat band: the audit trail, summarised in numbers ---------- */
+
+.stat-band {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 2rem;
+}
+.stat {
+  background: var(--paper-raised);
+  padding: 1.15rem 1.25rem;
+}
+.stat .num {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  line-height: 1;
+  color: var(--accent-deep);
+  letter-spacing: -0.01em;
+}
+.stat .lbl {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: 0.55rem;
+  line-height: 1.4;
+}
+@media (max-width: 760px) { .stat-band { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 430px) { .stat-band { grid-template-columns: 1fr; } }
+
+/* ---- pull quote: the load-bearing one-liners ------------------------- */
+
+.pullquote {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.6vw, 1.85rem);
+  line-height: 1.32;
+  color: var(--ink);
+  border-left: 3px solid var(--accent);
+  padding-left: 1.3rem;
+  margin: 2rem 0 0.5rem;
+  max-width: 34ch;
+  text-wrap: balance;
+}
+.pullquote em { font-style: italic; color: var(--accent-deep); }
+
+/* ---- sample receipt: a printed artefact ------------------------------ */
+
+.receipt-sample { max-width: 46rem; margin-top: 1.7rem; }
+
+.receipt-sample .caption {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0 0 0.5rem;
+}
+
+.receipt-sample pre.code-block { margin: 0; }
+
+.receipt-sample .verdict {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  margin-top: 0.9rem;
+}
+.receipt-sample .verdict .note {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  max-width: 40ch;
+}
+
+/* ---- persona grid: who it is for ------------------------------------- */
+
+.persona-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.1rem;
+  margin-top: 1.7rem;
+}
+@media (max-width: 760px) { .persona-grid { grid-template-columns: 1fr; } }
+
+.persona {
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 1.3rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.persona .who {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+.persona h3 { margin: 0; font-size: 1.1rem; }
+.persona p { margin: 0; font-size: 0.92rem; color: var(--ink-soft); }
+.persona .gain {
+  margin-top: 0.2rem;
+  font-size: 0.85rem;
+  color: var(--ink);
+  border-top: 1px solid var(--rule);
+  padding-top: 0.55rem;
+}
+.persona .gain strong { color: var(--accent-deep); font-weight: 600; }
+
+/* ---- pipeline: the receipt lifecycle, left to right ------------------ */
+
+.pipeline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.7rem;
+}
+.pipeline .node {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.55rem 0.8rem;
+  color: var(--ink);
+}
+.pipeline .node.external { border-color: var(--accent); color: var(--accent-deep); background: var(--accent-wash); }
+.pipeline .arrow { color: var(--rail); font-size: 0.9rem; }
+
+/* ---- ledger table: maturity by layer --------------------------------- */
+
+.table-scroll { overflow-x: auto; margin-top: 1.7rem; }
+
+.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  min-width: 34rem;
+}
+.ledger-table th,
+.ledger-table td {
+  text-align: left;
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+.ledger-table thead th {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-bottom: 2px solid var(--rail);
+}
+.ledger-table td.ver {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent-deep);
+  white-space: nowrap;
+}
+.ledger-table tbody tr:last-child td { border-bottom: 0; }
+
+.maturity-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.5rem;
+  border-radius: 2px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+.maturity-tag.stable   { color: var(--accent-deep); background: var(--accent-wash); }
+.maturity-tag.deployed { color: var(--accent-deep); background: var(--accent-wash); }
+.maturity-tag.hardening{ color: var(--pending); background: var(--pending-wash); }
+.maturity-tag.fresh    { color: var(--ink-soft); background: var(--paper); }
+
+/* ---- findings: what the receipts surfaced ---------------------------- */
+
+.findings { display: grid; gap: 1rem; margin-top: 1.7rem; max-width: 48rem; }
+
+.finding {
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 3px;
+  padding: 1.05rem 1.2rem;
+}
+.finding.inward { border-left-color: var(--pending); }
+
+.finding .tag {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+.finding.inward .tag { color: var(--pending); }
+.finding p { margin: 0.45rem 0 0; font-size: 0.92rem; }
+
 /* ---- 404 -------------------------------------------------------------- */
 
 .notfound { padding-top: 6rem; padding-bottom: 6rem; }
