@@ -1,0 +1,80 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { SITE } from '../../config';
+
+// Production listing: published posts only, newest first.
+const posts = (await getCollection('writing', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-AU', { year: 'numeric', month: 'short', day: 'numeric' });
+
+const JSONLD = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'Writing — Chris Conen',
+    description:
+      'Essays on AI agent accountability, verifiable audit trails, n8n, and the ' +
+      'EU AI Act, by Chris Conen, creator of AXR.',
+    url: 'https://chrisconen.dev/writing/',
+    author: { '@type': 'Person', name: 'Chris Conen', url: SITE.url },
+  },
+];
+---
+
+<Base
+  current="writing"
+  title="Writing — AI agent accountability, audit trails, n8n | Chris Conen"
+  description="Essays on AI agent accountability, tamper-evident audit trails, n8n, and the EU AI Act — by Chris Conen, creator of AXR."
+  jsonLd={JSONLD}
+>
+  <div class="shell hero">
+    <p class="kicker">
+      Chris Conen<span class="sep">/</span>Writing<span class="sep">/</span>Proof over promises
+    </p>
+    <h1>Writing on agent <em>accountability.</em></h1>
+    <p class="lede">
+      Problem-first essays on making AI agents and automated workflows
+      provable: tamper-evident audit trails, verifiable logs, n8n, and the
+      record-keeping rules now arriving with the EU AI Act.
+    </p>
+  </div>
+
+  <div class="shell">
+    {posts.length === 0 ? (
+      <p class="status-line">No posts published yet.</p>
+    ) : (
+      <ul class="post-list">
+        {posts.map((post) => (
+          <li class="post-item">
+            <a href={`/writing/${post.id}/`}>
+              <h2>{post.data.title}</h2>
+              <p class="post-desc">{post.data.description}</p>
+              <p class="post-meta mono">
+                <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
+                {post.data.tags.length > 0 && <span> · {post.data.tags.join(' · ')}</span>}
+              </p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</Base>
+
+<style>
+  .post-list { list-style: none; margin: 0; padding: 0; max-width: 46rem; }
+  .post-item {
+    border-top: 1px solid var(--rule, #d9d8cf);
+    padding: 1.4rem 0;
+  }
+  .post-item:last-child { border-bottom: 1px solid var(--rule, #d9d8cf); }
+  .post-item a { text-decoration: none; color: inherit; display: block; }
+  .post-item a:hover h2 { text-decoration: underline; }
+  .post-item h2 { margin: 0 0 0.4rem; }
+  .post-desc { margin: 0 0 0.5rem; color: var(--ink-soft, #4a4a44); }
+  .post-meta { font-size: 0.8rem; color: var(--muted, #6b6b63); margin: 0; }
+</style>

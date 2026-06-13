@@ -14,6 +14,7 @@ const { current = '' } = Astro.props;
     <nav class="site-nav" aria-label="Site">
       <a href="/#evidence">Evidence</a>
       <a href="/axr/" aria-current={current === 'axr' ? 'page' : undefined}>AXR</a>
+      <a href="/writing/" aria-current={current === 'writing' ? 'page' : undefined}>Writing</a>
       <a href="/receipt/" aria-current={current === 'receipt' ? 'page' : undefined}>Receipt</a>
       <a href={SITE.github} rel="me noopener">GitHub</a>
     </nav>
