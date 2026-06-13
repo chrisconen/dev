@@ -1,0 +1,92 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { SITE } from '../../config';
+
+export async function getStaticPaths() {
+  // Draft posts get no route in production, so they never ship or get indexed.
+  const posts = await getCollection('writing', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const d = post.data;
+
+const fmt = (date: Date) =>
+  date.toLocaleDateString('en-AU', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const url = `https://chrisconen.dev/writing/${post.id}/`;
+
+const JSONLD = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: d.title,
+    description: d.description,
+    url,
+    datePublished: d.pubDate.toISOString(),
+    ...(d.updatedDate ? { dateModified: d.updatedDate.toISOString() } : {}),
+    keywords: [d.primaryKeyword, ...d.keywords],
+    author: { '@type': 'Person', name: 'Chris Conen', url: SITE.url },
+    publisher: { '@type': 'Person', name: 'Chris Conen', url: SITE.url },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+  },
+];
+---
+
+<Base
+  current="writing"
+  title={d.seoTitle ?? `${d.title} | Chris Conen`}
+  description={d.description}
+  jsonLd={JSONLD}
+>
+  <article class="shell post">
+    <p class="kicker">
+      <a href="/writing/">Writing</a><span class="sep">/</span>
+      <time datetime={d.pubDate.toISOString()}>{fmt(d.pubDate)}</time>
+      {d.updatedDate && <><span class="sep">/</span>updated {fmt(d.updatedDate)}</>}
+    </p>
+    <h1>{d.title}</h1>
+    {d.description && <p class="lede">{d.description}</p>}
+
+    <div class="post-body">
+      <Content />
+    </div>
+
+    {d.tags.length > 0 && (
+      <p class="post-tags mono">{d.tags.map((t) => <span>{t}</span>)}</p>
+    )}
+
+    <div class="btn-row">
+      <a class="btn btn-ghost" href="/writing/">More writing</a>
+      <a class="btn btn-ghost" href="/axr/">About AXR</a>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .post { padding-top: 3rem; padding-bottom: 3rem; }
+  .post h1 { max-width: 22ch; margin: 0.3rem 0 1.3rem; }
+  .post-body { margin-top: 1.8rem; }
+  .post-body :global(h2) { margin-top: 2.2rem; }
+  .post-body :global(h3) { margin-top: 1.6rem; }
+  .post-body :global(pre) {
+    max-width: var(--measure, 62ch);
+    overflow-x: auto;
+    padding: 1rem 1.1rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+  .post-body :global(blockquote) {
+    margin: 1.4rem 0;
+    padding-left: 1.1rem;
+    border-left: 3px solid var(--rail, #c9c8be);
+    color: var(--ink-soft, #4a4a44);
+    font-style: italic;
+  }
+  .post-body :global(a) { color: inherit; }
+  .post-tags { margin: 2rem 0 0; font-size: 0.78rem; color: var(--muted, #6b6b63); }
+  .post-tags span:not(:last-child)::after { content: ' · '; }
+  .btn-row { margin-top: 2.4rem; }
+</style>
