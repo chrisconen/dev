@@ -211,7 +211,7 @@ const FINDINGS = [
     </p>
     <div class="btn-row">
       <a class="btn btn-primary" href={SITE.axrRepo} rel="noopener">AXR on GitHub</a>
-      <a class="btn btn-ghost" href="/receipt/">See the primitive live</a>
+      <a class="btn btn-ghost" href="/axr/verify/">Verify a log yourself</a>
       <a class="btn btn-ghost" href="/axr/n8n/">Using n8n?</a>
     </div>
     <div class="chips">
@@ -402,6 +402,11 @@ node axr-verify.js receipts.jsonl public-key.pem sth.jsonl anchors.jsonl
 
 # the same log, checked by a fully independent Python implementation
 python3 axr_verify.py receipts.jsonl public-key.pem sth.jsonl anchors.jsonl`}</pre>
+    <p>
+      No terminal? <a href="/axr/verify/">Drop a log into the in-browser
+      verifier</a> — it runs the same signature, Merkle-root and witness checks
+      locally, with nothing uploaded.
+    </p>
   </Entry>
 
   <Entry label="The design">

@@ -1,0 +1,508 @@
+---
+import Base from '../../layouts/Base.astro';
+import Entry from '../../components/Entry.astro';
+import { SITE } from '../../config';
+
+const JSONLD = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'AXR log verifier',
+    applicationCategory: 'SecurityApplication',
+    operatingSystem: 'Any (runs in the browser)',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    description:
+      'Drag in an AXR log and verify it offline in your browser: every Ed25519 ' +
+      'receipt signature, the RFC 6962 Merkle root against the signed tree head, ' +
+      'and the independent witness cosignatures. Nothing is uploaded.',
+    url: 'https://chrisconen.dev/axr/verify/',
+    isPartOf: { '@type': 'SoftwareSourceCode', name: 'AXR', url: 'https://chrisconen.dev/axr/' },
+    author: { '@type': 'Person', name: 'Chris Conen', url: SITE.url },
+  },
+];
+---
+
+<Base
+  current="axr"
+  title="Verify an AXR agent log in your browser — AXR"
+  description="Drag your own AXR log in and verify it offline: every Ed25519 receipt signature, the Merkle root against the signed tree head, and the independent witness cosignatures. Nothing leaves your browser."
+  jsonLd={JSONLD}
+>
+  <div class="shell hero">
+    <p class="kicker">
+      AXR<span class="sep">/</span>Verify<span class="sep">/</span>Runs in your browser
+    </p>
+    <h1>Drop in a log. Verify it <em>yourself.</em></h1>
+    <p class="lede">
+      AXR's promise is that anyone can verify a log offline, from nothing but a
+      public key. So here it is: drag in your own AXR receipts and keys, and
+      this page re-checks every signature, recomputes the Merkle root against
+      the signed tree head, and verifies the witness cosignatures — entirely in
+      your browser. Nothing is uploaded; close the tab and it's gone.
+    </p>
+  </div>
+
+  <Entry label="Your log" id="verify">
+    <div
+      class="dropzone"
+      id="vf-zone"
+      role="button"
+      tabindex="0"
+      aria-label="Drop AXR log files here, or click to choose files"
+    >
+      <p class="dz-lead">Drop your AXR files here<span class="dz-sub"> — or click to choose</span></p>
+      <p class="small muted">
+        receipts.jsonl + the public key (.pem) are required; sth.jsonl and
+        control.jsonl add the tree-head, Merkle and witness checks.
+      </p>
+      <input type="file" id="vf-input" multiple accept=".jsonl,.json,.pem,.txt" hidden />
+    </div>
+
+    <dl class="receipt-meta vf-slots">
+      <div class="row">
+        <dt>receipts.jsonl</dt>
+        <dd><span id="vf-slot-receipts" class="slot-state">waiting</span></dd>
+      </div>
+      <div class="row">
+        <dt>public key (.pem)</dt>
+        <dd><span id="vf-slot-pubkey" class="slot-state">waiting</span></dd>
+      </div>
+      <div class="row">
+        <dt>sth.jsonl <span class="small muted">optional</span></dt>
+        <dd><span id="vf-slot-sth" class="slot-state">—</span></dd>
+      </div>
+      <div class="row">
+        <dt>control.jsonl <span class="small muted">optional · witnesses</span></dt>
+        <dd><span id="vf-slot-control" class="slot-state">—</span></dd>
+      </div>
+    </dl>
+
+    <div class="stamp-row">
+      <button class="btn btn-primary" id="vf-verify-btn" type="button" disabled>
+        Verify the log
+      </button>
+      <button class="btn btn-ghost" id="vf-reset-btn" type="button" disabled>
+        Clear
+      </button>
+    </div>
+    <p class="status-line" id="vf-status">Waiting for files. Everything runs locally — this page makes no network request with your data.</p>
+  </Entry>
+
+  <Entry label="Verdict" id="verdict">
+    <div class="receipt-card" id="vf-card">
+      <dl class="receipt-meta">
+        <div class="row">
+          <dt>Status</dt>
+          <dd><span class="stamp unsigned" id="vf-stamp">No log yet</span></dd>
+        </div>
+        <div class="row">
+          <dt>Receipts</dt>
+          <dd id="vf-receipts">&mdash;</dd>
+        </div>
+        <div class="row">
+          <dt>Receipt signatures</dt>
+          <dd><span id="vf-sigs">&mdash;</span> <span class="match-note" id="vf-sigs-note"></span></dd>
+        </div>
+        <div class="row">
+          <dt>Merkle root (recomputed)</dt>
+          <dd><span id="vf-root">&mdash;</span> <span class="match-note" id="vf-root-note"></span></dd>
+        </div>
+        <div class="row">
+          <dt>Tree-head signature</dt>
+          <dd><span id="vf-sth-sig">&mdash;</span> <span class="match-note" id="vf-sth-note"></span></dd>
+        </div>
+        <div class="row">
+          <dt>Witness cosignatures</dt>
+          <dd id="vf-witness">&mdash;</dd>
+        </div>
+      </dl>
+      <div class="vf-failures" id="vf-failures"></div>
+    </div>
+  </Entry>
+
+  <Entry label="Honest framing" id="framing">
+    <h2>What this checks — and what it <em>does not.</em></h2>
+    <ul class="now-list">
+      <li>
+        <span class="tag">Checks</span>
+        <span>
+          Every receipt's Ed25519 signature against the public key you supply;
+          the tree-head (STH) signature; the RFC 6962 Merkle root recomputed
+          from your receipts, compared to the root the STH commits to; and each
+          witness cosignature over the canonical STH, in order, against the
+          threshold in your control file. All offline, in this tab.
+        </span>
+      </li>
+      <li>
+        <span class="tag">Does not</span>
+        <span>
+          Fetch external timestamp anchors. Whether the STH was committed to an
+          append-only backend (OpenTimestamps/Bitcoin, Rekor, RFC 3161) is what
+          turns "tamper-evident" into "tamper-detectable" — that inclusion proof
+          needs the network and the backend, so it lives in the CLI verifier,
+          not here.
+        </span>
+      </li>
+      <li>
+        <span class="tag">Does not</span>
+        <span>
+          Prove that any receipt was <em>true</em> when written. AXR is an
+          integrity layer, not an oracle: it proves the record is unaltered
+          since signing, not that the claim it records was correct.
+        </span>
+      </li>
+      <li>
+        <span class="tag">Private</span>
+        <span>
+          Your files are read with the browser's local File API and never sent
+          anywhere. This site ships zero analytics and zero third-party scripts;
+          the verifier is the same bundled code that runs the dev-log page.
+        </span>
+      </li>
+    </ul>
+
+    <p class="mt-lg"><strong>Don't have a log handy?</strong> Verify the real one, or run the CLI:</p>
+    <pre class="code-block">{`# the in-browser verifier, pre-loaded with AXR's own signed dev-log
+open ${SITE.url}/axr/devlog/
+
+# or, for the full check including external anchor inclusion proofs:
+node axr-verify.js receipts.jsonl public-key.pem sth.jsonl anchors.jsonl \\
+  --control control.jsonl --require-witnesses`}</pre>
+
+    <div class="btn-row">
+      <a class="btn btn-primary" href="/axr/devlog/">Verify the live dev-log</a>
+      <a class="btn btn-ghost" href={SITE.axrRepo} rel="noopener">AXR on GitHub</a>
+      <a class="btn btn-ghost" href="/axr/">Back to AXR</a>
+    </div>
+  </Entry>
+</Base>
+
+<style>
+  .dropzone {
+    border: 2px dashed var(--rail, #c9c8be);
+    border-radius: 6px;
+    padding: 2.4rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    max-width: 46rem;
+  }
+  .dropzone:hover,
+  .dropzone:focus-visible {
+    border-color: var(--accent, #2f6f4f);
+    outline: none;
+  }
+  .dropzone.over {
+    border-color: var(--accent, #2f6f4f);
+    background: var(--accent-wash, rgba(47, 111, 79, 0.06));
+  }
+  .dz-lead { font-weight: 500; margin: 0 0 0.4rem; }
+  .dz-sub { color: var(--muted, #6b6b63); font-weight: 400; }
+  .vf-slots { margin-top: 1.4rem; max-width: 46rem; }
+  .slot-state { font-family: var(--mono, monospace); font-size: 0.85rem; }
+  .slot-state.ok { color: var(--accent, #2f6f4f); }
+  .slot-state.bad { color: var(--stamp-red, #a23b2f); }
+  .vf-failures { margin-top: 1rem; }
+  .vf-failures .fail {
+    font-family: var(--mono, monospace);
+    font-size: 0.78rem;
+    color: var(--stamp-red, #a23b2f);
+    word-break: break-word;
+  }
+</style>
+
+<script>
+  import {
+    bytesToHex,
+    pemToRaw,
+    fingerprint,
+    signablePart,
+    verifySig,
+    leafHash,
+    mth,
+    parseJsonl,
+  } from '../../lib/axr-verify.ts';
+
+  const $ = (id: string) => document.getElementById(id) as HTMLElement;
+
+  const setStamp = (el: HTMLElement, state: string, text: string) => {
+    el.className = `stamp ${state} just-stamped`;
+    el.textContent = text;
+  };
+  const setStatus = (text: string, bad = false) => {
+    const line = $('vf-status');
+    line.textContent = text;
+    line.className = `status-line${bad ? ' bad' : ''}`;
+  };
+  const setSlot = (id: string, text: string, state = 'ok') => {
+    const el = $(id);
+    el.textContent = text;
+    el.className = `slot-state ${state}`;
+  };
+
+  // Loaded inputs, classified from whatever the user drops.
+  const state: {
+    receipts: any[] | null;
+    receiptsName: string;
+    opPem: string | null;
+    sth: any | null;
+    control: any | null;
+  } = { receipts: null, receiptsName: '', opPem: null, sth: null, control: null };
+
+  function refreshButtons() {
+    const ready = !!state.receipts && !!state.opPem;
+    ($('vf-verify-btn') as HTMLButtonElement).disabled = !ready;
+    ($('vf-reset-btn') as HTMLButtonElement).disabled =
+      !state.receipts && !state.opPem && !state.sth && !state.control;
+    if (ready) {
+      setStatus('Ready. Click "Verify the log" — every check runs locally in this tab.');
+    } else if (state.receipts && !state.opPem) {
+      setStatus('Got receipts. Add the public key (.pem) to verify the signatures.', false);
+    } else if (state.opPem && !state.receipts) {
+      setStatus('Got the public key. Add receipts.jsonl to verify.', false);
+    }
+  }
+
+  // Classify one dropped file. JSON/JSONL is tried first — control.jsonl and
+  // trust-root.json embed PEM public keys as strings, so a naive "contains a
+  // PEM header" check would misfile them as the signing key.
+  async function ingest(file: File) {
+    const text = await file.text();
+    let records: any[] | null = null;
+    try {
+      records = parseJsonl(text);
+    } catch {
+      records = null;
+    }
+    if (!records) {
+      // Not JSON — treat as a PEM public key only if it actually looks like one.
+      if (text.trimStart().startsWith('-----BEGIN') || file.name.endsWith('.pem')) {
+        state.opPem = text;
+        setSlot('vf-slot-pubkey', file.name);
+      } else {
+        setStatus(`Could not parse ${file.name} as JSON / JSONL — skipped.`, true);
+      }
+      return;
+    }
+    if (records.some((r) => r && r.receipt_type)) {
+      state.receipts = records;
+      state.receiptsName = file.name;
+      const steps = records.filter((r) => r.receipt_type === 'step').length;
+      setSlot('vf-slot-receipts', `${file.name} (${records.length})`);
+    } else if (records.some((r) => r && r.record_type === 'sth')) {
+      // If several tree heads are present, take the largest (latest) one.
+      state.sth = records
+        .filter((s) => s.record_type === 'sth')
+        .sort((a, b) => a.tree_size - b.tree_size)
+        .pop();
+      setSlot('vf-slot-sth', `${file.name} (tree_size ${state.sth.tree_size})`);
+    } else if (records.some((r) => r && r.record_type === 'witness_set')) {
+      state.control = records.find((r) => r.record_type === 'witness_set');
+      setSlot('vf-slot-control', `${file.name} (${state.control.witnesses.length} witnesses)`);
+    } else if (records.some((r) => r && r.record_type === 'trust_root')) {
+      setStatus(
+        `${file.name} is a trust root — noted, but root/genesis trust is verified by the CLI, not this page.`,
+        false
+      );
+    } else {
+      setStatus(`Did not recognise ${file.name} as an AXR file — skipped.`, true);
+    }
+  }
+
+  async function handleFiles(files: FileList | null) {
+    if (!files || !files.length) return;
+    setStatus('Reading files…');
+    for (const f of Array.from(files)) await ingest(f);
+    refreshButtons();
+  }
+
+  async function verify() {
+    const btn = $('vf-verify-btn') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Verifying…';
+    $('vf-failures').textContent = '';
+    setStatus('Verifying every signature and recomputing the Merkle root locally…');
+
+    const receipts = state.receipts!;
+    const opRaw = pemToRaw(state.opPem!);
+
+    // 1. Per-receipt Ed25519 signatures.
+    let sigOk = 0;
+    const failed: string[] = [];
+    for (const r of receipts) {
+      const ok = !!r.signature && verifySig(signablePart(r), r.signature, opRaw);
+      if (ok) sigOk++;
+      else failed.push(r.receipt_id || '(no receipt_id)');
+    }
+    $('vf-receipts').textContent = String(receipts.length);
+    $('vf-sigs').textContent = `${sigOk} / ${receipts.length}`;
+    const sigsNote = $('vf-sigs-note');
+    const sigsAllOk = sigOk === receipts.length;
+    sigsNote.textContent = sigsAllOk ? 'all valid' : `${receipts.length - sigOk} FAILED`;
+    sigsNote.className = `match-note ${sigsAllOk ? 'ok' : 'bad'}`;
+    if (failed.length) {
+      const head = document.createElement('p');
+      head.className = 'small muted';
+      head.textContent = 'Receipts whose signature did not verify:';
+      $('vf-failures').appendChild(head);
+      for (const id of failed.slice(0, 12)) {
+        const p = document.createElement('p');
+        p.className = 'fail';
+        p.textContent = id;
+        $('vf-failures').appendChild(p);
+      }
+      if (failed.length > 12) {
+        const p = document.createElement('p');
+        p.className = 'small muted';
+        p.textContent = `…and ${failed.length - 12} more.`;
+        $('vf-failures').appendChild(p);
+      }
+    }
+
+    // 2 + 3. Tree-head signature and Merkle root, only if an STH was supplied.
+    let sthOk = true;
+    let rootOk = true;
+    if (state.sth) {
+      const sth = state.sth;
+      sthOk = !!sth.signature && verifySig(signablePart(sth), sth.signature, opRaw);
+      const sthNote = $('vf-sth-note');
+      sthNote.textContent = sthOk ? 'verifies (Ed25519)' : 'FAILS';
+      sthNote.className = `match-note ${sthOk ? 'ok' : 'bad'}`;
+      $('vf-sth-sig').textContent = (sth.signature || '').slice(0, 32) + '…';
+
+      const leaves = await Promise.all(receipts.map(leafHash));
+      const root = 'sha256:' + bytesToHex(await mth(leaves, 0, leaves.length));
+      rootOk = root === sth.root_hash;
+      $('vf-root').textContent = root.slice(0, 24) + '…';
+      const rootNote = $('vf-root-note');
+      rootNote.textContent = rootOk
+        ? 'matches the signed tree head'
+        : 'MISMATCH — receipts do not form this tree head';
+      rootNote.className = `match-note ${rootOk ? 'ok' : 'bad'}`;
+      if (sth.tree_size !== receipts.length) {
+        rootNote.textContent += ` (tree_size ${sth.tree_size} vs ${receipts.length} receipts)`;
+      }
+    } else {
+      $('vf-sth-sig').textContent = 'no sth.jsonl supplied';
+      $('vf-root').textContent = 'no sth.jsonl supplied';
+    }
+
+    // 4. Witness cosignatures — needs both an STH and a control (witness) file.
+    let witOk = 0;
+    let threshold = 0;
+    let witnessChecked = false;
+    let anomaly = false;
+    const wd = $('vf-witness');
+    wd.textContent = '';
+    if (state.sth && state.control && Array.isArray(state.sth.witness_cosignatures)) {
+      witnessChecked = true;
+      threshold = state.control.witness_threshold || 0;
+      const witByFp = new Map<string, { name: string; raw: Uint8Array }>();
+      for (const w of state.control.witnesses) {
+        witByFp.set(await fingerprint(w.public_key), {
+          name: w.name,
+          raw: pemToRaw(w.public_key),
+        });
+      }
+      const witnessBody = { ...state.sth };
+      delete witnessBody.witness_cosignatures;
+      let prevFp: string | null = null;
+      for (const c of state.sth.witness_cosignatures) {
+        const w = witByFp.get(c.witness_fingerprint);
+        const ordered = prevFp === null || c.witness_fingerprint > prevFp;
+        prevFp = c.witness_fingerprint;
+        let ok = false;
+        if (w && ordered) ok = verifySig(witnessBody, c.signature, w.raw);
+        if (!w || !ordered) anomaly = true;
+        if (ok) witOk++;
+        const span = document.createElement('span');
+        span.className = 'dl-wmap';
+        const st = document.createElement('span');
+        st.className = `stamp ${ok ? 'verified' : 'failed'}`;
+        st.textContent = ok ? `${w ? w.name : '?'} ✓` : `${w ? w.name : 'UNKNOWN'} ✗`;
+        span.appendChild(st);
+        wd.appendChild(span);
+      }
+      const tNote = document.createElement('span');
+      tNote.className = 'small muted';
+      tNote.textContent = ` ${witOk}/${threshold} threshold${anomaly ? ' · anomaly' : ''}`;
+      wd.appendChild(tNote);
+    } else if (state.sth && !state.control) {
+      wd.textContent = 'add control.jsonl to verify witnesses';
+    } else {
+      wd.textContent = '—';
+    }
+
+    // Overall verdict. Witness threshold only gates the result when checked.
+    const witnessPass = !witnessChecked || (witOk >= threshold && !anomaly && threshold > 0);
+    const allOk = sigsAllOk && sthOk && rootOk && witnessPass;
+    setStamp($('vf-stamp'), allOk ? 'verified' : 'failed', allOk ? 'Verified' : 'Failed');
+
+    const parts = [`${sigOk}/${receipts.length} receipt signatures`];
+    if (state.sth) parts.push(`Merkle root ${rootOk ? 'match' : 'MISMATCH'}`, `tree-head ${sthOk ? 'ok' : 'FAIL'}`);
+    if (witnessChecked) parts.push(`${witOk}/${threshold} witness cosignatures${anomaly ? ' (anomaly)' : ''}`);
+    setStatus(
+      (allOk
+        ? 'Verified locally: '
+        : 'Verification did not fully pass: ') +
+        parts.join(', ') +
+        (allOk ? '. Nothing was altered since signing.' : '.') +
+        (state.sth ? '' : ' (No sth.jsonl, so only the receipt signatures were checked.)'),
+      !allOk
+    );
+
+    btn.textContent = 'Verify the log';
+    btn.disabled = false;
+  }
+
+  function reset() {
+    state.receipts = null;
+    state.receiptsName = '';
+    state.opPem = null;
+    state.sth = null;
+    state.control = null;
+    setSlot('vf-slot-receipts', 'waiting', '');
+    setSlot('vf-slot-pubkey', 'waiting', '');
+    setSlot('vf-slot-sth', '—', '');
+    setSlot('vf-slot-control', '—', '');
+    $('vf-failures').textContent = '';
+    ['vf-receipts', 'vf-sigs', 'vf-root', 'vf-sth-sig', 'vf-witness'].forEach(
+      (id) => ($(id).textContent = '—')
+    );
+    ['vf-sigs-note', 'vf-root-note', 'vf-sth-note'].forEach((id) => {
+      $(id).textContent = '';
+      $(id).className = 'match-note';
+    });
+    setStamp($('vf-stamp'), 'unsigned', 'No log yet');
+    (document.getElementById('vf-input') as HTMLInputElement).value = '';
+    refreshButtons();
+    setStatus('Cleared. Everything ran locally — nothing was uploaded.');
+  }
+
+  function init() {
+    const zone = $('vf-zone');
+    const input = document.getElementById('vf-input') as HTMLInputElement;
+    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+        e.preventDefault();
+        input.click();
+      }
+    });
+    zone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      zone.classList.add('over');
+    });
+    zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+    zone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      zone.classList.remove('over');
+      handleFiles((e as DragEvent).dataTransfer?.files ?? null);
+    });
+    input.addEventListener('change', () => handleFiles(input.files));
+    $('vf-verify-btn').addEventListener('click', verify);
+    $('vf-reset-btn').addEventListener('click', reset);
+  }
+
+  init();
+</script>
