@@ -37,7 +37,7 @@ A true audit log must be independent, immutable, and verifiable offline. It shou
 
 ## The One-Code-Node Integration Pattern
 
-To achieve this level of security without rewriting our workflows, we can use the **AXR (Agent Execution Receipts)** pattern. Instead of routing all our logs to an expensive external compliance platform, we place a single AXR Code node at the end of our workflow.
+To achieve this level of security without rewriting our workflows, we can use the **AXR (Agent eXecution Receipts)** pattern. Instead of routing all our logs to an expensive external compliance platform, we place a single AXR Code node at the end of our workflow.
 
 This node performs a very specific task:
 1. It gathers the inputs and outputs from the key decision-making nodes in the workflow (e.g., geographic checks, pricing logic, transaction commits).

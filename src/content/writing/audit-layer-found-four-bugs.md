@@ -33,7 +33,7 @@ For months, the workflow appeared to work perfectly. Webhooks fired, emails went
 
 But as a builder moving deliberately into security governance and AI assurance, I knew that "it seems to work" is a fragile shield. When a workflow decides whether to accept a booking or charge a card, it is making a governance decision. I wanted an immutable, cryptographically signed ledger of those decisions — one I could verify offline, without relying on the system's own database or mutable server logs.
 
-To achieve this, I integrated **AXR** (Agent Execution Receipts) into the n8n workflow.
+To achieve this, I integrated **AXR** (Agent eXecution Receipts) into the n8n workflow.
 
 AXR is an open-source, zero-dependency protocol that produces structured, cryptographically signed receipts of execution. It uses standard cryptography (SHA-256, Ed25519, and canonical JSON) to sign each decision-relevant step, accumulating the receipts into an append-only, tamper-evident log. With the audit layer in place, six of the workflow's twenty nodes became receipt-bearing, each receipt signed with a private key pinned in the execution environment.
 
