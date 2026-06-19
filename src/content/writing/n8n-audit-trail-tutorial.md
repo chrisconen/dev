@@ -78,6 +78,8 @@ Instead, we run anchoring out-of-band:
 
 The live user experience remains blazing fast, while our audit trail remains cryptographically secure.
 
+> **Store the receipts outside n8n's execution data.** n8n prunes execution history by default (`EXECUTIONS_DATA_PRUNE` with `EXECUTIONS_DATA_MAX_AGE`), so if you stash receipts in the execution context or a Data Table, the cryptographic chain survives but the run context that ties each receipt to its execution can be aged out from under you. Write the `.jsonl` to durable, append-only storage — a bind-mounted volume or dedicated path — *before* you rely on pruning. The chain then lives independently of n8n's retention settings.
+
 ---
 
 ## Anatomy of an n8n Execution Receipt

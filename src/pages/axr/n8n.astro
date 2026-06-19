@@ -147,7 +147,11 @@ const JSONLD = [
       <li>
         <span>
           <strong>Append to an immutable log.</strong> Receipts are written one
-          per line to an append-only JSON Lines file that survives restarts.
+          per line to an append-only JSON Lines file on a bind-mounted volume —
+          <em>outside</em> n8n's execution data. n8n prunes execution history by
+          default (<code>EXECUTIONS_DATA_PRUNE</code> /
+          <code>EXECUTIONS_DATA_MAX_AGE</code>); because the receipt chain lives
+          on durable external storage, that pruning never touches it.
         </span>
       </li>
       <li>
@@ -195,7 +199,9 @@ const JSONLD = [
       log — now past 227 signed receipts — has been anchored hourly into one
       Merkle tree since June 2026. Standing up that accountability layer did
       something its operator did not expect: it surfaced four real bugs that
-      pre-dated AXR.
+      pre-dated AXR — none of them tampering. That is the second thing a receipt
+      buys beyond tamper-evidence: behavioral legibility, the run made readable
+      enough that a contradiction surfaces on its own.
     </p>
     <ul class="now-list">
       <li>
@@ -215,6 +221,13 @@ const JSONLD = [
         <span>After a bugfix bumped the logic to v5.1, receipts kept attesting v5.0. Code-hash fingerprints now replace hand-written labels, and CI fails on drift.</span>
       </li>
     </ul>
+    <p class="small muted">
+      Planned next: a mark node on n8n's Error Trigger path, so a hard failure —
+      a node throw or a workflow error-out — also produces a signed,
+      failure-state receipt. A failed run is often the one you most need evidence
+      of. This extends generator coverage only; the frozen 1.x wire format is
+      untouched.
+    </p>
   </Entry>
 
   <Entry label="Next">

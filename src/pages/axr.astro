@@ -269,6 +269,14 @@ const FINDINGS = [
       decision, and that the record has not changed since.
     </p>
     <p>
+      That buys two distinct things. <strong>Tamper-evidence</strong> is the
+      cryptographic floor: the signature proves the record has not changed.
+      <strong>Behavioral legibility</strong> is what earns its keep day to day —
+      the receipt makes the workflow's actual behaviour readable enough that an
+      internal contradiction surfaces even when nothing was tampered with and
+      every signature is valid.
+    </p>
+    <p>
       It is deliberately <em>not</em> a workflow builder, an agent framework, or
       an observability platform. It is the thin accountability layer that sits
       underneath those tools. Two receipt types carry the load: a
@@ -493,6 +501,13 @@ python3 axr_verify.py receipts.jsonl public-key.pem sth.jsonl anchors.jsonl`}</p
       did not expect: it surfaced four real bugs that pre-dated AXR, and two
       defects in AXR's own tooling.
     </p>
+    <p>
+      None of these involved tampering or an invalid signature. They are
+      behavioral legibility, not tamper-evidence: the receipt made the run
+      readable enough that a contradiction between intended and executed branch
+      surfaced on its own. Bug B was exactly that — a rejection that still fired
+      the success branch, caught the moment the receipt's outcome was read.
+    </p>
     <div class="findings">
       {FINDINGS.map((f) => (
         <div class={f.inward ? 'finding inward' : 'finding'}>
@@ -626,6 +641,10 @@ python3 axr_verify.py receipts.jsonl public-key.pem sth.jsonl anchors.jsonl`}</p
       <li>
         <span class="tag">Next</span>
         <span>Exercise generative (LLM) step receipts on a live workflow — supported and tested end-to-end, not yet in production.</span>
+      </li>
+      <li>
+        <span class="tag">Next</span>
+        <span>Error-path receipts — sign failed runs too, via a mark node on the workflow's error path. A failure is often the most important thing to have evidence of; this extends generator coverage and leaves the frozen 1.x wire format untouched.</span>
       </li>
       <li>
         <span class="tag">Open</span>
