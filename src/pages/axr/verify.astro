@@ -58,6 +58,11 @@ const JSONLD = [
       <input type="file" id="vf-input" multiple accept=".jsonl,.json,.pem,.txt" hidden />
     </div>
 
+    <p class="vf-sample-line">
+      <button class="btn btn-ghost" id="vf-sample-btn" type="button">Try a sample log</button>
+      <span class="small muted">— loads AXR's own signed dev-log and verifies it right here. Nothing of yours needed.</span>
+    </p>
+
     <dl class="receipt-meta vf-slots">
       <div class="row">
         <dt>receipts.jsonl</dt>
@@ -198,6 +203,14 @@ node axr-verify.js receipts.jsonl public-key.pem sth.jsonl anchors.jsonl \\
   }
   .dz-lead { font-weight: 500; margin: 0 0 0.4rem; }
   .dz-sub { color: var(--muted, #6b6b63); font-weight: 400; }
+  .vf-sample-line {
+    margin: 1rem 0 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    max-width: 46rem;
+  }
   .vf-slots { margin-top: 1.4rem; max-width: 46rem; }
   .slot-state { font-family: var(--mono, monospace); font-size: 0.85rem; }
   .slot-state.ok { color: var(--accent, #2f6f4f); }
@@ -479,6 +492,38 @@ node axr-verify.js receipts.jsonl public-key.pem sth.jsonl anchors.jsonl \\
     setStatus('Cleared. Everything ran locally — nothing was uploaded.');
   }
 
+  // Load AXR's own signed dev-log snapshot as a ready-made sample, through the
+  // exact same ingest + verify path a dropped file takes — so a visitor with no
+  // log of their own can still see a real green verdict (and what red looks like
+  // is one edit away on /axr/start).
+  async function loadSample() {
+    const btn = $('vf-sample-btn') as HTMLButtonElement;
+    btn.disabled = true;
+    reset();
+    setStatus('Loading AXR’s own signed dev-log as a sample…');
+    const base = '/axr/devlog/';
+    const files: [string, string][] = [
+      ['receipts.jsonl', 'receipts.jsonl'],
+      ['op.pubkey.pem', 'public-key.pem'],
+      ['sth.jsonl', 'sth.jsonl'],
+      ['control.jsonl', 'control.jsonl'],
+    ];
+    try {
+      for (const [src, name] of files) {
+        const r = await fetch(base + src, { cache: 'no-store' });
+        if (!r.ok) throw new Error(`HTTP ${r.status} for ${src}`);
+        await ingest(new File([await r.text()], name));
+      }
+    } catch (e) {
+      setStatus(`Could not load the sample: ${e}`, true);
+      btn.disabled = false;
+      return;
+    }
+    refreshButtons();
+    btn.disabled = false;
+    await verify();
+  }
+
   function init() {
     const zone = $('vf-zone');
     const input = document.getElementById('vf-input') as HTMLInputElement;
@@ -502,6 +547,7 @@ node axr-verify.js receipts.jsonl public-key.pem sth.jsonl anchors.jsonl \\
     input.addEventListener('change', () => handleFiles(input.files));
     $('vf-verify-btn').addEventListener('click', verify);
     $('vf-reset-btn').addEventListener('click', reset);
+    $('vf-sample-btn').addEventListener('click', loadSample);
   }
 
   init();
