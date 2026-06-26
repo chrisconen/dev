@@ -120,6 +120,16 @@ const JSONLD = [
       Run AI in your business but don't write code? There's a plain-English
       version with a 30-second demo — and AXR itself is free and open source (MIT).
     </p>
+    <div class="proof-strip">
+      <p class="proof-lead">No testimonials, no logo wall — just things you can <em>check:</em></p>
+      <ul class="proof-points">
+        <li><strong>In production since June 2026</strong> on a live booking workflow — 200+ signed receipts, anchored hourly.</li>
+        <li><strong>Four pre-existing bugs surfaced</strong> the week the receipts went in — none caused by AXR.</li>
+        <li><strong>Two independent verifiers</strong> (Node + Python) agree byte-for-byte on every check.</li>
+        <li><strong>Open source · MIT · zero runtime dependencies</strong> — read exactly how it works.</li>
+      </ul>
+      <a class="proof-cta" href="/axr/devlog/">Don't trust it — verify the dev-log yourself &rarr;</a>
+    </div>
     <div class="btn-row">
       <a class="btn btn-ghost" href="/axr/start/">New to this? Plain English</a>
       <a class="btn btn-ghost" href="/axr/">How it works</a>
@@ -241,5 +251,32 @@ const JSONLD = [
   @media (max-width: 30rem) {
     .hero-path { flex-direction: column; gap: 0.25rem; }
     .hp-go { white-space: normal; }
+  }
+
+  /* Honest social proof: no testimonials we don't have — checkable facts, the
+     site's "proof over promises" ethos applied to the trust question. */
+  .proof-strip {
+    margin: 1.5rem 0 0.5rem;
+    max-width: 40rem;
+    padding: 1rem 1.2rem 1.15rem;
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+  }
+  .proof-lead { margin: 0 0 0.6rem; font-weight: 500; }
+  .proof-points {
+    margin: 0 0 0.85rem;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .proof-points li { font-size: 0.9rem; color: var(--ink-soft); }
+  .proof-points strong { color: var(--ink); font-weight: 600; }
+  .proof-cta {
+    font-family: var(--mono, monospace);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent-deep);
   }
 </style>
