@@ -1,0 +1,58 @@
+---
+// End-of-article conversion bridge. Tag-aware: n8n posts point to the n8n
+// walkthrough; everything else points to the plain-English demo. Keeps the
+// "Proof over promises" voice — it offers a thing to try, not a hard sell.
+interface Props {
+  tags?: string[];
+}
+const { tags = [] } = Astro.props;
+const isN8n = tags.some((t) => /n8n/i.test(t));
+const cta = isN8n
+  ? {
+      lead: 'Running n8n automations?',
+      body:
+        'Add a tamper-evident audit trail to your workflow with one Code node — about ten minutes, nothing to install.',
+      href: '/axr/n8n/',
+      label: 'The n8n walkthrough',
+    }
+  : {
+      lead: 'Not a cryptographer? Good — you don’t need to be.',
+      body:
+        'See a real signed receipt break the moment you edit it: a 30-second demo that runs in your browser, with nothing uploaded.',
+      href: '/axr/start/',
+      label: 'Try the live demo',
+    };
+---
+
+<aside class="post-cta" aria-label="Try AXR">
+  <span class="post-cta-tag">AXR</span>
+  <p class="post-cta-lead">{cta.lead}</p>
+  <p class="post-cta-body">{cta.body}</p>
+  <a class="btn btn-primary" href={cta.href}>{cta.label} &rarr;</a>
+</aside>
+
+<style>
+  .post-cta {
+    margin: 2.6rem 0 0;
+    max-width: var(--measure, 62ch);
+    padding: 1.2rem 1.3rem 1.35rem;
+    background: var(--paper-raised);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+  }
+  .post-cta-tag {
+    font-family: var(--mono, monospace);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+  }
+  .post-cta-lead {
+    font-weight: 600;
+    margin: 0.45rem 0 0.3rem;
+  }
+  .post-cta-body {
+    margin: 0 0 1rem;
+    color: var(--ink-soft);
+  }
+</style>

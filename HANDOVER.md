@@ -65,7 +65,7 @@ kattintotta végig — a screenshotokon valódi futás látszik.
    ha más lesz.
 2. LinkedIn URL (üresen a link nem jelenik meg — most üres).
 3. AXR repo URL megerősítése (most github.com/chrisconen/axr).
-4. Case study linkek: Motyán, Bella Camila, ECO Clean Google-értékelések.
+4. Case study linkek: Motyán, NEXUS AI, ECO Clean Google-értékelések.
    Üres href = a kártya link nélkül jelenik meg, ami most az állapot.
 5. `npm run keygen` egyszer: a privát kulcs Cloudflare Pages env varba
    (RECEIPT_PRIVATE_KEY, titkosítva), a publikus a config

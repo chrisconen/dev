@@ -1,0 +1,70 @@
+---
+// Sub-navigation shown only on /axr/* routes. The /axr family has five sibling
+// pages but the global nav shows only "AXR"; without this, the layman bridge
+// (/axr/start) and the live verifiers are effectively undiscoverable, and there
+// is no way to move between AXR pages. Deliberately a sub-nav, not a new global
+// nav item — so the senior security/GRC top-level positioning stays clean.
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const items = [
+  { href: '/axr', label: 'Overview' },
+  { href: '/axr/start', label: 'Plain English' },
+  { href: '/axr/n8n', label: 'n8n' },
+  { href: '/axr/verify', label: 'Verify a log' },
+  { href: '/axr/devlog', label: 'Dev-log' },
+];
+---
+
+<nav class="axr-subnav" aria-label="AXR sections">
+  <div class="shell axr-subnav-inner">
+    <span class="axr-subnav-tag">AXR</span>
+    {items.map((it) => (
+      <a
+        class="axr-subnav-link"
+        href={`${it.href}/`}
+        aria-current={path === it.href ? 'page' : undefined}
+      >
+        {it.label}
+      </a>
+    ))}
+  </div>
+</nav>
+
+<style>
+  .axr-subnav {
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper-raised);
+  }
+  .axr-subnav-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.15rem 0.9rem;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+    font-family: var(--mono, monospace);
+    font-size: 0.78rem;
+  }
+  .axr-subnav-tag {
+    color: var(--ink-soft);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    margin-right: 0.2rem;
+  }
+  .axr-subnav-link {
+    color: var(--ink-soft);
+    text-decoration: none;
+    position: relative;
+  }
+  .axr-subnav-link + .axr-subnav-link::before {
+    content: '·';
+    color: var(--rule);
+    position: absolute;
+    left: -0.55rem;
+  }
+  .axr-subnav-link:hover { color: var(--accent-deep); }
+  .axr-subnav-link[aria-current='page'] {
+    color: var(--accent-deep);
+    font-weight: 600;
+  }
+</style>

@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PostCTA from '../../components/PostCTA.astro';
 import { getCollection, render } from 'astro:content';
 import { SITE } from '../../config';
 
@@ -53,6 +54,8 @@ const JSONLD = [
     <div class="post-body">
       <Content />
     </div>
+
+    <PostCTA tags={d.tags} />
 
     {d.tags.length > 0 && (
       <p class="post-tags mono">{d.tags.map((t) => <span>{t}</span>)}</p>

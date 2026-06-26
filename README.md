@@ -8,7 +8,8 @@ AXR applies to AI agent actions.
 
 ## Stack
 
-- Astro 5, zero JavaScript on every page except `/receipt/` (the verifier)
+- Astro 5, zero JavaScript on most pages; client-side script runs only on the
+  verifier/demo pages (`/receipt/`, `/axr/verify/`, `/axr/devlog/`, `/axr/start/`)
 - Hand-rolled CSS design system ("Ledger & Stamp"), no framework
 - Fonts self-hosted via Fontsource: Libre Caslon Text, Public Sans, IBM Plex Mono
 - `@noble/ed25519` + `@noble/hashes` for signing and verification
@@ -86,7 +87,7 @@ Brotli/gzip compression is fine: it changes transport encoding, not bytes.
 | `email` | defaults to `hello@chrisconen.dev`; create the mailbox via Cloudflare Email Routing, or change it |
 | `linkedin` | empty hides the link; add the profile URL |
 | `axrRepo` | confirm the exact repository URL |
-| `EVIDENCE[].href` | add live URLs for Motyán, Bella Camila and the ECO Clean reviews; empty hides each link |
+| `EVIDENCE[].href` | add live URLs for Motyán, NEXUS AI and the ECO Clean reviews; empty hides each link |
 | `receiptPublicKey` | paste after `npm run keygen` |
 
 Also `public/.well-known/security.txt`: keep the contact in sync with

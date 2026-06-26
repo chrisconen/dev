@@ -382,6 +382,21 @@ const FAQ = [
   }
   @media (max-width: 44rem) {
     .seal-demo { grid-template-columns: 1fr; }
+    /* Keep the seal visible while the on-screen keyboard is open: pin it to the
+       top of the card, above the editable fields, so the green->red flip is
+       seen live as the visitor types. */
+    .seal-card { display: flex; flex-direction: column; }
+    .seal-wrap {
+      order: -1;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: var(--paper-raised);
+      padding: 0.6rem 0;
+      margin: 0 0 0.4rem;
+    }
+    .seal { width: 76px; height: 76px; }
   }
   .seal-card {
     position: relative;

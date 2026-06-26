@@ -4,10 +4,10 @@ import Entry from '../components/Entry.astro';
 import { SITE } from '../config';
 
 // Live numbers, kept in one place so the prose and the stat band can never
-// drift apart. Sourced from the AXR repository README / CHANGELOG (1.5.1).
+// drift apart. Sourced from the AXR repository README / CHANGELOG (1.5.3).
 const STATS = [
   { num: '9', lbl: 'Maturity layers, one repo — core to the witness lifecycle + SDK' },
-  { num: '41', lbl: 'Test suites green, incl. JS↔Python cross-impl parity (core + governance)' },
+  { num: '42', lbl: 'Test suites green, incl. JS↔Python cross-impl parity (core + governance)' },
   { num: '15 / 15', lbl: 'Tamper mutations rejected by the verifier' },
   { num: '2', lbl: 'Independent verifiers (Node + pure-Python) agree byte-for-byte' },
   { num: '15', lbl: 'Security findings caught by multi-agent review before release' },
@@ -216,7 +216,7 @@ const FINDINGS = [
       <a class="btn btn-ghost" href="/axr/start/">Not technical? Start here</a>
     </div>
     <div class="chips">
-      <span class="chip">Protocol contract <strong>1.5.1 (frozen 1.x)</strong></span>
+      <span class="chip">Protocol contract <strong>1.5.3 (frozen 1.x)</strong></span>
       <span class="chip">Live profile <strong>0.2.1 core · hourly anchoring</strong></span>
       <span class="chip">Dependencies <strong>Zero</strong></span>
     </div>
@@ -309,7 +309,7 @@ const FINDINGS = [
         <span class="stamp verified">Signature valid</span>
         <span class="note">
           Change one byte of any field and the signature no longer verifies.
-          That is the whole trick — and it is enough.
+          That is the whole principle — and it is enough.
         </span>
       </div>
     </div>
