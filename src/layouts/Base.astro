@@ -16,9 +16,18 @@ interface Props {
   description?: string;
   current?: string;
   jsonLd?: Record<string, unknown>[];
+  lang?: string;
+  alternates?: { hreflang: string; href: string }[];
 }
 
-const { title = SITE.title, description = SITE.description, current = '', jsonLd = [] } = Astro.props;
+const {
+  title = SITE.title,
+  description = SITE.description,
+  current = '',
+  jsonLd = [],
+  lang = 'en',
+  alternates = [],
+} = Astro.props;
 const canonical = new URL(Astro.url.pathname, SITE.url).href;
 
 // Serialise JSON-LD as a data block. Escaping '<' keeps the literal "</script>"
@@ -28,7 +37,7 @@ const ldBlocks = jsonLd.map((b) => JSON.stringify(b).replace(/</g, '\\u003c'));
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -36,6 +45,7 @@ const ldBlocks = jsonLd.map((b) => JSON.stringify(b).replace(/</g, '\\u003c'));
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="alternate" type="application/json" title="Signed build receipt" href="/receipt.json" />

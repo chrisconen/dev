@@ -1,0 +1,505 @@
+---
+import Entry from './Entry.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+
+// The /axr/start body, rendered from a per-locale content object `t` (see
+// src/i18n/start.ts). Used by the English page (src/pages/axr/start.astro) and
+// the localized routes (src/pages/[lang]/axr/start.astro), so the markup and the
+// interactive demo live in ONE place across all languages. The signed sample
+// values (A. Nagy, 38000, …) are NOT translated — they are the bytes the demo
+// verifies. Cross-page links point at the English AXR pages until those are
+// localized too.
+interface Props {
+  t: any;
+  lang: string;
+  locales: string[];
+}
+const { t, lang, locales } = Astro.props;
+const d = t.demo;
+---
+
+<div class="shell page-hero">
+  <LanguageSwitcher lang={lang} enPath="/axr/start/" locales={locales} />
+  <p class="kicker">
+    AXR<span class="sep">/</span>{t.hero.kickerMid}<span class="sep">/</span>{t.hero.kickerEnd}
+  </p>
+  <h1 set:html={t.hero.h1Html} />
+  <p class="lede" set:html={t.hero.lede1Html} />
+  <p class="lede measure-narrow" set:html={t.hero.lede2Html} />
+  <div class="chips">
+    {t.hero.chips.map((c: any) => (
+      <span class="chip">{c.label} <strong>{c.strong}</strong></span>
+    ))}
+  </div>
+  <div class="btn-row">
+    <a class="btn btn-primary" href="#demo">{t.hero.btns[0]}</a>
+    <a class="btn btn-ghost" href="#how">{t.hero.btns[1]}</a>
+    <a class="btn btn-ghost" href="/axr/">{t.hero.btns[2]}</a>
+  </div>
+</div>
+
+<Entry label={d.label} id="demo">
+  <h2 set:html={d.h2Html} />
+  <p class="measure-narrow" set:html={d.intro} />
+
+  <div class="seal-demo" id="seal-demo">
+    <div class="seal-card" id="seal-card">
+      <p class="seal-card-head">{d.cardHead}</p>
+      <dl class="seal-fields">
+        <div class="srow"><dt>{d.fields.customer}</dt><dd><span class="edit" contenteditable="true" spellcheck="false" role="textbox" aria-label={d.fields.customer} data-path="io.input_summary.customer">A. Nagy</span><span class="chg" aria-hidden="true">{d.changedTag}</span></dd></div>
+        <div class="srow"><dt>{d.fields.service}</dt><dd><span class="edit" contenteditable="true" spellcheck="false" role="textbox" aria-label={d.fields.service} data-path="io.input_summary.service">Carpet clean</span><span class="chg" aria-hidden="true">{d.changedTag}</span></dd></div>
+        <div class="srow"><dt>{d.fields.date}</dt><dd><span class="edit" contenteditable="true" spellcheck="false" role="textbox" aria-label={d.fields.date} data-path="io.input_summary.date">2026-07-02</span><span class="chg" aria-hidden="true">{d.changedTag}</span></dd></div>
+        <div class="srow"><dt>{d.fields.price}</dt><dd><span class="edit" contenteditable="true" spellcheck="false" role="textbox" aria-label={d.fields.price} data-path="io.input_summary.price">38000</span><span class="chg" aria-hidden="true">{d.changedTag}</span></dd></div>
+        <div class="srow"><dt>{d.fields.decision}</dt><dd><span class="edit" contenteditable="true" spellcheck="false" role="textbox" aria-label={d.fields.decision} data-path="io.decision">BOOKING_CONFIRMED</span><span class="chg" aria-hidden="true">{d.changedTag}</span></dd></div>
+      </dl>
+
+      <div class="seal-wrap">
+        <div class="seal intact" id="seal" aria-hidden="true">
+          <span class="seal-text" id="seal-text" set:html={d.js.sealIntact.join('<br>')} />
+        </div>
+      </div>
+    </div>
+
+    <div class="seal-side">
+      <p class="seal-verdict"><span class="stamp verified" id="seal-stamp">{d.js.stampValid}</span></p>
+      <p class="status-line" id="seal-status" role="status" aria-live="polite" aria-atomic="true">{d.js.statusDefault}</p>
+      <button class="btn btn-ghost" id="seal-reset" type="button">{d.reset}</button>
+
+      <div class="what-happened">
+        <p class="wh-head">{d.whHead}</p>
+        <p set:html={d.whP1Html} />
+        <p class="small muted" set:html={d.whP2Html} />
+      </div>
+
+      <div class="btn-row mt-md">
+        <a class="btn btn-ghost" href="/axr/verify/">{d.tryOwn}</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="application/json" id="seal-i18n" set:html={JSON.stringify(d.js).replace(/</g, '\\u003c')} />
+</Entry>
+
+<Entry label={t.whatItIs.label}>
+  <h2 set:html={t.whatItIs.h2Html} />
+  <p class="measure-narrow" set:html={t.whatItIs.p1} />
+
+  <div class="contrast">
+    <article class="contrast-card story-side">
+      <span class="contrast-label">{t.whatItIs.contrast[0].label}</span>
+      <h3>{t.whatItIs.contrast[0].h3}</h3>
+      <p>{t.whatItIs.contrast[0].p}</p>
+    </article>
+    <article class="contrast-card record-side">
+      <span class="contrast-label record">{t.whatItIs.contrast[1].label}</span>
+      <h3>{t.whatItIs.contrast[1].h3}</h3>
+      <p>{t.whatItIs.contrast[1].p}</p>
+    </article>
+  </div>
+
+  <p class="pullquote" set:html={t.whatItIs.pullquoteHtml} />
+  <p class="measure-narrow small muted" set:html={t.whatItIs.smallHtml} />
+</Entry>
+
+<Entry label={t.isThisYou.label} id="you">
+  <h2 set:html={t.isThisYou.h2Html} />
+  <p class="measure-narrow" set:html={t.isThisYou.introHtml} />
+  <div class="persona-grid">
+    {t.isThisYou.personas.map((p: any) => (
+      <article class="persona">
+        <span class="who">{p.who}</span>
+        <p class="trigger">{p.trigger}</p>
+      </article>
+    ))}
+  </div>
+</Entry>
+
+<Entry label={t.stories.label} id="stories">
+  <h2 set:html={t.stories.h2Html} />
+  <div class="story-grid">
+    {t.stories.items.map((s: any) => (
+      <article class="story">
+        <span class="tag">{s.tag}</span>
+        <h3>{s.title}</h3>
+        <p>{s.body}</p>
+      </article>
+    ))}
+  </div>
+  <p class="footnote" set:html={t.stories.footnoteHtml} />
+</Entry>
+
+<Entry label={t.moment.label}>
+  <h2 set:html={t.moment.h2Html} />
+  <p class="measure-narrow" set:html={t.moment.introHtml} />
+  <ul class="now-list">
+    {t.moment.items.map((i: any) => (
+      <li><span class="tag">{i.tag}</span><span>{i.text}</span></li>
+    ))}
+  </ul>
+</Entry>
+
+<Entry label={t.how.label} id="how">
+  <h2 set:html={t.how.h2Html} />
+  <ol class="steps">
+    {t.how.steps.map((s: any) => (
+      <li><span><strong>{s.strong}</strong> {s.text}</span></li>
+    ))}
+  </ol>
+
+  <div class="path-grid">
+    <article class="path">
+      <h3>{t.how.paths[0].h3}</h3>
+      <p>{t.how.paths[0].p}</p>
+      <a class="btn btn-ghost" href="/axr/n8n/">{t.how.paths[0].cta}</a>
+    </article>
+    <article class="path">
+      <h3>{t.how.paths[1].h3}</h3>
+      <p>{t.how.paths[1].p}</p>
+      <a class="btn btn-ghost" href="/axr/verify/">{t.how.paths[1].cta}</a>
+    </article>
+  </div>
+</Entry>
+
+<Entry label={t.faq.label} id="faq">
+  <h2 set:html={t.faq.h2Html} />
+  <dl class="def-rows">
+    {t.faq.items.map((f: any) => (
+      <div class="def-row">
+        <dt>{f.q}</dt>
+        <dd>{f.a}</dd>
+      </div>
+    ))}
+  </dl>
+
+  <h3 class="mt-lg" set:html={t.faq.notClaimH3Html} />
+  <ul class="now-list">
+    {t.faq.limits.map((l: any) => (
+      <li><span class="tag">{l.tag}</span><span set:html={l.textHtml} /></li>
+    ))}
+  </ul>
+</Entry>
+
+<Entry label={t.tryIt.label}>
+  <h2 set:html={t.tryIt.h2Html} />
+  <p class="measure-narrow" set:html={t.tryIt.pHtml} />
+  <div class="btn-row">
+    <a class="btn btn-primary" href="/axr/verify/">{t.tryIt.ctas[0]}</a>
+    <a class="btn btn-ghost" href="/axr/n8n/">{t.tryIt.ctas[1]}</a>
+    <a class="btn btn-ghost" href="mailto:hello@chrisconen.dev">{t.tryIt.ctas[2]}</a>
+  </div>
+  <p class="small muted" set:html={t.tryIt.smallHtml} />
+</Entry>
+
+<style>
+  .persona .trigger {
+    font-family: var(--mono, monospace);
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    margin: 0.4rem 0 0;
+    line-height: 1.5;
+  }
+
+  /* Seal & Tamper demo */
+  .seal-demo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+    gap: 1.5rem;
+    margin-top: 1.25rem;
+    align-items: start;
+  }
+  @media (max-width: 44rem) {
+    .seal-demo { grid-template-columns: 1fr; }
+    .seal-card { display: flex; flex-direction: column; }
+    .seal-wrap {
+      order: -1;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: var(--paper-raised);
+      padding: 0.6rem 0;
+      margin: 0 0 0.4rem;
+    }
+    .seal { width: 76px; height: 76px; }
+  }
+  .seal-card {
+    position: relative;
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .seal-card-head {
+    font-family: var(--mono, monospace);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 0.75rem;
+  }
+  .seal-fields { margin: 0; }
+  .seal-fields .srow {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 0.3rem 1rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+  @media (max-width: 30rem) {
+    .seal-fields .srow { grid-template-columns: 1fr; }
+  }
+  .seal-fields dt { font-size: 0.8rem; color: var(--ink-soft); }
+  .seal-fields dd { margin: 0; display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+  .edit {
+    font-family: var(--mono, monospace);
+    font-size: 0.9rem;
+    color: var(--ink);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    background: var(--paper);
+    box-shadow: inset 0 -1px 0 var(--rule);
+    cursor: text;
+    white-space: pre-wrap;
+    word-break: break-word;
+    transition: background-color 140ms ease, box-shadow 140ms ease;
+  }
+  .edit:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .edit.changed { background: var(--stamp-wash); box-shadow: inset 0 -2px 0 var(--stamp); }
+  .chg {
+    font-family: var(--mono, monospace);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--stamp);
+    opacity: 0;
+    transition: opacity 140ms ease;
+  }
+  .chg.show { opacity: 1; }
+
+  .seal-wrap { display: flex; justify-content: flex-end; margin-top: 1rem; }
+  .seal {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    border: 3px solid var(--accent);
+    color: var(--accent-deep);
+    background:
+      radial-gradient(circle at 50% 35%, var(--accent-wash), transparent 70%),
+      repeating-radial-gradient(circle, transparent 0 6px, rgba(30,92,64,0.06) 6px 7px);
+    transition: border-color 200ms ease, color 200ms ease, transform 120ms ease;
+  }
+  .seal-text {
+    font-family: var(--mono, monospace);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.25;
+  }
+  .seal::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      linear-gradient(102deg, transparent 46%, var(--stamp) 47% 49%, transparent 50%),
+      linear-gradient(102deg, transparent 49%, var(--stamp) 50% 52%, transparent 53%);
+    opacity: 0;
+    transition: opacity 180ms ease;
+    pointer-events: none;
+  }
+  .seal.broken {
+    border-color: var(--stamp);
+    color: var(--stamp);
+    background:
+      radial-gradient(circle at 50% 35%, var(--stamp-wash), transparent 70%),
+      repeating-radial-gradient(circle, transparent 0 6px, rgba(168,57,43,0.07) 6px 7px);
+  }
+  .seal.broken::after { opacity: 1; }
+  .seal.shake { animation: seal-shake 220ms ease, ink-bleed 360ms ease-out; }
+  @keyframes seal-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px) rotate(-1deg); }
+    75% { transform: translateX(3px) rotate(1deg); }
+  }
+  @keyframes ink-bleed {
+    0% { filter: blur(0); }
+    35% { filter: blur(0.7px) saturate(1.15); }
+    100% { filter: blur(0); }
+  }
+
+  .seal-side { padding-top: 0.25rem; }
+  .seal-verdict { margin: 0 0 0.6rem; }
+  #seal-reset { margin-top: 0.2rem; }
+  .what-happened {
+    margin-top: 1.1rem;
+    padding: 0.85rem 1rem;
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+  .what-happened p { margin: 0 0 0.5rem; }
+  .what-happened p:last-child { margin-bottom: 0; }
+  .wh-head {
+    font-family: var(--mono, monospace);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .mt-md { margin-top: 1rem; }
+
+  .contrast {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+  .contrast-card {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1rem 1.1rem 1.15rem;
+    background: var(--paper-raised);
+  }
+  .contrast-card.story-side { border-style: dashed; }
+  .contrast-card.record-side { border-color: var(--accent); }
+  .contrast-card h3 { margin: 0.4rem 0 0.4rem; }
+  .contrast-card p { margin: 0; }
+  .contrast-label {
+    font-family: var(--mono, monospace);
+    font-size: 0.66rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .contrast-label.record { color: var(--accent-deep); }
+
+  .story-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+  .story {
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.1rem 1.2rem 1.25rem;
+  }
+  .story h3 { margin: 0.5rem 0 0.5rem; }
+  .story p { margin: 0; }
+
+  .path-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .path { border: 1px solid var(--rule); border-radius: 4px; padding: 1.1rem 1.2rem 1.25rem; }
+  .path h3 { margin: 0 0 0.5rem; }
+  .path p { margin: 0 0 0.9rem; }
+</style>
+
+<script>
+  import { SAMPLE_RECEIPT, SAMPLE_PUBKEY_PEM } from '../lib/axr-demo.ts';
+  import { signablePart, verifySig, pemToRaw } from '../lib/axr-verify.ts';
+
+  const $ = (id: string) => document.getElementById(id) as HTMLElement;
+  const RAW = pemToRaw(SAMPLE_PUBKEY_PEM);
+
+  // Localized demo strings, embedded as a data block by the component.
+  const T = JSON.parse(($('seal-i18n') as HTMLElement).textContent || '{}');
+
+  let work: any = structuredClone(SAMPLE_RECEIPT);
+  const editEls = Array.from(document.querySelectorAll<HTMLElement>('#seal-demo .edit'));
+
+  const norm = (s: string | null) =>
+    (s ?? '').normalize('NFC').replace(/[​-‍﻿]/g, '').replace(/\s+/g, ' ').trim();
+
+  function setByPath(obj: any, path: string, value: string) {
+    const keys = path.split('.');
+    let o = obj;
+    for (let i = 0; i < keys.length - 1; i++) o = o[keys[i]];
+    o[keys[keys.length - 1]] = value;
+  }
+  function getByPath(obj: any, path: string) {
+    return path.split('.').reduce((o, k) => o[k], obj);
+  }
+
+  function rebuildFromDom() {
+    for (const el of editEls) setByPath(work, el.dataset.path as string, norm(el.textContent));
+  }
+
+  function markChangedFields() {
+    let any = false;
+    for (const el of editEls) {
+      const original = String(getByPath(SAMPLE_RECEIPT, el.dataset.path as string));
+      const changed = norm(el.textContent) !== norm(original);
+      el.classList.toggle('changed', changed);
+      const tag = el.nextElementSibling;
+      if (tag) tag.classList.toggle('show', changed);
+      if (changed) any = true;
+    }
+    return any;
+  }
+
+  function render(ok: boolean, edited: boolean) {
+    const seal = $('seal');
+    const text = $('seal-text');
+    const stamp = $('seal-stamp');
+    const status = $('seal-status');
+    if (ok) {
+      seal.className = 'seal intact';
+      text.innerHTML = T.sealIntact.join('<br>');
+      stamp.className = 'stamp verified';
+      stamp.textContent = T.stampValid;
+      status.className = 'status-line';
+      status.textContent = edited ? T.statusRestored : T.statusDefault;
+    } else {
+      seal.className = 'seal broken shake';
+      text.innerHTML = T.sealTampered.join('<br>');
+      stamp.className = 'stamp failed';
+      stamp.textContent = T.stampBroken;
+      status.className = 'status-line bad';
+      status.textContent = T.statusTampered;
+      window.setTimeout(() => seal.classList.remove('shake'), 240);
+    }
+  }
+
+  function check() {
+    rebuildFromDom();
+    const edited = markChangedFields();
+    const ok = verifySig(signablePart(work), work.signature, RAW);
+    render(ok, edited);
+  }
+
+  for (const el of editEls) {
+    el.addEventListener('input', check);
+    el.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Enter') e.preventDefault();
+    });
+    el.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const t = (e as ClipboardEvent).clipboardData?.getData('text/plain') ?? '';
+      el.textContent = norm(t);
+      check();
+    });
+  }
+
+  $('seal-reset').addEventListener('click', () => {
+    for (const el of editEls) {
+      el.textContent = String(getByPath(SAMPLE_RECEIPT, el.dataset.path as string));
+      el.classList.remove('changed');
+      const tag = el.nextElementSibling;
+      if (tag) tag.classList.remove('show');
+    }
+    work = structuredClone(SAMPLE_RECEIPT);
+    render(true, false);
+  });
+
+  check();
+</script>

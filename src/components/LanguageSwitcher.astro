@@ -1,0 +1,44 @@
+---
+// Locale pills for the AXR pages. enPath is the English (canonical) path, e.g.
+// "/axr/start/"; non-English locales are served under a /<lang> prefix. Only
+// locales actually built for this page are passed in, so no link 404s.
+interface Props {
+  lang: string;
+  enPath: string;
+  locales: string[];
+}
+const { lang, enPath, locales } = Astro.props;
+const NAMES: Record<string, string> = { en: 'EN', hu: 'HU', de: 'DE', es: 'ES' };
+const href = (loc: string) => (loc === 'en' ? enPath : `/${loc}${enPath}`);
+---
+
+<nav class="lang-switch" aria-label="Language">
+  {locales.map((loc) => (
+    <a
+      href={href(loc)}
+      hreflang={loc}
+      aria-current={loc === lang ? 'true' : undefined}
+      class="lang-pill"
+    >
+      {NAMES[loc] ?? loc.toUpperCase()}
+    </a>
+  ))}
+</nav>
+
+<style>
+  .lang-switch {
+    display: flex;
+    gap: 0.15rem 0.6rem;
+    align-items: baseline;
+    margin-bottom: 0.4rem;
+    font-family: var(--mono, monospace);
+    font-size: 0.72rem;
+  }
+  .lang-pill {
+    color: var(--ink-soft);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+  }
+  .lang-pill:hover { color: var(--accent-deep); }
+  .lang-pill[aria-current='true'] { color: var(--accent-deep); font-weight: 600; }
+</style>
