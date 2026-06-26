@@ -87,12 +87,42 @@ const FAQ = [
     a: 'No. Writing the receipt runs alongside your workflow; anchoring runs outside it. If the receipt step ever fails, your business process still completes — it just leaves a visible, honest gap.',
   },
 ];
+
+// Structured data so this plain-English page is machine-legible for the queries
+// non-technical people actually type. The FAQPage mirrors the visible "Straight
+// answers" section verbatim (quotes stripped from the question text), and a
+// WebPage node ties it to AXR. Nothing here is asserted that the page doesn't show.
+const JSONLD = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'AXR in plain English',
+    description:
+      'A plain-English explanation of AXR for non-technical people: when an AI ' +
+      'or automated workflow is questioned, a tamper-evident receipt proves what ' +
+      'it did — a record anyone can check, without taking your word for it.',
+    url: 'https://chrisconen.dev/axr/start/',
+    isPartOf: { '@type': 'SoftwareSourceCode', name: 'AXR', url: 'https://chrisconen.dev/axr/' },
+    about: { '@type': 'SoftwareSourceCode', name: 'AXR — Agent eXecution Receipts', url: 'https://chrisconen.dev/axr/' },
+    author: { '@type': 'Person', name: 'Chris Conen', url: SITE.url },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQ.map((f) => ({
+      '@type': 'Question',
+      name: f.q.replace(/^"(.*)"$/, '$1'),
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
 ---
 
 <Base
   current="axr"
   title="AXR in plain English — proof of what your AI actually did"
   description="A plain-English guide to AXR for people who run AI but aren’t cryptographers. When your automation is questioned, an AXR receipt proves what it did — a tamper-evident record anyone can check, without taking your word for it. Break the seal live, then learn how to use it."
+  jsonLd={JSONLD}
 >
   <div class="shell page-hero">
     <p class="kicker">
