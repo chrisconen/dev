@@ -1,0 +1,694 @@
+---
+import Base from '../../layouts/Base.astro';
+import Entry from '../../components/Entry.astro';
+import { SITE } from '../../config';
+
+// Plain-English entry point to AXR for non-technical people who may need it but
+// don't know the term yet. Leads with the reader's present-day situation, then
+// an action-first demo, then relevance, then (only once they hold the solution)
+// the high-stakes framing. Honest throughout: a green seal proves the record is
+// unchanged since signing — not that the decision was right. Iterated from the
+// team review (Arcus copy, NEXUS UX, Meridian technical) — see PLAIN-BRANCH-PLAN.md.
+
+const PERSONAS = [
+  {
+    who: 'You run a webshop',
+    trigger:
+      '"I returned the parcel two weeks ago — your system says the refund went out. It didn’t."',
+  },
+  {
+    who: 'You handle the books',
+    trigger:
+      '"Your system dunned an invoice I already paid. Three times. Fix it or I call a lawyer."',
+  },
+  {
+    who: 'You screen applicants',
+    trigger:
+      '"Your AI rejected me because I’m 52." Now prove age was never an input.',
+  },
+  {
+    who: 'You answer to a regulator',
+    trigger:
+      '"Show that last year’s automated decision followed the policy in force at the time."',
+  },
+  {
+    who: 'You just use ChatGPT for everything',
+    trigger:
+      '"The contract says something else than we agreed." — "But the AI wrote it…" is not a defence.',
+  },
+];
+
+const STORIES = [
+  {
+    tag: 'Webshop',
+    title: 'The refund that never left',
+    body:
+      'Your automation says refund_processed: true. The customer never got the money; the bank says it never received a request. Whose fault is it? With a receipt for that step, you can show whether the bot actually issued the instruction — so you know in seconds where the chain broke, instead of eating a chargeback to keep the peace.',
+  },
+  {
+    tag: 'Finance / bookkeeping',
+    title: 'The invoice that was already paid',
+    body:
+      'An AI kept sending payment demands on a settled invoice, and the customer is threatening to sue. Your internal log says everything was correct — but you wrote that log. A signed receipt for each billing decision is something the other side (or a court) can check without phoning your developer.',
+  },
+  {
+    tag: 'Hiring / HR',
+    title: 'The rejected candidate',
+    body:
+      'A rejected applicant suspects the AI screened them out for a forbidden reason. You need to show what the decision actually saw. A signed decision record lets an authority check that the banned data was never an input — they don’t have to take your word for it. (And personal data can still be erased later without breaking the signature.)',
+  },
+  {
+    tag: 'Regulated',
+    title: 'The audit, a year later',
+    body:
+      'A supervisor asks you to prove a past automated decision followed the rules in force at the time. The model has changed since. An anchored, signed trail lets them verify the record was not edited after the fact — and you can hand them an auditor-ready report instead of raw files.',
+  },
+];
+
+const FAQ = [
+  {
+    q: '"My log already shows this. Why do I need more?"',
+    a: 'You wrote that log, on your own server. In a dispute it counts for about as much as your own word. Your logs are still your first line of defence — an AXR receipt just makes them independently checkable, by the customer, an auditor or a court, without your help.',
+  },
+  {
+    q: '"Isn’t this too complicated for us?"',
+    a: 'One click in your browser to check a receipt. Or one node at the end of your n8n workflow. No install, no server, no new account. It’s free and open source. If it doesn’t click in ten minutes, you’ve lost ten minutes.',
+  },
+  {
+    q: '"What if I set it up wrong?"',
+    a: 'The receipt step never blocks your workflow. If signing fails, your business process still completes — you get an honest "unsigned" gap in the record, never a forged one. There’s no silent failure to clean up after.',
+  },
+  {
+    q: '"AI is new — why worry about this now?"',
+    a: 'The EU AI Act’s high-risk rules include automatic logging, and the main regime applies from 2 August 2026. And the first dispute where you can’t prove what your AI did will cost more than setting this up ever will.',
+  },
+  {
+    q: '"Does it slow my system down?"',
+    a: 'No. Writing the receipt runs alongside your workflow; anchoring runs outside it. If the receipt step ever fails, your business process still completes — it just leaves a visible, honest gap.',
+  },
+];
+---
+
+<Base
+  current="axr"
+  title="AXR in plain English — proof of what your AI actually did"
+  description="A plain-English guide to AXR for people who run AI but aren’t cryptographers. When your automation is questioned, an AXR receipt proves what it did — a tamper-evident record anyone can check, without taking your word for it. Break the seal live, then learn how to use it."
+>
+  <div class="shell page-hero">
+    <p class="kicker">
+      AXR<span class="sep">/</span>Plain English<span class="sep">/</span>For people who run AI, not cryptography
+    </p>
+    <h1>Your AI runs your business. Can you <em>prove what it did?</em></h1>
+    <p class="lede">
+      Your AI books appointments, sets prices, sends messages, processes
+      refunds — real money, real decisions, real risk of a dispute. The day a
+      customer says it did something it shouldn’t have, your log says everything’s
+      fine. But <em>you</em> wrote that log. Who’s going to believe you?
+    </p>
+    <p class="lede measure-narrow">
+      AXR gives every decision a <strong>receipt</strong> — like the seal on a
+      parcel, but for your automation. It can’t be changed afterwards, and anyone
+      can check it without taking your word for it. Don’t take ours either:
+      break one yourself, just below.
+    </p>
+    <div class="chips">
+      <span class="chip">Free &amp; open source <strong>MIT</strong></span>
+      <span class="chip">Set up in <strong>~10 minutes</strong></span>
+      <span class="chip">In your browser <strong>nothing uploaded</strong></span>
+    </div>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="#demo">See it work &darr;</a>
+      <a class="btn btn-ghost" href="#how">How to use it</a>
+      <a class="btn btn-ghost" href="/axr/">The technical version</a>
+    </div>
+  </div>
+
+  <Entry label="See it" id="demo">
+    <h2>A receipt with a <em>seal.</em> Try to break it.</h2>
+    <p class="measure-narrow">
+      Below is a real, signed AXR receipt — the kind your automation would
+      produce for one booking. The seal is green because every character matches
+      the signature. <strong>Edit any field</strong> and watch the seal break,
+      live, on your machine. Nothing is uploaded.
+    </p>
+
+    <div class="seal-demo" id="seal-demo">
+      <div class="seal-card" id="seal-card">
+        <p class="seal-card-head">AI booking receipt</p>
+        <dl class="seal-fields">
+          <div class="srow"><dt>Customer</dt><dd><span class="edit" contenteditable="true" spellcheck="false" role="textbox" aria-label="Customer" data-path="io.input_summary.customer">A. Nagy</span><span class="chg" aria-hidden="true">changed</span></dd></div>
+          <div class="srow"><dt>Service</dt><dd><span class="edit" contenteditable="true" spellcheck="false" role="textbox" aria-label="Service" data-path="io.input_summary.service">Carpet clean</span><span class="chg" aria-hidden="true">changed</span></dd></div>
+          <div class="srow"><dt>Date</dt><dd><span class="edit" contenteditable="true" spellcheck="false" role="textbox" aria-label="Date" data-path="io.input_summary.date">2026-07-02</span><span class="chg" aria-hidden="true">changed</span></dd></div>
+          <div class="srow"><dt>Price (HUF)</dt><dd><span class="edit" contenteditable="true" spellcheck="false" role="textbox" aria-label="Price" data-path="io.input_summary.price">38000</span><span class="chg" aria-hidden="true">changed</span></dd></div>
+          <div class="srow"><dt>Decision</dt><dd><span class="edit" contenteditable="true" spellcheck="false" role="textbox" aria-label="Decision" data-path="io.decision">BOOKING_CONFIRMED</span><span class="chg" aria-hidden="true">changed</span></dd></div>
+        </dl>
+
+        <div class="seal-wrap">
+          <div class="seal intact" id="seal" aria-hidden="true">
+            <span class="seal-text" id="seal-text">VERIFIED<br />INTACT</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="seal-side">
+        <p class="seal-verdict"><span class="stamp verified" id="seal-stamp">Signature valid</span></p>
+        <p class="status-line" id="seal-status" role="status" aria-live="polite" aria-atomic="true">
+          Edit any field above. The seal breaks the instant one character no
+          longer matches what was signed.
+        </p>
+        <button class="btn btn-ghost" id="seal-reset" type="button">Reset the receipt</button>
+
+        <div class="what-happened">
+          <p class="wh-head">What just happened?</p>
+          <p>
+            Your browser recomputed the receipt’s Ed25519 signature over the
+            exact text shown — the same check a verifier runs. Match → green.
+            One byte off → red. No server, no upload.
+          </p>
+          <p class="small muted">
+            This proves the record wasn’t changed since signing. It does
+            <em>not</em> prove the decision was right — it makes a wrong one
+            <em>undeniable.</em>
+          </p>
+        </div>
+
+        <div class="btn-row mt-md">
+          <a class="btn btn-ghost" href="/axr/verify/">Try it with your own data &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </Entry>
+
+  <Entry label="What it actually is">
+    <h2>Like the seal on a parcel — but for your <em>automation.</em></h2>
+    <p class="measure-narrow">
+      When a courier hands over a parcel, they get a signature. You don’t write
+      it; you can’t change it later; and if there’s a dispute, you both look at
+      it. AXR is that, done automatically for your AI — and the stamp can’t be
+      swapped out afterwards.
+    </p>
+
+    <div class="contrast">
+      <article class="contrast-card story-side">
+        <span class="contrast-label">Editable story</span>
+        <h3>Your server log</h3>
+        <p>Written by you, on your server, at any time. In a dispute it’s your word about your own systems.</p>
+      </article>
+      <article class="contrast-card record-side">
+        <span class="contrast-label record">Verifiable record</span>
+        <h3>An AXR receipt</h3>
+        <p>Sealed when the decision happened, checkable offline by anyone — no access to you or your systems needed.</p>
+      </article>
+    </div>
+
+    <p class="pullquote">
+      A log you alone can rewrite is a story. A receipt anyone can check is a
+      <em>record.</em>
+    </p>
+    <p class="measure-narrow small muted">
+      Under the hood it’s standard, proven cryptography — a digital signature and
+      a tamper-evident chain, nothing experimental. You never have to see any of
+      it to use it. (If you want to check, the code is open source.)
+    </p>
+  </Entry>
+
+  <Entry label="Is this you?" id="you">
+    <h2>You might need this and not <em>know it yet.</em></h2>
+    <p class="measure-narrow">
+      Nobody searches for "tamper-evident audit trail." They hit a moment like
+      one of these — and suddenly the question is <em>can you prove it?</em>
+    </p>
+    <div class="persona-grid">
+      {PERSONAS.map((p) => (
+        <article class="persona">
+          <span class="who">{p.who}</span>
+          <p class="trigger">{p.trigger}</p>
+        </article>
+      ))}
+    </div>
+  </Entry>
+
+  <Entry label="Four stories" id="stories">
+    <h2>What it looks like when it <em>saves you.</em></h2>
+    <div class="story-grid">
+      {STORIES.map((s) => (
+        <article class="story">
+          <span class="tag">{s.tag}</span>
+          <h3>{s.title}</h3>
+          <p>{s.body}</p>
+        </article>
+      ))}
+    </div>
+    <p class="footnote">
+      Not a thought experiment: AXR runs in production today on a live booking
+      workflow — 200+ signed receipts, anchored hourly since June 2026.
+      <a href="/axr/">See the technical account</a>.
+    </p>
+  </Entry>
+
+  <Entry label="The moment it matters">
+    <h2>Now picture yourself in front of a <em>judge.</em></h2>
+    <p class="measure-narrow">
+      You hold up a screenshot of your log. The judge asks: <em>"You wrote this
+      yourself, correct?"</em> With a receipt, the answer changes — because the
+      other side can check it without trusting you. These moments are already
+      arriving:
+    </p>
+    <ul class="now-list">
+      <li>
+        <span class="tag">Dispute</span>
+        <span>A customer’s screenshot against your log — and no neutral record to settle it.</span>
+      </li>
+      <li>
+        <span class="tag">Audit</span>
+        <span>"Prove the automated decision followed the rules in force at the time."</span>
+      </li>
+      <li>
+        <span class="tag">Law</span>
+        <span>The EU AI Act’s high-risk rules include automatic, retainable logging, with the main regime applying from 2 August 2026 — and it has to be auditable.</span>
+      </li>
+    </ul>
+  </Entry>
+
+  <Entry label="How to use it" id="how">
+    <h2>Three steps. No <em>cryptography degree.</em></h2>
+    <ol class="steps">
+      <li>
+        <span>
+          <strong>Record.</strong> Every decision your automation makes gets a
+          receipt — what went in, what it decided, when, and which version of the
+          logic ran.
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>Seal.</strong> The receipt is signed and chained to the one
+          before it. Change a single character and the seal breaks; remove one
+          and the chain breaks.
+        </span>
+      </li>
+      <li>
+        <span>
+          <strong>Check.</strong> Anyone can verify a receipt — in a browser,
+          with nothing uploaded — without trusting you or your systems.
+        </span>
+      </li>
+    </ol>
+
+    <div class="path-grid">
+      <article class="path">
+        <h3>If you use n8n</h3>
+        <p>
+          Drop one Code node at the end of your workflow. That’s it — about ten
+          minutes, no server, no dependencies. From then on every run leaves a
+          signed receipt.
+        </p>
+        <a class="btn btn-ghost" href="/axr/n8n/">The n8n walkthrough</a>
+      </article>
+      <article class="path">
+        <h3>If you don’t (yet)</h3>
+        <p>
+          Start by checking a receipt yourself — one click, nothing uploaded —
+          so you can see exactly what the green seal means before you produce one.
+        </p>
+        <a class="btn btn-ghost" href="/axr/verify/">Check a receipt in your browser</a>
+      </article>
+    </div>
+  </Entry>
+
+  <Entry label="Straight answers" id="faq">
+    <h2>The honest <em>small print.</em></h2>
+    <dl class="def-rows">
+      {FAQ.map((f) => (
+        <div class="def-row">
+          <dt>{f.q}</dt>
+          <dd>{f.a}</dd>
+        </div>
+      ))}
+    </dl>
+
+    <h3 class="mt-lg">What it does <em>not</em> claim</h3>
+    <ul class="now-list">
+      <li>
+        <span class="tag">Honest</span>
+        <span>A green seal proves the record hasn’t changed since it was signed. It does <em>not</em> prove the decision was correct, or that the AI told the truth. AXR makes mistakes <em>visible and undeniable</em> — it doesn’t prevent them.</span>
+      </li>
+      <li>
+        <span class="tag">Honest</span>
+        <span>"Verified" means the record checks out locally. It is not, by itself, a certificate of legal compliance.</span>
+      </li>
+      <li>
+        <span class="tag">Open</span>
+        <span>It’s open source (MIT). The point of being open is that you don’t have to trust us — anyone can read exactly how it works.</span>
+      </li>
+    </ul>
+  </Entry>
+
+  <Entry label="Try it">
+    <h2>Don’t take our word for <em>any of this.</em></h2>
+    <p class="measure-narrow">
+      That’s the whole idea. Check a real receipt in your browser right now —
+      nothing uploaded, nothing installed. Green seal, genuine record; red seal,
+      it was changed. That’s the whole test.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="/axr/verify/">Check a real receipt</a>
+      <a class="btn btn-ghost" href="/axr/n8n/">Set it up in n8n</a>
+      <a class="btn btn-ghost" href={`mailto:${SITE.email}`}>Ask a question</a>
+    </div>
+    <p class="small muted">
+      Prefer the deep end? The <a href="/axr/">full technical account</a> covers
+      the threat model, the two independent verifiers, and the limits.
+    </p>
+  </Entry>
+</Base>
+
+<style>
+  .persona .trigger {
+    font-family: var(--mono, monospace);
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    margin: 0.4rem 0 0;
+    line-height: 1.5;
+  }
+
+  /* Seal & Tamper demo */
+  .seal-demo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+    gap: 1.5rem;
+    margin-top: 1.25rem;
+    align-items: start;
+  }
+  @media (max-width: 44rem) {
+    .seal-demo { grid-template-columns: 1fr; }
+  }
+  .seal-card {
+    position: relative;
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .seal-card-head {
+    font-family: var(--mono, monospace);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 0.75rem;
+  }
+  .seal-fields { margin: 0; }
+  .seal-fields .srow {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 0.3rem 1rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+  @media (max-width: 30rem) {
+    .seal-fields .srow { grid-template-columns: 1fr; }
+  }
+  .seal-fields dt {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+  .seal-fields dd { margin: 0; display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+  .edit {
+    font-family: var(--mono, monospace);
+    font-size: 0.9rem;
+    color: var(--ink);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    background: var(--paper);
+    box-shadow: inset 0 -1px 0 var(--rule);
+    cursor: text;
+    white-space: pre-wrap;
+    word-break: break-word;
+    transition: background-color 140ms ease, box-shadow 140ms ease;
+  }
+  .edit:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .edit.changed {
+    background: var(--stamp-wash);
+    box-shadow: inset 0 -2px 0 var(--stamp);
+  }
+  .chg {
+    font-family: var(--mono, monospace);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--stamp);
+    opacity: 0;
+    transition: opacity 140ms ease;
+  }
+  .chg.show { opacity: 1; }
+
+  .seal-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+  .seal {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    border: 3px solid var(--accent);
+    color: var(--accent-deep);
+    background:
+      radial-gradient(circle at 50% 35%, var(--accent-wash), transparent 70%),
+      repeating-radial-gradient(circle, transparent 0 6px, rgba(30,92,64,0.06) 6px 7px);
+    transition: border-color 200ms ease, color 200ms ease, transform 120ms ease;
+  }
+  .seal-text {
+    font-family: var(--mono, monospace);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.25;
+  }
+  /* the crack: a jagged line revealed only when broken */
+  .seal::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      linear-gradient(102deg, transparent 46%, var(--stamp) 47% 49%, transparent 50%),
+      linear-gradient(102deg, transparent 49%, var(--stamp) 50% 52%, transparent 53%);
+    opacity: 0;
+    transition: opacity 180ms ease;
+    pointer-events: none;
+  }
+  .seal.broken {
+    border-color: var(--stamp);
+    color: var(--stamp);
+    background:
+      radial-gradient(circle at 50% 35%, var(--stamp-wash), transparent 70%),
+      repeating-radial-gradient(circle, transparent 0 6px, rgba(168,57,43,0.07) 6px 7px);
+  }
+  .seal.broken::after { opacity: 1; }
+  .seal.shake { animation: seal-shake 220ms ease; }
+  @keyframes seal-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px) rotate(-1deg); }
+    75% { transform: translateX(3px) rotate(1deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .seal.shake { animation: none; }
+    .seal, .edit, .chg { transition: none; }
+  }
+
+  .seal-side { padding-top: 0.25rem; }
+  .seal-verdict { margin: 0 0 0.6rem; }
+  #seal-reset { margin-top: 0.2rem; }
+  .what-happened {
+    margin-top: 1.1rem;
+    padding: 0.85rem 1rem;
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+  .what-happened p { margin: 0 0 0.5rem; }
+  .what-happened p:last-child { margin-bottom: 0; }
+  .wh-head {
+    font-family: var(--mono, monospace);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .mt-md { margin-top: 1rem; }
+
+  /* Log vs Receipt contrast */
+  .contrast {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+  .contrast-card {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1rem 1.1rem 1.15rem;
+    background: var(--paper-raised);
+  }
+  .contrast-card.story-side { border-style: dashed; }
+  .contrast-card.record-side { border-color: var(--accent); }
+  .contrast-card h3 { margin: 0.4rem 0 0.4rem; }
+  .contrast-card p { margin: 0; }
+  .contrast-label {
+    font-family: var(--mono, monospace);
+    font-size: 0.66rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .contrast-label.record { color: var(--accent-deep); }
+
+  .story-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+  .story {
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.1rem 1.2rem 1.25rem;
+  }
+  .story h3 { margin: 0.5rem 0 0.5rem; }
+  .story p { margin: 0; }
+
+  .path-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .path {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.1rem 1.2rem 1.25rem;
+  }
+  .path h3 { margin: 0 0 0.5rem; }
+  .path p { margin: 0 0 0.9rem; }
+</style>
+
+<script>
+  import { SAMPLE_RECEIPT, SAMPLE_PUBKEY_PEM } from '../../lib/axr-demo.ts';
+  import { signablePart, verifySig, pemToRaw } from '../../lib/axr-verify.ts';
+
+  const $ = (id: string) => document.getElementById(id) as HTMLElement;
+  const RAW = pemToRaw(SAMPLE_PUBKEY_PEM);
+
+  // Working copy we mutate as the visitor edits. The pristine, genuinely-signed
+  // receipt stays in SAMPLE_RECEIPT.
+  let work: any = structuredClone(SAMPLE_RECEIPT);
+
+  const editEls = Array.from(document.querySelectorAll<HTMLElement>('#seal-demo .edit'));
+
+  // Normalise so cosmetic differences (stray newline from contenteditable, an
+  // injected zero-width char, NFC variants) don't cause a confusing false break.
+  const norm = (s: string | null) =>
+    (s ?? '').normalize('NFC').replace(/[​-‍﻿]/g, '').replace(/\s+/g, ' ').trim();
+
+  function setByPath(obj: any, path: string, value: string) {
+    const keys = path.split('.');
+    let o = obj;
+    for (let i = 0; i < keys.length - 1; i++) o = o[keys[i]];
+    o[keys[keys.length - 1]] = value;
+  }
+  function getByPath(obj: any, path: string) {
+    return path.split('.').reduce((o, k) => o[k], obj);
+  }
+
+  function rebuildFromDom() {
+    for (const el of editEls) {
+      setByPath(work, el.dataset.path as string, norm(el.textContent));
+    }
+  }
+
+  function markChangedFields() {
+    let any = false;
+    for (const el of editEls) {
+      const original = String(getByPath(SAMPLE_RECEIPT, el.dataset.path as string));
+      const changed = norm(el.textContent) !== norm(original);
+      el.classList.toggle('changed', changed);
+      const tag = el.nextElementSibling;
+      if (tag) tag.classList.toggle('show', changed);
+      if (changed) any = true;
+    }
+    return any;
+  }
+
+  function render(ok: boolean, edited: boolean) {
+    const seal = $('seal');
+    const text = $('seal-text');
+    const stamp = $('seal-stamp');
+    const status = $('seal-status');
+    if (ok) {
+      seal.className = 'seal intact';
+      text.innerHTML = 'VERIFIED<br>INTACT';
+      stamp.className = 'stamp verified';
+      stamp.textContent = 'Signature valid';
+      status.className = 'status-line';
+      status.textContent = edited
+        ? 'Back to the original — every character matches what was signed, so the seal re-forms.'
+        : 'Edit any field above. The seal breaks the instant one character no longer matches what was signed.';
+    } else {
+      seal.className = 'seal broken shake';
+      text.innerHTML = 'TAMPERED<br>INVALID';
+      stamp.className = 'stamp failed';
+      stamp.textContent = 'Signature broken';
+      status.className = 'status-line bad';
+      status.textContent =
+        'The record no longer matches its signature. This is exactly the moment a verifier rejects an altered receipt — the change cannot hide.';
+      window.setTimeout(() => seal.classList.remove('shake'), 240);
+    }
+  }
+
+  function check() {
+    rebuildFromDom();
+    const edited = markChangedFields();
+    const ok = verifySig(signablePart(work), work.signature, RAW);
+    render(ok, edited);
+  }
+
+  for (const el of editEls) {
+    el.addEventListener('input', check);
+    // single-line: Enter shouldn't insert a newline
+    el.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Enter') e.preventDefault();
+    });
+    // force plain text on paste so markup/newlines can't sneak in
+    el.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const t = (e as ClipboardEvent).clipboardData?.getData('text/plain') ?? '';
+      el.textContent = norm(t);
+      check();
+    });
+  }
+
+  $('seal-reset').addEventListener('click', () => {
+    for (const el of editEls) {
+      el.textContent = String(getByPath(SAMPLE_RECEIPT, el.dataset.path as string));
+      el.classList.remove('changed');
+      const tag = el.nextElementSibling;
+      if (tag) tag.classList.remove('show');
+    }
+    work = structuredClone(SAMPLE_RECEIPT);
+    render(true, false);
+  });
+
+  // initial: verify the pristine receipt so the green seal is earned, not asserted
+  check();
+</script>
