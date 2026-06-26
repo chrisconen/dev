@@ -20,3 +20,15 @@ const builtOn = new Date().toISOString().slice(0, 10);
     <a class="verify-link" href="/receipt/">Verify this site</a>
   </div>
 </div>
+
+<style>
+  /* The tape "prints out" on load, like a receipt rolling off a dot-matrix —
+     a one-time nudge toward the verify link. Disabled under reduced-motion by
+     the global rule in global.css. */
+  .tape-wrap { animation: print-out 620ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  @keyframes print-out {
+    0% { transform: translateY(-10px); opacity: 0; }
+    80% { transform: translateY(1px); }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+</style>

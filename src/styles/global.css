@@ -59,6 +59,24 @@ html {
 
 body { margin: 0; min-height: 100vh; }
 
+/* Faint "official ledger" watermark: a barely-there diagonal hairline texture
+   behind all content, deepening the physical-document feel. Kept near-invisible
+   so it never competes with the text. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0,
+    transparent 22px,
+    rgba(26, 30, 27, 0.022) 22px,
+    rgba(26, 30, 27, 0.022) 23px
+  );
+}
+
 ::selection { background: var(--accent); color: var(--paper-raised); }
 
 a { color: inherit; text-decoration-color: var(--rail); text-underline-offset: 3px; }
