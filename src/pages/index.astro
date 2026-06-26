@@ -61,10 +61,23 @@ const JSONLD = [
         direction the EU AI Act's record-keeping rules and NIST's new agent
         standards work are already pointing.
       </p>
-      <div class="btn-row">
-        <a class="btn btn-primary" href="/receipt/">Verify this site</a>
-        <a class="btn btn-ghost" href="/axr/">Read about AXR</a>
-      </div>
+      <nav class="hero-paths" aria-label="Choose your path">
+        <a class="hero-path" href="/#evidence">
+          <span class="hp-who">Hiring · security / GRC / AI assurance</span>
+          <span class="hp-go">See the evidence &rarr;</span>
+        </a>
+        <a class="hero-path" href="/axr/start/">
+          <span class="hp-who">You run AI in your business</span>
+          <span class="hp-go">AXR in plain English &rarr;</span>
+        </a>
+        <a class="hero-path" href="/axr/">
+          <span class="hp-who">Builder or engineer</span>
+          <span class="hp-go">The AXR protocol &rarr;</span>
+        </a>
+      </nav>
+      <p class="hero-verify small muted">
+        This page signs itself. <a href="/receipt/">Verify this site &rarr;</a>
+      </p>
       <div class="chips">
         <span class="chip">Google Cybersecurity Certificate <strong>in progress</strong></span>
         <span class="chip">Open to sponsored roles <strong>security / GRC / AI assurance, AU</strong></span>
@@ -191,3 +204,42 @@ const JSONLD = [
     </p>
   </Entry>
 </Base>
+
+<style>
+  /* Hero "three doors": let each of the three audiences (hiring, non-technical
+     AXR, engineer) self-select above the fold, without diluting the "Proof over
+     promises" career identity above. */
+  .hero-paths {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin: 1.5rem 0 0.9rem;
+    max-width: 34rem;
+  }
+  .hero-path {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.7rem 0.95rem;
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: border-color 120ms ease, background-color 120ms ease;
+  }
+  .hero-path:hover { border-color: var(--accent); background: var(--accent-wash); }
+  .hp-who {
+    font-family: var(--mono, monospace);
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .hp-go { font-weight: 600; color: var(--accent-deep); white-space: nowrap; }
+  .hero-verify { margin: 0.2rem 0 0; }
+  @media (max-width: 30rem) {
+    .hero-path { flex-direction: column; gap: 0.25rem; }
+    .hp-go { white-space: normal; }
+  }
+</style>
