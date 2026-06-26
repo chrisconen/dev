@@ -1,14 +1,18 @@
 ---
-import Base from '../layouts/Base.astro';
-import AxrPage from '../components/AxrPage.astro';
-import { AXR, LOCALES } from '../i18n/axr';
-import { SITE } from '../config';
+import Base from '../../../layouts/Base.astro';
+import AxrPage from '../../../components/AxrPage.astro';
+import { AXR, LOCALES } from '../../../i18n/axr';
+import { SITE } from '../../../config';
 
-// English (canonical) /axr. Body lives in AxrPage; content in the shared i18n
-// dictionary. Localized routes: /<lang>/axr/ via src/pages/[lang]/axr/index.astro.
-const lang = 'en';
+// Localized /<lang>/axr/ routes. English canonical lives at /axr/.
+export function getStaticPaths() {
+  return LOCALES.filter((l) => l !== 'en').map((l) => ({ params: { lang: l } }));
+}
+
+const { lang } = Astro.params as { lang: string };
 const t = AXR[lang];
 const enPath = '/axr/';
+const selfUrl = `${SITE.url}/${lang}${enPath}`;
 
 const alternates = [
   { hreflang: 'en', href: SITE.url + enPath },
@@ -23,7 +27,7 @@ const JSONLD = [
     name: 'AXR — Agent eXecution Receipts',
     alternateName: 'AXR',
     description: t.meta.description,
-    url: SITE.url + enPath,
+    url: selfUrl,
     inLanguage: lang,
     codeRepository: SITE.axrRepo,
     programmingLanguage: ['JavaScript', 'Python'],

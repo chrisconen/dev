@@ -1,0 +1,243 @@
+---
+import Entry from './Entry.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { SITE } from '../config';
+
+// The /axr body, rendered from a per-locale TEXT object `t` (src/i18n/axr.ts).
+// Non-translatable structure lives here and is zipped with the text arrays by
+// index: stat numbers, maturity versions/states, code blocks, pipeline flags,
+// findings flags, and cross-page hrefs. Used by the English page (src/pages/
+// axr.astro) and the localized routes (src/pages/[lang]/axr/index.astro).
+interface Props {
+  t: any;
+  lang: string;
+  locales: string[];
+}
+const { t, lang, locales } = Astro.props;
+
+const STAT_NUMS = ['9', '42', '15 / 15', '2', '15', '0'];
+const MAT = [
+  { ver: '0.2.1', state: 'stable' },
+  { ver: '0.3', state: 'deployed' },
+  { ver: '0.4', state: 'stable' },
+  { ver: '0.5', state: 'stable' },
+  { ver: '0.6', state: 'stable' },
+  { ver: '0.6', state: 'stable' },
+  { ver: '0.7 – 1.5', state: 'stable' },
+  { ver: '0.8 – 1.4', state: 'stable' },
+  { ver: '1.2 – 1.3', state: 'stable' },
+];
+const PIPE_EXT = [false, false, false, true, false, true];
+const FIND_INWARD = [false, false, false, false, true];
+
+const startHref = lang === 'en' ? '/axr/start/' : `/${lang}/axr/start/`;
+
+const SAMPLE_CODE = `{
+  "axr_version": "0.2.1",
+  "agent_id":    "axr:agent:eco-clean:v5.1",
+  "step": { "name": "Create Booking", "kind": "side_effecting" },
+  "io": {
+    "input_hash":  "sha256:9f2c…b41a",
+    "output_hash": "sha256:1d7e…0c88",
+    "decision":    "BOOKING_CONFIRMED"
+  },
+  "logic_version": "5.1",
+  "logic_hash":    "sha256:a3b9…77e2",
+  "previous_receipt_hash": "sha256:5c10…d9f3",
+  "timestamp":  "2026-06-13T09:14:22Z",
+  "signature":  "ed25519:K8f…/Qb2Aw=="
+}`;
+const VERIFY_CODE = `# offline, zero dependencies, exit 0 = valid
+node axr-verify.js receipts.jsonl public-key.pem sth.jsonl anchors.jsonl
+
+# the same log, checked by a fully independent Python implementation
+python3 axr_verify.py receipts.jsonl public-key.pem sth.jsonl anchors.jsonl`;
+---
+
+<div class="shell page-hero">
+  <LanguageSwitcher lang={lang} enPath="/axr/" locales={locales} />
+  <p class="kicker">
+    AXR<span class="sep">/</span>{t.hero.kickerMid}<span class="sep">/</span>{t.hero.kickerEnd}
+  </p>
+  <h1 set:html={t.hero.h1Html} />
+  <p class="lede" set:html={t.hero.ledeHtml} />
+  <div class="btn-row">
+    <a class="btn btn-primary" href={SITE.axrRepo} rel="noopener">{t.hero.btns[0]}</a>
+    <a class="btn btn-ghost" href="/axr/verify/">{t.hero.btns[1]}</a>
+    <a class="btn btn-ghost" href="/axr/n8n/">{t.hero.btns[2]}</a>
+    <a class="btn btn-ghost" href={startHref}>{t.hero.btns[3]}</a>
+  </div>
+  <div class="chips">
+    {t.hero.chips.map((c: any) => (
+      <span class="chip">{c.label} <strong>{c.strong}</strong></span>
+    ))}
+  </div>
+
+  <div class="stat-band">
+    {t.stats.map((lbl: string, i: number) => (
+      <div class="stat">
+        <div class="num">{STAT_NUMS[i]}</div>
+        <div class="lbl">{lbl}</div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<Entry label={t.problem.label}>
+  <h2 set:html={t.problem.h2Html} />
+  <p set:html={t.problem.p1Html} />
+  <p set:html={t.problem.p2Html} />
+  <p set:html={t.problem.p3Html} />
+  <p class="pullquote" set:html={t.problem.pullquoteHtml} />
+</Entry>
+
+<Entry label={t.whatIs.label}>
+  <h2 set:html={t.whatIs.h2Html} />
+  <p set:html={t.whatIs.p1Html} />
+  <p set:html={t.whatIs.p2Html} />
+  <p set:html={t.whatIs.p3Html} />
+
+  <div class="receipt-sample">
+    <p class="caption">{t.whatIs.sampleCaption}</p>
+    <pre class="code-block">{SAMPLE_CODE}</pre>
+    <div class="verdict">
+      <span class="stamp verified">{t.whatIs.verdictStamp}</span>
+      <span class="note" set:html={t.whatIs.verdictNoteHtml} />
+    </div>
+  </div>
+</Entry>
+
+<Entry label={t.whoFor.label}>
+  <h2 set:html={t.whoFor.h2Html} />
+  <p>{t.whoFor.introP}</p>
+  <div class="persona-grid">
+    {t.whoFor.personas.map((p: any) => (
+      <article class="persona">
+        <span class="who">{p.who}</span>
+        <h3>{p.title}</h3>
+        <p>{p.body}</p>
+        <p class="gain"><strong>{t.whoFor.gainLabel}</strong> {p.gain}</p>
+      </article>
+    ))}
+  </div>
+</Entry>
+
+<Entry label={t.how.label}>
+  <h2 set:html={t.how.h2Html} />
+  <p set:html={t.how.introHtml} />
+
+  <div class="pipeline" role="img" aria-label="AXR lifecycle">
+    {t.how.pipeline.map((label: string, i: number) => (
+      <Fragment>
+        {i > 0 && <span class="arrow">&rarr;</span>}
+        <span class={PIPE_EXT[i] ? 'node external' : 'node'}>{label}</span>
+      </Fragment>
+    ))}
+  </div>
+
+  <ol class="steps">
+    {t.how.steps.map((s: any) => (
+      <li><span><strong>{s.strong}</strong> {s.text}</span></li>
+    ))}
+  </ol>
+
+  <p class="mt-lg" set:html={t.how.verifyHeadingHtml} />
+  <pre class="code-block">{VERIFY_CODE}</pre>
+  <p set:html={t.how.afterCodeHtml} />
+</Entry>
+
+<Entry label={t.design.label}>
+  <h2 set:html={t.design.h2Html} />
+  <p>{t.design.introP}</p>
+  <dl class="def-rows">
+    {t.design.rows.map((r: any) => (
+      <div class="def-row"><dt>{r.dt}</dt><dd>{r.dd}</dd></div>
+    ))}
+  </dl>
+</Entry>
+
+<Entry label={t.maturity.label}>
+  <h2 set:html={t.maturity.h2Html} />
+  <p>{t.maturity.introP}</p>
+  <div class="table-scroll">
+    <table class="ledger-table">
+      <thead>
+        <tr>
+          <th scope="col">{t.maturity.th[0]}</th>
+          <th scope="col">{t.maturity.th[1]}</th>
+          <th scope="col">{t.maturity.th[2]}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {t.maturity.layers.map((m: any, i: number) => (
+          <tr>
+            <td>{m.layer}<br /><span class="small muted">{m.note}</span></td>
+            <td class="ver">{MAT[i].ver}</td>
+            <td><span class={`maturity-tag ${MAT[i].state}`}>{m.label}</span></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Entry>
+
+<Entry label={t.proofProd.label}>
+  <h2 set:html={t.proofProd.h2Html} />
+  <p set:html={t.proofProd.p1Html} />
+  <p set:html={t.proofProd.p2Html} />
+  <div class="findings">
+    {t.proofProd.findings.map((f: any, i: number) => (
+      <div class={FIND_INWARD[i] ? 'finding inward' : 'finding'}>
+        <span class="tag">{f.tag}</span>
+        <p>{f.text}</p>
+      </div>
+    ))}
+  </div>
+</Entry>
+
+<Entry label={t.adversarial.label}>
+  <h2 set:html={t.adversarial.h2Html} />
+  <p>{t.adversarial.introP}</p>
+  <dl class="def-rows">
+    {t.adversarial.rows.map((r: any) => (
+      <div class="def-row"><dt>{r.dt}</dt><dd>{r.dd}</dd></div>
+    ))}
+  </dl>
+</Entry>
+
+<Entry label={t.standards.label}>
+  <h2 set:html={t.standards.h2Html} />
+  <p set:html={t.standards.p1Html} />
+  <p set:html={t.standards.p2Html} />
+  <p class="small muted" set:html={t.standards.smallHtml} />
+</Entry>
+
+<Entry label={t.dogfooding.label}>
+  <h2 set:html={t.dogfooding.h2Html} />
+  <p set:html={t.dogfooding.p1Html} />
+  <p class="small muted" set:html={t.dogfooding.smallHtml} />
+  <div class="btn-row">
+    <a class="btn btn-primary" href="/axr/devlog/">{t.dogfooding.cta}</a>
+  </div>
+</Entry>
+
+<Entry label={t.statusLimits.label}>
+  <h2 set:html={t.statusLimits.h2Html} />
+  <p set:html={t.statusLimits.introHtml} />
+  <ul class="now-list">
+    {t.statusLimits.items.map((i: any) => (
+      <li><span class="tag">{i.tag}</span><span>{i.text}</span></li>
+    ))}
+  </ul>
+  <div class="btn-row">
+    <a class="btn btn-primary" href={SITE.axrRepo} rel="noopener">{t.statusLimits.cta}</a>
+  </div>
+</Entry>
+
+<Entry label={t.proof.label}>
+  <h2 set:html={t.proof.h2Html} />
+  <p set:html={t.proof.pHtml} />
+  <div class="btn-row">
+    <a class="btn btn-primary" href="/receipt/">{t.proof.cta}</a>
+  </div>
+</Entry>
