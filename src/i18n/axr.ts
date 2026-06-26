@@ -4,7 +4,7 @@
 // component and is zipped with these arrays by index. EN is canonical; HU/DE/ES
 // are translations (DE/ES added next). Fields ending "Html" allow inline markup.
 
-export const LOCALES = ['en', 'hu'];
+export const LOCALES = ['en', 'hu', 'de', 'es'];
 
 export const AXR: Record<string, any> = {
   en: {
@@ -362,6 +362,364 @@ export const AXR: Record<string, any> = {
       pHtml:
         'A chrisconen.dev minden deployja közzétesz egy manifestet az oldal minden fájljáról, SHA-256-tal hash-elve és Ed25519-cel aláírva. A böngésződ ellenőrizheti az aláírást, és bármely fájlt újrahash-elhet a manifest ellenében. Ez az AXR alapötlete egy build-pipeline-ra alkalmazva ágens helyett — ugyanaz a bizonylat, más szereplő.',
       cta: 'Ellenőrizd ezt az oldalt',
+    },
+  },
+
+  de: {
+    meta: {
+      title: 'Manipulationssicherer Audit-Trail für KI-Agenten und n8n — AXR',
+      description:
+        'AXR ist eine quelloffene Verantwortungsschicht für KI-Agenten: Ed25519-signierte, manipulationssichere Ausführungsbelege. Produktiv im Einsatz mit stündlicher Merkle-Verankerung, zwei unabhängigen Verifizierern und einer EU-AI-Act-/DSGVO-Kontrollzuordnung.',
+    },
+    hero: {
+      kickerMid: 'Agent eXecution Receipts',
+      kickerEnd: 'Quelloffen · MIT',
+      h1Html: 'Lassen Sie den Agenten seine <em>Belege zeigen.</em>',
+      ledeHtml:
+        'AXR ist eine quelloffene Verantwortungsschicht für KI-Agenten und automatisierte Workflows: kryptografisch signierte, manipulationssichere Ausführungsbelege, die „Vertrau mir" in „Prüf es nach" verwandeln. Heute produktiv im Einsatz, stündlich verankert, und von jedem prüfbar, der den öffentlichen Schlüssel hat.',
+      btns: ['AXR auf GitHub', 'Ein Protokoll selbst prüfen', 'Sie nutzen n8n?', 'Keine Technik? Hier starten'],
+      chips: [
+        { label: 'Protokoll-Vertrag', strong: '1.5.3 (eingefroren 1.x)' },
+        { label: 'Live-Profil', strong: '0.2.1 Kern · stündliche Verankerung' },
+        { label: 'Abhängigkeiten', strong: 'Null' },
+      ],
+    },
+    stats: [
+      'Reifegrad-Schichten, ein Repo — vom Kern über den Witness-Lebenszyklus bis zum SDK',
+      'Grüne Test-Suites, inkl. JS↔Python-Cross-Impl-Parität (Kern + Governance)',
+      'Vom Verifizierer abgewiesene Manipulationsmutationen',
+      'Unabhängige Verifizierer (Node + reines Python) stimmen Byte für Byte überein',
+      'Vor dem Release durch Multi-Agent-Review gefundene Sicherheitsbefunde',
+      'Laufzeitabhängigkeiten — nur Standard-Kryptografie',
+    ],
+    problem: {
+      label: 'Das Problem',
+      h2Html: 'Protokolle lassen sich ändern. Das war früher <em>in Ordnung.</em>',
+      p1Html:
+        'KI-Agenten treffen heute folgenreiche Aktionen: Sie rufen Tools auf, ändern Datensätze, bewegen Geld, senden Nachrichten im Namen anderer. Der Audit-Trail dafür ist meist eine Protokolldatei, die demjenigen gehört, der den Agenten betrieb — veränderbar, löschbar und außerhalb der eigenen Infrastruktur des Betreibers von niemandem prüfbar.',
+      p2Html:
+        'Im Nachhinein gibt es keine verlässliche Möglichkeit, die wichtigen Fragen zu beantworten: <em>welcher</em> Agent tat dies, was erhielt er als Eingabe, was entschied er und auf welcher Grundlage, wurde der Datensatz nachträglich verändert, und warum wurde einem Kunden „nein" gesagt?',
+      p3Html:
+        'Die Regulierung hat es bemerkt. Der EU AI Act macht automatische Ereignisprotokollierung zur Designanforderung für Hochrisiko-KI-Systeme (Artikel 12), verpflichtet Betreiber zur Aufbewahrung (Artikel 26), und seine Hochrisiko-Pflichten gelten ab dem 2. August 2026. In den USA hat das NIST Center for AI Standards and Innovation im Februar 2026 die AI Agent Standards Initiative gestartet, mit Agentensicherheit und -identität als Kernsäulen.',
+      pullquoteHtml: 'Ein Protokoll, das Sie umschreiben können, ist eine Erzählung. Ein Beleg, den Sie prüfen können, ist ein <em>Nachweis.</em>',
+    },
+    whatIs: {
+      label: 'Was es ist',
+      h2Html: 'Ein Beleg pro folgenreicher <em>Aktion.</em>',
+      p1Html:
+        'Für jede Aktion, die zählt, gibt AXR einen Beleg aus: die durchgeführte Aktion, Hashes ihrer Ein- und Ausgaben, einen Zeitstempel, die Identität des Agenten und eine Ed25519-Signatur über den kanonisierten Datensatz. Es beweist genau eine Sache — dass ein bestimmter Workflow bei einer bestimmten Eingabe eine bestimmte Entscheidung traf und dass der Datensatz sich seither nicht geändert hat.',
+      p2Html:
+        'Das bringt zwei verschiedene Dinge. <strong>Manipulationssicherheit</strong> ist die kryptografische Grundlinie: die Signatur beweist, dass der Datensatz unverändert ist. <strong>Verhaltens-Lesbarkeit</strong> ist das, was sich täglich auszahlt — der Beleg macht das tatsächliche Verhalten des Workflows lesbar genug, dass ein interner Widerspruch auch dann auffällt, wenn nichts manipuliert wurde und jede Signatur gültig ist.',
+      p3Html:
+        'Es ist bewusst <em>kein</em> Workflow-Builder, kein Agenten-Framework und keine Observability-Plattform. Es ist die dünne Verantwortungsschicht, die unter diesen Werkzeugen liegt. Zwei Belegtypen tragen die Last: ein <strong>Schritt-Beleg</strong> erfasst einen einzelnen entscheidungsrelevanten Node, und ein <strong>Workflow-Beleg</strong> bindet die Schritte eines Laufs zu einem signierten, verketteten Datensatz. Schritte verketten innerhalb eines Laufs; Läufe verketten über die Historie eines Agenten — das Löschen eines Belegs bricht die Kette, das Ändern bricht die Signatur.',
+      sampleCaption: 'Beispielhafter Schritt-Beleg — die Form einer signierten Aktion',
+      verdictStamp: 'Signatur gültig',
+      verdictNoteHtml:
+        'Ändern Sie ein Byte in einem beliebigen Feld, und die Signatur verifiziert nicht mehr. Das ist das ganze Prinzip — und es genügt.',
+    },
+    whoFor: {
+      label: 'Für wen es ist',
+      h2Html: 'Gebaut für die Menschen, die <em>dafür geradestehen.</em>',
+      introP: 'AXR zahlt sich überall dort aus, wo eine automatisierte Entscheidung später infrage gestellt werden kann und jemand hinter der Antwort stehen muss.',
+      gainLabel: 'Was Sie bekommen:',
+      personas: [
+        { who: 'Teams, die KI-Agenten betreiben', title: 'Sie liefern Agenten, die echte Aktionen ausführen', body: 'Sie buchen, bepreisen, schreiben Nachrichten, bewegen Geld oder ändern Datensätze im Namen anderer. Heute ist die einzige Aufzeichnung des Geschehenen eine Protokolldatei, die Ihnen gehört und die Sie ändern könnten.', gain: 'Ein signierter Beleg pro folgenreicher Aktion — Nachweis, keine änderbare Erzählung.' },
+        { who: 'Compliance & GRC', title: 'Sie stehen für den EU AI Act gerade', body: 'Artikel 12 macht automatische Ereignisprotokollierung zur Designanforderung für Hochrisiko-Systeme; Artikel 26 verpflichtet Betreiber zur Aufbewahrung, ab dem 2. August 2026.', gain: 'Datensätze, die auf diese Pflichten zugeschnitten sind, mit einem auditbereiten Bericht.' },
+        { who: 'Prüfer & Ermittler', title: 'Sie müssen verifizieren, nicht vertrauen', body: 'Im Nachhinein müssen Sie feststellen, welcher Agent was bei welcher Eingabe tat und ob der Datensatz verändert wurde — ohne dem Betreiber sein Wort zu glauben.', gain: 'Offline-Verifizierung aus nichts als einem öffentlichen Schlüssel. Kein Betreiberzugriff nötig.' },
+        { who: 'Plattform- & Infra-Entwickler', title: 'Sie wollen ein Verantwortungs-Primitiv', body: 'AXR ist kein Agenten-Framework und keine Observability-Plattform. Es ist die dünne, langweilige Schicht, auf der diese Werkzeuge aufsetzen können — Standard-Krypto, null Abhängigkeiten, MIT.', gain: 'Ein eingefrorenes Wire-Format und zwei unabhängige Verifizierer, gegen die Sie bauen.' },
+        { who: 'Datenschutzbeauftragte', title: 'Sie schulden das Recht auf Löschung', body: 'Die Löschung nach DSGVO Art. 17 scheint einem Append-only-Protokoll zu widersprechen: Wie löscht man personenbezogene Daten aus einem Datensatz, dessen ganzer Sinn es ist, dass er sich nicht ändern kann?', gain: 'Feldweise gesalzene Merkle-Commitments — löschen Sie den Klartext, die Signaturen halten.' },
+        { who: 'Security Operations', title: 'Sie wachen über Manipulation', body: 'Ein unabhängiger Monitor macht aus latentem Schutz aktive Erkennung: Equivocation, Trunkierung, Historien-Umschreibungen und unautorisierte Schlüsselwechsel.', gain: 'OCSF-förmige Detection Findings und Webhook-Zustellung in Ihr SIEM.' },
+      ],
+    },
+    how: {
+      label: 'Wie es funktioniert',
+      h2Html: 'Schritte markieren. Datensatz signieren. Dort verankern, wo Sie ihn nicht <em>umschreiben können.</em>',
+      introHtml:
+        'Der Beleg-Generator ist ein einzelner Code-Node am Ende eines Workflows, vor der Antwort. Er liest die Ausgaben der entscheidungsrelevanten Nodes und erzeugt alle Belege in einem Durchgang. Verankerung und Monitoring laufen <em>außerhalb</em> des Workflows, sodass der Live-Hot-Path keine Latenz und keine neue Abhängigkeit erhält.',
+      pipeline: ['Schritte markieren', 'Belege signieren', 'An JSONL anhängen', 'Verankern (Merkle / STH)', 'Offline verifizieren', 'Über die Zeit monitoren'],
+      steps: [
+        { strong: 'Entscheidungs-Nodes markieren.', text: 'Jeder entscheidungsrelevante Node hängt die exakte Eingabe an, die er verarbeitet hat, sodass der Beleg hasht, was der Schritt wirklich sah — kein einheitlicher Platzhalter.' },
+        { strong: 'Generieren & signieren.', text: 'Ein Durchgang gibt die Schritt- und Workflow-Belege aus, jeden mit Ed25519 über eine kanonische (RFC 8785) Serialisierung signiert. Die Generierung ist fail-open: ein fehlender Schlüssel degradiert zu einem lauten Fehler, bricht aber nie den Geschäftsprozess, den er bezeugt.' },
+        { strong: 'An ein unveränderliches Protokoll anhängen.', text: 'Belege werden zeilenweise in eine Append-only-JSON-Lines-Datei geschrieben, die Neustarts übersteht.' },
+        { strong: 'Unabhängig verankern.', text: 'Ein Sidecar bündelt Beleg-Hashes in einen RFC-6962-Merkle-Baum und committet Signed Tree Heads an ein externes, Append-only-Backend (OpenTimestamps/Bitcoin, Rekor, RFC 3161). Das bringt eine Partei ins Spiel, die der Betreiber nicht kontrolliert — die ehrliche Analogie ist Certificate Transparency, nicht selbstsigniertes HTTPS.' },
+        { strong: 'Verifizierbar für jeden.', text: 'Ein eigenständiges, abhängigkeitsfreies Skript verifiziert eine ganze Kette offline. Exit-Code 0 bedeutet gültig, 1 bedeutet, ein Problem wurde gefunden.' },
+        { strong: 'Über die Zeit monitoren.', text: 'Ein unabhängiger Monitor führt sein eigenes Journal der gesehenen Tree Heads und schlägt Alarm, wenn eine neue Sicht der alten widerspricht — und fängt so Equivocation, Trunkierung, Historien-Umschreibungen und unautorisierte Schlüsselwechsel ab.' },
+      ],
+      verifyHeadingHtml: '<strong>Ein Protokoll selbst verifizieren — der ganze Befehl:</strong>',
+      afterCodeHtml: 'Kein Terminal? <a href="/axr/verify/">Ziehen Sie ein Protokoll in den In-Browser-Verifizierer</a> — er führt dieselben Signatur-, Merkle-Root- und Witness-Prüfungen lokal aus, ohne dass etwas hochgeladen wird.',
+    },
+    design: {
+      label: 'Das Design',
+      h2Html: 'Langweilige Primitive, mit <em>Absicht.</em>',
+      introP: 'Assurance-Arbeit sollte auch von Menschen prüfbar sein, die sie nicht geschrieben haben. Deshalb nutzt AXR nur standardisierte, gut verstandene Bausteine — und benennt seine Ziele klar:',
+      rows: [
+        { dt: 'Signiert', dd: 'Ed25519 über eine kanonische Serialisierung des Belegs. Das Neusignieren eines manipulierten Datensatzes erfordert den privaten Schlüssel; ohne ihn sind Änderungen sichtbar.' },
+        { dt: 'Eigenständig', dd: 'Ein Beleg verifiziert offline mit nichts als dem öffentlichen Schlüssel. Kein Zugriff auf die Infrastruktur des Betreibers, kein Vertrauen in seine Datenbank.' },
+        { dt: 'Manipulationssicher', dd: 'Jede Änderung an einem Beleg bricht seine Signatur; das Löschen eines Belegs bricht die Kette. Die Verankerung macht stilles Umschreiben dann erkennbar, nicht nur evident.' },
+        { dt: 'Langweilig mit Absicht', dd: 'SHA-256, Ed25519, kanonisches JSON, RFC-6962-Merkle-Bäume. Keine neuartige Kryptografie und null Laufzeitabhängigkeiten.' },
+      ],
+    },
+    maturity: {
+      label: 'Reifegrad',
+      h2Html: 'Ein Repository, geschichtet danach, wie weit jeder Teil <em>Vertrauen verdient hat.</em>',
+      introP: 'AXR wird als ein einziges Repo ausgeliefert, das mehrere Reifegrade umfasst. Der Sinn dieser Tabelle ist Ehrlichkeit: Lesen Sie den Grad eines Features, bevor Sie sich darauf verlassen. Das 0.2-Wire-Format ist eingefroren — ältere Protokolle verifizieren Byte für Byte unter dem aktuellen Verifizierer, und alle späteren Arbeiten sind additiv.',
+      th: ['Schicht', 'Version', 'Reifegrad'],
+      layers: [
+        { layer: 'Kern — Signierung, Verkettung, schrittweises Eingabe-Hashing, kanonisches JSON, Cross-Impl-Parität', note: 'Produktiv getestet, eingefrorenes Wire-Format; gehärteter n8n-Node.', label: 'Stabil' },
+        { layer: 'Verankerung — Merkle-Bündelung, Signed Tree Heads, Monitor, externe Zeitstempelung', note: 'Stündlicher Verankerungs-Cron produktiv; separater STH-Schlüssel.', label: 'Im Einsatz' },
+        { layer: 'Schwärzbare Belege, Seiteneffekt-Attestierung, Trust-Root, Schlüssel-Rollentrennung', note: 'Getestet; eingefroren im 1.0-Vertrag.', label: 'Stabil' },
+        { layer: 'Schlüsselnachfolge — root-verankerte Rotation, unterscheidbar von Kompromittierung', note: 'Cross-Impl-Parität + adversariales Review; vom Piloten noch nicht genutzt.', label: 'Stabil' },
+        { layer: 'SIEM-Export — OCSF-Detection-Finding-Mapping + generischer Webhook', note: 'OCSF-förmige Ausgabe; bewusst Best-Effort-Zustellung.', label: 'Stabil' },
+        { layer: 'Root-Lebenszyklus-Härtung — Quorum-(M-aus-N)-Root, Rotation, Widerruf, Zeremonie-CLI', note: 'Cross-Impl-Parität; die Quorum-Policy ist Teil des Bedrohungsmodells.', label: 'Stabil' },
+        { layer: 'Control-Log — verankerte Governance-Verteilung + partielle Offenlegung', note: 'Schließt die Out-of-Band-Zurückhaltungslücke; 1.5 ergänzt einen Off-Wire-Inclusion-Proof für einen einzelnen Datensatz (einen beweisen, keinen anderen offenlegen).', label: 'Stabil' },
+        { layer: 'Witness-Lebenszyklus — Cosigning, Notfall-Widerruf, temporäre, automatisch ablaufende Aussetzung', note: 'Präventive Equivocation-Abwehr; der vollständige Slow-Revoke → Revoke → Suspend-Lebenszyklus, cross-impl.', label: 'Stabil' },
+        { layer: "Bibliotheks-SDK — require('axr'): eine eingefrorene öffentliche API-Fläche + programmatisches verify()", note: 'Die Fläche ist durch einen Test fixiert; axr.verify() führt den kanonischen Verifizierer aus, kann also nie abweichen.', label: 'Stabil' },
+      ],
+    },
+    proofProd: {
+      label: 'Nachweis in Produktion',
+      h2Html: 'Ein ehrlicher Beleg macht stille Fehler <em>laut.</em>',
+      p1Html:
+        'AXR läuft produktiv auf einem echten Buchungs-Workflow für ECO Clean HU — sechs der zwanzig Nodes des Workflows tragen Belege, und das Protokoll — inzwischen über 227 signierte Belege — wird seit Juni 2026 stündlich in einen Merkle-Baum verankert. Der Aufbau dieser Verantwortungsschicht tat etwas, womit ihr Betreiber nicht rechnete: Er brachte vier echte Fehler ans Licht, die AXR vorausgingen, und zwei Defekte in AXRs eigenem Werkzeug.',
+      p2Html:
+        'Keiner davon betraf Manipulation oder eine ungültige Signatur. Sie sind Verhaltens-Lesbarkeit, nicht Manipulationssicherheit: der Beleg machte den Lauf lesbar genug, dass ein Widerspruch zwischen beabsichtigtem und ausgeführtem Zweig von selbst auffiel. Bug B war genau das — eine Ablehnung, die dennoch den Erfolgszweig auslöste, entdeckt in dem Moment, als das Ergebnis des Belegs gelesen wurde.',
+      findings: [
+        { tag: 'Pilot — Bug B', text: 'Jeder Lauf feuerte alle drei Antwortzweige gleichzeitig: eine ZONE_INCOMPATIBLE-Ablehnung sendete trotzdem eine Erfolgs-E-Mail. Der final_status des Belegs machte den Widerspruch sofort sichtbar. Behoben mit einem Switch-Node, der auf das Beleg-Ergebnis routet.' },
+        { tag: 'Pilot — Bug C', text: 'Ablehnungen gaben „unknown_error" zurück und spiegelten die eigene Nachricht des Kunden — der wahre Grund ging verloren. Der Beleg erfasste bei jedem Lauf den korrekten Status, im Widerspruch zu dem, was Kunden erhielten.' },
+        { tag: 'Pilot — Bug D', text: 'Ein Recheck-Konflikt erzeugte einen HTTP 200 mit leerem Body, während der Beleg eine vollständige, signierte 5-Schritt-SLOT_TAKEN-Kette war. Die Lücke zwischen einem korrekten Beleg und einer leeren Antwort ist genau das, wofür AXR gebaut ist.' },
+        { tag: 'Pilot — Bug E', text: 'Nachdem ein Bugfix die Logik auf v5.1 hob, bezeugte jeder Beleg weiterhin v5.0 — gültige Signaturen über eine falsche Behauptung darüber, welcher Code entschied. Jetzt ersetzen Code-Hash-Fingerabdrücke handgeschriebene Etiketten, und die CI scheitert bei Drift. Versionsetiketten sind Aussage; Code-Hashes sind Nachweis.' },
+        { tag: 'In AXR selbst', text: 'Ein Sandbox-Probelauf der Verankerungs-Einführung fing zwei von AXRs eigenen Defekten ab, bevor sie das Live-Protokoll berührten: die versionsübergreifende Verankerung hätte jede Legacy-Signatur ungültig gemacht, und der Python-Verifizierer ignorierte still das Separate-Key-Flag. Beide behoben, bevor der erste Produktiv-Anker gesetzt wurde. Ein Probelauf, der in einer Sandbox bricht, ist ein Feature.' },
+      ],
+    },
+    adversarial: {
+      label: 'Adversarialer Nachweis',
+      h2Html: 'Die Behauptung „manipulationssicher", getestet, <em>wie ein Angreifer es täte.</em>',
+      introP: 'Eine Integritätsbehauptung ist nur so viel wert wie die Versuche, sie zu brechen. AXR beweist seine zentrale Behauptung systematisch statt rhetorisch:',
+      rows: [
+        { dt: '15 / 15 abgewiesen', dd: 'Ein einzelnes gültiges, verankertes, generatives Beleg-Protokoll wird 15 verschiedenen Mutationen unterzogen — Body-Manipulation, Schritt-Löschung, Signatur-Tausch, weggelassene Tree Heads, manipulierte Inclusion-Proofs, Neusignieren mit falschem Schlüssel und mehr. Der Verifizierer weist alle fünfzehn ab; die unberührte Kontrolle besteht.' },
+        { dt: 'Zwei Implementierungen', dd: 'Glaubwürdigkeit, so wie Certificate Transparency sie sich verdiente: ein zweiter, vollständig unabhängiger Verifizierer in reinem Python — eigener Kanonisierer, ein reines-Python-Ed25519, validiert gegen die RFC-8032-Testvektoren, und die RFC-6962-Merkle-Logik. Er muss bei jedem Akzeptieren und jedem Abweisen mit dem Node-Verifizierer übereinstimmen.' },
+        { dt: 'Byte-identisch', dd: 'Das Versprechen „jeder kann verifizieren, in jeder Sprache" beruht auf deterministischer Kanonisierung. Der Serialisierer folgt RFC 8785 und wirft bei NaN / Infinity / undefined, statt sie still zu beschädigen. Sprachübergreifende Byte-Vektoren sind als Konformitätsvertrag fixiert.' },
+        { dt: 'CI bei jedem Push', dd: 'Die volle Suite — inkl. JS↔Python-Parität — läuft bei jeder Änderung über Node 18 / 20 / 22 und Python 3.10 / 3.11 / 3.12.' },
+      ],
+    },
+    standards: {
+      label: 'Standards & Compliance',
+      h2Html: 'Gebaut in Richtung dessen, wohin die Regeln <em>gehen.</em>',
+      p1Html:
+        'AXR ist darauf ausgelegt, auf die kommenden Aufzeichnungspflichten abzubilden — nicht zertifizierte Konformität mit irgendeiner zu behaupten. Artikel 12 des EU AI Act verlangt, dass Hochrisiko-Systeme Ereignisse automatisch zur Rückverfolgbarkeit aufzeichnen, und Artikel 26 verpflichtet Betreiber zur Aufbewahrung. DSGVO Artikel 17 zieht in die andere Richtung, zur Löschung. Die AI Agent Standards Initiative des NIST formt die US-Seite um Identität und Auditierbarkeit. Signierte, unabhängig prüfbare Belege sind ein Primitiv, auf dem jede dieser Richtungen aufbauen kann.',
+      p2Html:
+        'Zwei Bausteine machen das konkret. <strong>Schwärzbare Belege</strong> lösen die DSGVO-gegen-Append-only-Spannung: sensible Felder werden über einen gesalzenen, feldweisen Merkle-Baum committet, sodass der Klartext später gelöscht werden kann, während die Signatur, die Kette und der bereits verankerte Proof weiterhin halten. Und der <strong>Compliance-Report-Generator</strong> verwandelt ein rohes Protokoll in einen auditbereiten HTML-Bericht — Integrität, die Schlüssel-Governance-Zeitachse, Verankerungsstatus und ein EU-AI-Act-Art.-12-/DSGVO-Kontroll-Mapping.',
+      smallHtml:
+        'Präzision zählt hier: „darauf ausgelegt, abzubilden" ist die Behauptung. Der Bericht ist eine Sicht auf das Urteil des Verifizierers, kein Ersatz dafür, und er behauptet nichts, was er nicht geprüft hat.',
+    },
+    dogfooding: {
+      label: 'Dogfooding',
+      h2Html: 'AXR beweist seine eigene <em>Konstruktion.</em>',
+      p1Html:
+        'AXR wurde von einer Drei-KI-Werkbank gebaut — Fable, Meridian und NEXUS — über ein gemeinsames, Append-only-Journal. Dieses Journal ist selbst ein prüfbares AXR-Protokoll: jeder Eintrag ist ein Ed25519-signierter Beleg, das gesamte Set ist in einen signierten Tree Head Merkle-verankert, und dieser Tree Head wurde von den zwei Reviewer-Agenten cosigniert — jeder in seinem eigenen Prozess, mit einem Schlüssel, den er selbst erzeugte und hielt, sodass der Orchestrator nie einen privaten Schlüssel sah. Der committete Snapshot verifiziert erneut unter dem vollen 1.0-Stack, in Ihrem Browser.',
+      smallHtml:
+        'Ehrliche Einordnung: das beweist, dass das Journal seit der Signierung unverändert ist, nicht dass irgendein Eintrag beim Schreiben wahr war. Die Cosignaturen sind echt prozessunabhängig; die einzige verbleibende Lücke zum vollen Zero-Trust ist, dass die Verwahrung noch auf derselben Maschine liegt — produktiv laufen die Witnesses in getrennten Sicherheitszonen.',
+      cta: 'Das Dev-Log live verifizieren',
+    },
+    statusLimits: {
+      label: 'Status & Grenzen',
+      h2Html: 'Live, offen und über <em>beides</em> ehrlich.',
+      introHtml:
+        'AXR ist quelloffen, MIT-lizenziert und wird öffentlich entwickelt. Seit 1.0 sind das Wire-Format und der CLI-/Verifizierer-Vertrag für 1.x eingefroren; 1.1–1.4 fügten nur rückwärtskompatible Datensätze und ein eingefrorenes Bibliotheks-SDK hinzu. Der Kern und die Verankerungsschicht laufen produktiv; die höheren Schichten — Schlüsselnachfolge, Quorum-Roots, das Control-Log und der vollständige Witness-Lebenszyklus (Cosigning, Notfall-Widerruf, temporäre Aussetzung) — sind getestet, cross-impl verifiziert und additiv, aber vom Live-Piloten noch nicht genutzt. Das Projekt bleibt ehrlich über seine eigenen Lücken:',
+      items: [
+        { tag: 'Nächstes', text: 'Das Produktiv-Anker-Backend von local auf OpenTimestamps (Bitcoin) umstellen — ein einziges Flag, sobald die Kadenz stabil lief.' },
+        { tag: 'Nächstes', text: 'Den unabhängigen Monitor bei einer Partei außerhalb des Betreibers laufen lassen und so die Split-View-/Equivocation-Erkennung von latent auf aktiv heben.' },
+        { tag: 'Nächstes', text: 'Generative (LLM-)Schritt-Belege auf einem Live-Workflow erproben — durchgängig unterstützt und getestet, aber noch nicht produktiv.' },
+        { tag: 'Nächstes', text: 'Fehlerpfad-Belege — auch fehlgeschlagene Läufe signieren, über einen Mark-Node auf dem Fehlerpfad des Workflows. Ein Fehlschlag ist oft das, wofür man am dringendsten einen Nachweis braucht; das erweitert die Generator-Abdeckung und lässt das eingefrorene 1.x-Wire-Format unberührt.' },
+        { tag: 'Offen', text: 'Selbstdeklarierte Agenten-Identität und PEM-Datei- (nicht hardwarebasierte) Schlüsselspeicherung — beides bewusst außerhalb des aktuellen Scopes.' },
+      ],
+      cta: 'Dem Repository folgen',
+    },
+    proof: {
+      label: 'Nachweis',
+      h2Html: 'Diese Website läuft auf demselben <em>Primitiv.</em>',
+      pHtml:
+        'Jeder Deploy von chrisconen.dev veröffentlicht ein Manifest jeder Datei der Website, mit SHA-256 gehasht und mit Ed25519 signiert. Ihr Browser kann die Signatur prüfen und jede Datei gegen das Manifest neu hashen. Es ist AXRs Kernidee, auf eine Build-Pipeline statt auf einen Agenten angewandt — derselbe Beleg, anderer Akteur.',
+      cta: 'Diese Website verifizieren',
+    },
+  },
+
+  es: {
+    meta: {
+      title: 'Auditoría a prueba de manipulaciones para agentes de IA y n8n — AXR',
+      description:
+        'AXR es una capa de rendición de cuentas de código abierto para agentes de IA: recibos de ejecución firmados con Ed25519 y a prueba de manipulaciones. En producción con anclaje Merkle por hora, dos verificadores independientes y un mapeo de controles para el Reglamento de IA de la UE / RGPD.',
+    },
+    hero: {
+      kickerMid: 'Agent eXecution Receipts',
+      kickerEnd: 'Código abierto · MIT',
+      h1Html: 'Haz que el agente muestre sus <em>recibos.</em>',
+      ledeHtml:
+        'AXR es una capa de rendición de cuentas de código abierto para agentes de IA y flujos automatizados: recibos de ejecución firmados criptográficamente y a prueba de manipulaciones que convierten el «confía en mí» en «verifícalo». Está hoy en producción, anclado cada hora, y verificable por cualquiera que tenga la clave pública.',
+      btns: ['AXR en GitHub', 'Verifica un registro tú mismo', '¿Usas n8n?', '¿No eres técnico? Empieza aquí'],
+      chips: [
+        { label: 'Contrato del protocolo', strong: '1.5.3 (congelado 1.x)' },
+        { label: 'Perfil en producción', strong: 'núcleo 0.2.1 · anclaje por hora' },
+        { label: 'Dependencias', strong: 'Cero' },
+      ],
+    },
+    stats: [
+      'Capas de madurez, un repo — del núcleo al ciclo de vida del witness + SDK',
+      'Suites de test en verde, incl. paridad cross-impl JS↔Python (núcleo + gobernanza)',
+      'Mutaciones de manipulación rechazadas por el verificador',
+      'Verificadores independientes (Node + Python puro) coinciden byte a byte',
+      'Hallazgos de seguridad detectados por revisión multiagente antes del lanzamiento',
+      'Dependencias en tiempo de ejecución — solo criptografía estándar',
+    ],
+    problem: {
+      label: 'El problema',
+      h2Html: 'Los registros se pueden editar. Antes eso <em>estaba bien.</em>',
+      p1Html:
+        'Los agentes de IA ahora toman acciones de peso: llaman herramientas, cambian registros, mueven dinero, envían mensajes en nombre de alguien. La auditoría de todo eso suele ser un archivo de registro propiedad de quien ejecutó el agente — mutable, borrable, e inverificable por cualquiera fuera de la propia infraestructura del operador.',
+      p2Html:
+        'Después de los hechos, no hay forma fiable de responder a las preguntas que importan: <em>qué</em> agente hizo esto, qué recibió como entrada, qué decidió y sobre qué base, ¿se alteró el registro después?, y ¿por qué se le dijo «no» a un cliente?',
+      p3Html:
+        'Los reguladores se han dado cuenta. El Reglamento de IA de la UE convierte el registro automático de eventos en un requisito de diseño para sistemas de IA de alto riesgo (Artículo 12), obliga a los responsables del despliegue a conservar esos registros (Artículo 26), y sus obligaciones de alto riesgo se aplican desde el 2 de agosto de 2026. En EE. UU., el Center for AI Standards and Innovation del NIST lanzó la AI Agent Standards Initiative en febrero de 2026, con la seguridad y la identidad de los agentes como pilares centrales.',
+      pullquoteHtml: 'Un registro que puedes reescribir es un relato. Un recibo que puedes verificar es un <em>registro.</em>',
+    },
+    whatIs: {
+      label: 'Qué es',
+      h2Html: 'Un recibo por cada <em>acción</em> de peso.',
+      p1Html:
+        'Por cada acción que importa, AXR emite un recibo: la acción realizada, hashes de sus entradas y salidas, una marca de tiempo, la identidad del agente, y una firma Ed25519 sobre el registro canonicalizado. Prueba una cosa con precisión — que un flujo dado, sobre una entrada dada, tomó una decisión dada, y que el registro no ha cambiado desde entonces.',
+      p2Html:
+        'Eso compra dos cosas distintas. La <strong>resistencia a manipulaciones</strong> es el suelo criptográfico: la firma prueba que el registro no ha cambiado. La <strong>legibilidad del comportamiento</strong> es lo que se gana el pan a diario — el recibo hace el comportamiento real del flujo lo bastante legible como para que una contradicción interna salga a la luz incluso cuando nada fue manipulado y cada firma es válida.',
+      p3Html:
+        'Deliberadamente <em>no</em> es un constructor de flujos, ni un framework de agentes, ni una plataforma de observabilidad. Es la fina capa de rendición de cuentas que se sitúa por debajo de esas herramientas. Dos tipos de recibo cargan el peso: un <strong>recibo de paso</strong> registra un único nodo relevante para la decisión, y un <strong>recibo de flujo</strong> encadena los pasos de una ejecución en un registro firmado y encadenado. Los pasos se encadenan dentro de una ejecución; las ejecuciones se encadenan a lo largo del historial del agente — así, borrar cualquier recibo rompe la cadena, y alterar cualquier recibo rompe la firma.',
+      sampleCaption: 'Recibo de paso ilustrativo — la forma de una acción firmada',
+      verdictStamp: 'Firma válida',
+      verdictNoteHtml:
+        'Cambia un byte de cualquier campo y la firma ya no verifica. Ese es todo el principio — y basta.',
+    },
+    whoFor: {
+      label: 'Para quién es',
+      h2Html: 'Hecho para quienes tienen que <em>responder por ello.</em>',
+      introP: 'AXR se gana el pan allí donde una decisión automatizada puede cuestionarse después y alguien tiene que respaldar la respuesta.',
+      gainLabel: 'Lo que obtienes:',
+      personas: [
+        { who: 'Equipos que ejecutan agentes de IA', title: 'Lanzas agentes que toman acciones reales', body: 'Reservan, fijan precios, mensajean, mueven dinero o cambian registros en nombre de alguien. Hoy el único relato de lo ocurrido es un archivo de registro que es tuyo y que podrías editar.', gain: 'Un recibo firmado por cada acción de peso — prueba, no un relato editable.' },
+        { who: 'Compliance y GRC', title: 'Respondes por el Reglamento de IA de la UE', body: 'El Artículo 12 convierte el registro automático de eventos en requisito de diseño para sistemas de alto riesgo; el Artículo 26 impone la conservación a los responsables del despliegue, desde el 2 de agosto de 2026.', gain: 'Registros diseñados para encajar en esos deberes, con un informe listo para auditoría.' },
+        { who: 'Auditores e investigadores', title: 'Necesitas verificar, no confiar', body: 'Después de los hechos tienes que establecer qué agente hizo qué, sobre qué entrada, y si el registro fue alterado — sin tener que creer la palabra del operador.', gain: 'Verificación sin conexión a partir de nada más que una clave pública. Sin acceso del operador.' },
+        { who: 'Constructores de plataforma e infra', title: 'Quieres un primitivo de rendición de cuentas', body: 'AXR no es un framework de agentes ni una plataforma de observabilidad. Es la capa fina y aburrida sobre la que esas herramientas pueden asentarse — cripto estándar, cero dependencias, MIT.', gain: 'Un formato de cable congelado y dos verificadores independientes contra los que construir.' },
+        { who: 'Responsables de privacidad', title: 'Debes el derecho al borrado', body: 'El borrado del Artículo 17 del RGPD parece pelearse con un registro de solo anexar: ¿cómo borras datos personales de un registro cuyo sentido es que no puede cambiar?', gain: 'Compromisos Merkle salados por campo — borra el texto claro, las firmas siguen en pie.' },
+        { who: 'Operaciones de seguridad', title: 'Vigilas la manipulación', body: 'Un monitor independiente convierte la protección latente en detección activa: equivocación, truncamiento, reescrituras del historial y cambios de clave no autorizados.', gain: 'Detection Findings con forma OCSF y entrega por webhook a tu SIEM.' },
+      ],
+    },
+    how: {
+      label: 'Cómo funciona',
+      h2Html: 'Marca los pasos. Firma el registro. Áncralo donde no puedas <em>reescribirlo.</em>',
+      introHtml:
+        'El generador de recibos es un único nodo Code al final de un flujo, antes de la respuesta. Lee las salidas de los nodos relevantes para la decisión y produce todos los recibos en una sola pasada. El anclaje y la monitorización corren <em>fuera</em> del flujo, así que la ruta caliente en producción no gana latencia ni una nueva dependencia.',
+      pipeline: ['Marcar pasos', 'Firmar recibos', 'Anexar a JSONL', 'Anclar (Merkle / STH)', 'Verificar sin conexión', 'Monitorizar en el tiempo'],
+      steps: [
+        { strong: 'Marca los nodos de decisión.', text: 'Cada nodo relevante para la decisión adjunta la entrada exacta que consumió, así el recibo hashea lo que el paso vio de verdad — no un sustituto uniforme.' },
+        { strong: 'Genera y firma.', text: 'Una pasada emite los recibos de paso y de flujo, cada uno firmado con Ed25519 sobre una serialización canónica (RFC 8785). La generación es fail-open: una clave ausente degrada a un error ruidoso, pero nunca rompe el proceso de negocio que atestigua.' },
+        { strong: 'Anexa a un registro inmutable.', text: 'Los recibos se escriben uno por línea en un archivo JSON Lines de solo anexar que sobrevive a los reinicios.' },
+        { strong: 'Ancla de forma independiente.', text: 'Un sidecar agrupa los hashes de recibo en un árbol Merkle RFC 6962 y compromete Signed Tree Heads a un backend externo de solo anexar (OpenTimestamps/Bitcoin, Rekor, RFC 3161). Esto introduce una parte que el operador no controla — la analogía honesta es Certificate Transparency, no HTTPS autofirmado.' },
+        { strong: 'Verificable por cualquiera.', text: 'Un script independiente y sin dependencias verifica una cadena entera sin conexión. El código de salida 0 significa válido, 1 significa que se encontró un problema.' },
+        { strong: 'Monitoriza en el tiempo.', text: 'Un monitor independiente mantiene su propio diario de los tree heads que ha presenciado y da la alarma cuando una nueva vista contradice la anterior — atrapando equivocación, truncamiento, reescrituras del historial y cambios de clave no autorizados.' },
+      ],
+      verifyHeadingHtml: '<strong>Verifica un registro tú mismo — el comando completo:</strong>',
+      afterCodeHtml: '¿Sin terminal? <a href="/axr/verify/">Arrastra un registro al verificador en el navegador</a> — ejecuta las mismas comprobaciones de firma, raíz Merkle y witness localmente, sin subir nada.',
+    },
+    design: {
+      label: 'El diseño',
+      h2Html: 'Primitivos aburridos, a <em>propósito.</em>',
+      introP: 'El trabajo de aseguramiento debería ser auditable por personas que no lo escribieron. Por eso AXR usa solo bloques estándar y bien entendidos — y declara sus objetivos con claridad:',
+      rows: [
+        { dt: 'Firmado', dd: 'Ed25519 sobre una serialización canónica del recibo. Volver a firmar un registro manipulado requiere la clave privada; sin ella, las ediciones son visibles.' },
+        { dt: 'Autónomo', dd: 'Un recibo verifica sin conexión con nada más que la clave pública. Sin acceso a la infraestructura del operador, sin confiar en su base de datos.' },
+        { dt: 'A prueba de manipulaciones', dd: 'Cualquier cambio en un recibo rompe su firma; borrar uno rompe la cadena. El anclaje hace entonces la reescritura silenciosa detectable, no solo evidente.' },
+        { dt: 'Aburrido a propósito', dd: 'SHA-256, Ed25519, JSON canónico, árboles Merkle RFC 6962. Sin criptografía novedosa, y cero dependencias en tiempo de ejecución.' },
+      ],
+    },
+    maturity: {
+      label: 'Madurez',
+      h2Html: 'Un repositorio, por capas según cuánto se ha <em>ganado la confianza</em> cada parte.',
+      introP: 'AXR se entrega como un único repo que abarca varios niveles de madurez. El sentido de esta tabla es la honestidad: lee el nivel de una función antes de depender de ella. El formato de cable 0.2 está congelado — los registros antiguos verifican byte a byte con el verificador actual, y todo el trabajo posterior es aditivo.',
+      th: ['Capa', 'Versión', 'Madurez'],
+      layers: [
+        { layer: 'Núcleo — firma, encadenado, hash de entrada por paso, JSON canónico, paridad cross-impl', note: 'Probado en producción, formato de cable congelado; nodo n8n endurecido.', label: 'Estable' },
+        { layer: 'Anclaje — agrupado Merkle, Signed Tree Heads, monitor, sellado de tiempo externo', note: 'Cron de anclaje por hora en producción; clave STH separada.', label: 'Desplegado' },
+        { layer: 'Recibos redactables, atestación de efectos secundarios, trust root, separación de roles de clave', note: 'Probado; congelado en el contrato 1.0.', label: 'Estable' },
+        { layer: 'Sucesión de claves — rotación anclada a root, distinguible de un compromiso', note: 'Paridad cross-impl + revisión adversaria; el piloto aún no la usa.', label: 'Estable' },
+        { layer: 'Exportación SIEM — mapeo OCSF Detection Finding + webhook genérico', note: 'Salida con forma OCSF; entrega best-effort por diseño.', label: 'Estable' },
+        { layer: 'Endurecimiento del ciclo de vida del root — root por quórum (M-de-N), rotación, revocación, CLI de ceremonia', note: 'Paridad cross-impl; la política de quórum es parte del modelo de amenazas.', label: 'Estable' },
+        { layer: 'Control log — distribución de gobernanza anclada + divulgación parcial', note: 'Cierra la brecha de retención fuera de banda; 1.5 añade prueba de inclusión off-wire para un único registro (prueba uno, no reveles los demás).', label: 'Estable' },
+        { layer: 'Ciclo de vida del witness — cosigning, revocación de emergencia, suspensión temporal con caducidad automática', note: 'Defensa preventiva de equivocación; el ciclo completo lento-revoca → revoca → suspende, cross-impl.', label: 'Estable' },
+        { layer: "SDK de biblioteca — require('axr'): una superficie de API pública congelada + verify() programático", note: 'La superficie la fija un test; axr.verify() ejecuta el verificador canónico, así que nunca puede divergir.', label: 'Estable' },
+      ],
+    },
+    proofProd: {
+      label: 'Prueba en producción',
+      h2Html: 'Un recibo honesto hace los fallos silenciosos <em>ruidosos.</em>',
+      p1Html:
+        'AXR corre en producción sobre un flujo de reservas real para ECO Clean HU — seis de los veinte nodos del flujo llevan recibo, y el registro — ya por encima de 227 recibos firmados — se ancla cada hora en un único árbol Merkle desde junio de 2026. Levantar esa capa de rendición de cuentas hizo algo que su operador no esperaba: sacó a la luz cuatro fallos reales anteriores a AXR, y dos defectos en las propias herramientas de AXR.',
+      p2Html:
+        'Ninguno implicó manipulación ni una firma inválida. Son legibilidad del comportamiento, no resistencia a manipulaciones: el recibo hizo la ejecución lo bastante legible como para que una contradicción entre la rama prevista y la ejecutada saliera sola a la luz. El Bug B fue justo eso — un rechazo que aun así disparó la rama de éxito, detectado en el momento en que se leyó el resultado del recibo.',
+      findings: [
+        { tag: 'Piloto — Bug B', text: 'Cada ejecución disparaba las tres ramas de respuesta a la vez: un rechazo ZONE_INCOMPATIBLE aun así enviaba un correo de éxito. El final_status del recibo hizo la contradicción inmediata. Resuelto con un nodo Switch que enruta según el resultado del recibo.' },
+        { tag: 'Piloto — Bug C', text: 'Los rechazos devolvían «unknown_error» reflejando el propio mensaje del cliente — la razón real se perdía. El recibo registraba el estado correcto en cada ejecución, contradiciendo lo que recibían los clientes.' },
+        { tag: 'Piloto — Bug D', text: 'Un conflicto de reverificación producía un HTTP 200 con cuerpo vacío, mientras el recibo era una cadena SLOT_TAKEN de 5 pasos completa y firmada. La brecha entre un recibo correcto y una respuesta vacía es exactamente lo que AXR está hecho para sacar a la luz.' },
+        { tag: 'Piloto — Bug E', text: 'Tras un parche que subió la lógica a v5.1, cada recibo seguía atestiguando v5.0 — firmas válidas sobre una afirmación falsa de qué código decidió. Ahora las huellas hash de código sustituyen a las etiquetas escritas a mano, y la CI falla ante la deriva. Las etiquetas de versión son testimonio; los hashes de código son prueba.' },
+        { tag: 'En el propio AXR', text: 'Una ejecución de prueba en sandbox del despliegue de anclaje atrapó dos defectos del propio AXR antes de que tocaran el registro en vivo: el anclaje entre versiones habría invalidado cada firma heredada, y el verificador de Python ignoraba en silencio el flag de clave separada. Ambos resueltos antes de emitir el primer ancla en producción. Una ejecución de prueba que se rompe en un sandbox es una función.' },
+      ],
+    },
+    adversarial: {
+      label: 'Prueba adversaria',
+      h2Html: 'La afirmación «a prueba de manipulaciones», puesta a prueba <em>como lo haría un atacante.</em>',
+      introP: 'Una afirmación de integridad vale solo lo que valen los intentos de romperla. AXR prueba su afirmación central de forma sistemática, no retórica:',
+      rows: [
+        { dt: '15 / 15 rechazadas', dd: 'Un único registro de recibos válido, anclado y generativo se somete a 15 mutaciones distintas — manipulación del cuerpo, borrado de pasos, intercambio de firmas, tree heads omitidos, pruebas de inclusión manipuladas, refirma con clave incorrecta, y más. El verificador rechaza las quince; el control intacto pasa.' },
+        { dt: 'Dos implementaciones', dd: 'Credibilidad, como se la ganó Certificate Transparency: un segundo verificador totalmente independiente en Python puro — su propio canonicalizador, un Ed25519 en Python puro validado contra los vectores de prueba del RFC 8032, y la lógica Merkle del RFC 6962. Debe coincidir con el verificador Node en cada aceptación y cada rechazo.' },
+        { dt: 'Byte-idéntico', dd: 'La promesa de «cualquiera puede verificar, en cualquier lenguaje» se apoya en una canonicalización determinista. El serializador sigue el RFC 8785 y lanza ante NaN / Infinity / undefined en vez de corromperlos en silencio. Los vectores de bytes entre lenguajes se fijan como contrato de conformidad.' },
+        { dt: 'CI en cada push', dd: 'La suite completa — incl. paridad JS↔Python — corre en Node 18 / 20 / 22 y Python 3.10 / 3.11 / 3.12 en cada cambio.' },
+      ],
+    },
+    standards: {
+      label: 'Estándares y cumplimiento',
+      h2Html: 'Construido hacia donde <em>van</em> las reglas.',
+      p1Html:
+        'AXR está diseñado para encajar en los deberes de registro que están llegando — no para afirmar cumplimiento certificado con ninguno. El Artículo 12 del Reglamento de IA de la UE exige que los sistemas de alto riesgo registren eventos automáticamente para la trazabilidad, y el Artículo 26 impone la conservación a los responsables del despliegue. El Artículo 17 del RGPD tira en sentido contrario, hacia el borrado. La AI Agent Standards Initiative del NIST está moldeando el lado de EE. UU. en torno a la identidad y la auditabilidad. Los recibos firmados y verificables de forma independiente son un primitivo sobre el que cada una de esas direcciones puede construir.',
+      p2Html:
+        'Dos piezas lo hacen concreto. Los <strong>recibos redactables</strong> resuelven la tensión RGPD-contra-solo-anexar: los campos sensibles se comprometen a través de un árbol Merkle salado por campo, así el texto claro puede borrarse después mientras la firma, la cadena y la prueba ya anclada siguen en pie. Y el <strong>Compliance Report Generator</strong> convierte un registro en bruto en un informe HTML listo para auditoría — integridad, la línea de tiempo de gobernanza de claves, el estado de anclaje, y un mapeo de controles para el Artículo 12 del Reglamento de IA de la UE / RGPD.',
+      smallHtml:
+        'La precisión importa aquí: «diseñado para encajar» es la afirmación. El informe es una vista sobre el veredicto del verificador, no un sustituto, y no afirma nada que no haya comprobado.',
+    },
+    dogfooding: {
+      label: 'Dogfooding',
+      h2Html: 'AXR prueba su propia <em>construcción.</em>',
+      p1Html:
+        'AXR fue construido por un banco de trabajo de tres IA — Fable, Meridian y NEXUS — sobre un diario compartido de solo anexar. Ese diario es en sí un registro AXR verificable: cada entrada es un recibo firmado con Ed25519, todo el conjunto se ancla con Merkle en un único tree head firmado, y ese tree head fue cosignado por los dos agentes revisores — cada uno en su propio proceso, con una clave que generó y custodió él mismo, de modo que el orquestador nunca vio una clave privada. La instantánea comprometida se reverifica bajo el stack 1.0 completo, en tu navegador.',
+      smallHtml:
+        'Encuadre honesto: esto prueba que el diario no se ha alterado desde la firma, no que cada entrada fuera cierta al escribirse. Las cosignaturas son genuinamente independientes del proceso; la única brecha que queda hacia el zero-trust pleno es que la custodia sigue en la misma máquina — en producción los witnesses corren en zonas de seguridad separadas.',
+      cta: 'Verifica el dev-log en vivo',
+    },
+    statusLimits: {
+      label: 'Estado y límites',
+      h2Html: 'En vivo, abierto y honesto sobre <em>ambas cosas.</em>',
+      introHtml:
+        'AXR es de código abierto, con licencia MIT, y se desarrolla en público. Desde 1.0 el formato de cable y el contrato CLI/verificador están congelados para 1.x; 1.1–1.4 solo añadieron registros retrocompatibles y un SDK de biblioteca congelado. El núcleo y la capa de anclaje corren en producción; las capas superiores — sucesión de claves, roots por quórum, el control log y el ciclo de vida completo del witness (cosigning, revocación de emergencia, suspensión temporal) — están probadas, verificadas cross-impl y son aditivas, pero el piloto en vivo aún no las usa. El proyecto es honesto sobre sus propias carencias:',
+      items: [
+        { tag: 'Siguiente', text: 'Cambiar el backend de anclaje en producción de local a OpenTimestamps (Bitcoin) — un solo flag, una vez que la cadencia haya corrido de forma estable.' },
+        { tag: 'Siguiente', text: 'Ejecutar el monitor independiente en una parte fuera del operador, llevando la detección de vista dividida / equivocación de latente a activa.' },
+        { tag: 'Siguiente', text: 'Ejercitar recibos de paso generativos (LLM) en un flujo en vivo — soportado y probado de extremo a extremo, aún no en producción.' },
+        { tag: 'Siguiente', text: 'Recibos de ruta de error — firmar también las ejecuciones fallidas, mediante un nodo de marca en la ruta de error del flujo. Un fallo es a menudo de lo que más necesitas prueba; esto amplía la cobertura del generador y deja intacto el formato de cable 1.x congelado.' },
+        { tag: 'Abierto', text: 'Identidad de agente autodeclarada, y almacenamiento de claves en archivo PEM (no de grado hardware) — ambos deliberadamente fuera del alcance actual.' },
+      ],
+      cta: 'Sigue el repositorio',
+    },
+    proof: {
+      label: 'Prueba',
+      h2Html: 'Este sitio corre sobre el mismo <em>primitivo.</em>',
+      pHtml:
+        'Cada despliegue de chrisconen.dev publica un manifiesto de cada archivo del sitio, hasheado con SHA-256 y firmado con Ed25519. Tu navegador puede verificar la firma y rehashear cualquier archivo contra el manifiesto. Es la idea central de AXR aplicada a un pipeline de build en vez de a un agente — el mismo recibo, distinto actor.',
+      cta: 'Verifica este sitio',
     },
   },
 };

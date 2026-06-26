@@ -16,6 +16,9 @@ interface Props {
 }
 const { t, lang, locales } = Astro.props;
 const d = t.demo;
+// /axr is localized in the same four locales, so the "technical version" link
+// stays in-language.
+const techHref = lang === 'en' ? '/axr/' : `/${lang}/axr/`;
 ---
 
 <div class="shell page-hero">
@@ -34,7 +37,7 @@ const d = t.demo;
   <div class="btn-row">
     <a class="btn btn-primary" href="#demo">{t.hero.btns[0]}</a>
     <a class="btn btn-ghost" href="#how">{t.hero.btns[1]}</a>
-    <a class="btn btn-ghost" href="/axr/">{t.hero.btns[2]}</a>
+    <a class="btn btn-ghost" href={techHref}>{t.hero.btns[2]}</a>
   </div>
 </div>
 
