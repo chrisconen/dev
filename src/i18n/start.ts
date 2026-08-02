@@ -271,14 +271,14 @@ export const START: Record<string, any> = {
     meta: {
       title: 'AXR auf Deutsch erklärt — Beweis dafür, was Ihre KI wirklich getan hat',
       description:
-        'Eine verständliche Einführung in AXR für Menschen, die KI einsetzen, aber keine Kryptografen sind. Wird Ihre Automatisierung infrage gestellt, beweist ein AXR-Beleg, was sie getan hat — ein manipulationssicherer Nachweis, den jeder prüfen kann, ohne Ihnen glauben zu müssen. Brechen Sie das Siegel live, dann lernen Sie, wie man es nutzt.',
+        'Eine verständliche Einführung in AXR für Menschen, die KI einsetzen, aber keine Kryptografen sind. Wird Ihre Automatisierung infrage gestellt, beweist ein AXR-Beleg, was sie getan hat — ein manipulationsnachweisbarer Datensatz, den jeder prüfen kann, ohne Ihnen glauben zu müssen. Brechen Sie das Siegel live, dann lernen Sie, wie man es nutzt.',
     },
     hero: {
       kickerMid: 'Verständlich erklärt',
-      kickerEnd: 'Für Menschen, die KI betreiben, nicht Kryptografie',
+      kickerEnd: 'Für Menschen, die KI einsetzen, nicht Kryptografen',
       h1Html: 'Ihre KI führt Ihr Geschäft. Können Sie <em>beweisen, was sie getan hat?</em>',
       lede1Html:
-        'Ihre KI bucht Termine, setzt Preise, sendet Nachrichten, bearbeitet Rückerstattungen — echtes Geld, echte Entscheidungen, echtes Streitrisiko. An dem Tag, an dem ein Kunde sagt, sie habe etwas getan, was sie nicht durfte, sagt Ihr Protokoll, alles sei in Ordnung. Aber dieses Protokoll haben <em>Sie</em> geschrieben. Wer wird Ihnen glauben?',
+        'Ihre KI bucht Termine, setzt Preise, sendet Nachrichten, bearbeitet Rückerstattungen — echtes Geld, echte Entscheidungen, echtes Streitrisiko. An dem Tag, an dem ein Kunde sagt, sie habe etwas getan, was sie nicht durfte, sagt Ihr Log, alles sei in Ordnung. Aber dieses Log haben <em>Sie</em> geschrieben. Wer wird Ihnen glauben?',
       lede2Html:
         'AXR gibt jeder Entscheidung einen <strong>Beleg</strong> — wie das Siegel auf einem Paket, nur für Ihre Automatisierung. Er lässt sich nachträglich nicht ändern, und jeder kann ihn prüfen, ohne Ihnen glauben zu müssen. Glauben Sie auch uns nicht: brechen Sie selbst einen, gleich unten.',
       chips: [
@@ -316,19 +316,19 @@ export const START: Record<string, any> = {
     whatItIs: {
       label: 'Was es eigentlich ist',
       h2Html: 'Wie das Siegel auf einem Paket — nur für Ihre <em>Automatisierung.</em>',
-      p1: 'Wenn ein Kurier ein Paket übergibt, lässt er sich unterschreiben. Sie schreiben die Unterschrift nicht; Sie können sie später nicht ändern; und bei einem Streit schauen beide darauf. AXR ist genau das, automatisch für Ihre KI — und der Stempel kann nachträglich nicht ausgetauscht werden.',
+      p1: 'Wenn ein Kurier ein Paket übergibt, bekommt er eine Unterschrift. Sie schreiben die Unterschrift nicht; Sie können sie später nicht ändern; und bei einem Streit schauen beide darauf. AXR ist genau das, automatisch für Ihre KI — und der Stempel kann nachträglich nicht ausgetauscht werden.',
       contrast: [
-        { label: 'Veränderbare Erzählung', h3: 'Ihr Server-Protokoll', p: 'Von Ihnen geschrieben, auf Ihrem Server, jederzeit. Im Streit ist es Ihr Wort über Ihre eigenen Systeme.' },
+        { label: 'Veränderbare Erzählung', h3: 'Ihr Server-Log', p: 'Von Ihnen geschrieben, auf Ihrem Server, jederzeit. Im Streit ist es Ihr Wort über Ihre eigenen Systeme.' },
         { label: 'Prüfbarer Nachweis', h3: 'Ein AXR-Beleg', p: 'Versiegelt im Moment der Entscheidung, offline von jedem prüfbar — kein Zugriff auf Sie oder Ihre Systeme nötig.' },
       ],
-      pullquoteHtml: 'Ein Protokoll, das nur Sie umschreiben können, ist eine Erzählung. Ein Beleg, den jeder prüfen kann, ist ein <em>Nachweis.</em>',
+      pullquoteHtml: 'Ein Log, das nur Sie umschreiben können, ist eine Erzählung. Ein Beleg, den jeder prüfen kann, ist ein <em>Nachweis.</em>',
       smallHtml:
-        'Darunter steckt standardisierte, bewährte Kryptografie — eine digitale Signatur und eine manipulationssichere Kette, nichts Experimentelles. Sie müssen davon nie etwas sehen, um es zu nutzen. (Wer prüfen möchte: der Code ist quelloffen.)',
+        'Darunter steckt standardisierte, bewährte Kryptografie — eine digitale Signatur und eine manipulationsnachweisbare Kette, nichts Experimentelles. Sie müssen davon nie etwas sehen, um es zu nutzen. (Wer prüfen möchte: der Code ist quelloffen.)',
     },
     isThisYou: {
       label: 'Sind Sie das?',
       h2Html: 'Vielleicht brauchen Sie das und <em>wissen es noch nicht.</em>',
-      introHtml: 'Niemand sucht nach „manipulationssicherem Audit-Trail". Man gerät in einen dieser Momente — und plötzlich lautet die Frage: <em>können Sie es beweisen?</em>',
+      introHtml: 'Niemand sucht nach „manipulationsnachweisbarem Audit-Trail". Man gerät in einen dieser Momente — und plötzlich lautet die Frage: <em>können Sie es beweisen?</em>',
       personas: [
         { who: 'Sie betreiben einen Webshop', trigger: '„Ich habe das Paket vor zwei Wochen zurückgeschickt — Ihr System sagt, die Rückerstattung sei raus. War sie nicht."' },
         { who: 'Sie führen die Bücher', trigger: '„Ihr System hat eine bereits bezahlte Rechnung dreimal angemahnt. Beheben Sie das, oder ich rufe einen Anwalt."' },
@@ -342,20 +342,20 @@ export const START: Record<string, any> = {
       h2Html: 'So sieht es aus, wenn es Sie <em>rettet.</em>',
       items: [
         { tag: 'Webshop', title: 'Die Rückerstattung, die nie losging', body: 'Ihre Automatisierung sagt refund_processed: true. Der Kunde hat das Geld nie erhalten; die Bank sagt, sie habe nie eine Anfrage bekommen. Wessen Schuld ist das? Mit einem Beleg für diesen Schritt können Sie zeigen, ob der Bot die Anweisung tatsächlich erteilt hat — so wissen Sie in Sekunden, wo die Kette riss, statt eine Rückbuchung zu schlucken, um Ruhe zu haben.' },
-        { tag: 'Finanzen / Buchhaltung', title: 'Die Rechnung, die längst bezahlt war', body: 'Eine KI mahnte fortlaufend eine beglichene Rechnung an, und der Kunde droht mit Klage. Ihr internes Protokoll sagt, alles sei korrekt gewesen — aber dieses Protokoll haben Sie geschrieben. Ein signierter Beleg für jede Abrechnungsentscheidung ist etwas, das die Gegenseite (oder ein Gericht) prüfen kann, ohne Ihren Entwickler anzurufen.' },
+        { tag: 'Finanzen / Buchhaltung', title: 'Die Rechnung, die längst bezahlt war', body: 'Eine KI mahnte fortlaufend eine beglichene Rechnung an, und der Kunde droht mit Klage. Ihr internes Log sagt, alles sei korrekt gewesen — aber dieses Log haben Sie geschrieben. Ein signierter Beleg für jede Abrechnungsentscheidung ist etwas, das die Gegenseite (oder ein Gericht) prüfen kann, ohne Ihren Entwickler anzurufen.' },
         { tag: 'Recruiting / HR', title: 'Die abgelehnte Bewerberin', body: 'Eine abgelehnte Bewerberin vermutet, die KI habe sie aus einem verbotenen Grund aussortiert. Sie müssen zeigen, was die Entscheidung tatsächlich gesehen hat. Ein signierter Entscheidungsdatensatz lässt eine Behörde prüfen, dass die verbotenen Daten nie eine Eingabe waren — man muss Ihnen nicht glauben. (Und personenbezogene Daten lassen sich später löschen, ohne die Signatur zu brechen.)' },
-        { tag: 'Reguliert', title: 'Das Audit, ein Jahr später', body: 'Eine Aufsicht bittet Sie zu beweisen, dass eine vergangene automatisierte Entscheidung den damals geltenden Regeln folgte. Das Modell hat sich seither geändert. Ein verankerter, signierter Verlauf lässt sie prüfen, dass der Datensatz nachträglich nicht bearbeitet wurde — und Sie übergeben einen auditbereiten Bericht statt Rohdateien.' },
+        { tag: 'Reguliert', title: 'Das Audit, ein Jahr später', body: 'Eine Aufsicht bittet Sie zu beweisen, dass eine vergangene automatisierte Entscheidung den damals geltenden Regeln folgte. Das Modell hat sich seither geändert. Ein verankerter, signierter Audit-Trail lässt sie prüfen, dass der Datensatz nachträglich nicht bearbeitet wurde — und Sie übergeben einen auditbereiten Bericht statt Rohdateien.' },
       ],
       footnoteHtml: 'Kein Gedankenexperiment: AXR läuft heute produktiv auf einem echten Buchungs-Workflow — 200+ signierte Belege, seit Juni 2026 stündlich verankert. <a href="/axr/">Den technischen Bericht ansehen</a>.',
     },
     moment: {
       label: 'Der Moment, in dem es zählt',
       h2Html: 'Stellen Sie sich nun vor einem <em>Richter</em> vor.',
-      introHtml: 'Sie halten einen Screenshot Ihres Protokolls hoch. Der Richter fragt: <em>„Das haben Sie selbst geschrieben, korrekt?"</em> Mit einem Beleg ändert sich die Antwort — denn die Gegenseite kann ihn prüfen, ohne Ihnen zu vertrauen. Diese Momente kommen bereits:',
+      introHtml: 'Sie halten einen Screenshot Ihres Logs hoch. Der Richter fragt: <em>„Das haben Sie selbst geschrieben, korrekt?"</em> Mit einem Beleg ändert sich die Antwort — denn die Gegenseite kann ihn prüfen, ohne Ihnen zu vertrauen. Diese Momente kommen bereits:',
       items: [
-        { tag: 'Streit', text: 'Der Screenshot eines Kunden gegen Ihr Protokoll — und kein neutraler Nachweis, der es klärt.' },
+        { tag: 'Streit', text: 'Der Screenshot eines Kunden gegen Ihr Log — und kein neutraler Nachweis, der es klärt.' },
         { tag: 'Audit', text: '„Belegen Sie, dass die automatisierte Entscheidung den damals geltenden Regeln folgte."' },
-        { tag: 'Gesetz', text: 'Die Hochrisiko-Regeln des EU AI Act umfassen automatische, aufbewahrungspflichtige Protokollierung; das Hauptregime gilt ab dem 2. August 2026 — und es muss auditierbar sein.' },
+        { tag: 'Gesetz', text: 'Die Hochrisiko-Regeln des EU AI Act umfassen automatische, aufbewahrbare Protokollierung; das Hauptregime gilt ab dem 2. August 2026 — und es muss auditierbar sein.' },
       ],
     },
     how: {
@@ -367,7 +367,7 @@ export const START: Record<string, any> = {
         { strong: 'Prüfen.', text: 'Jeder kann einen Beleg verifizieren — im Browser, ohne Upload — ohne Ihnen oder Ihren Systemen zu vertrauen.' },
       ],
       paths: [
-        { h3: 'Wenn Sie n8n nutzen', p: 'Setzen Sie einen Code-Node ans Ende Ihres Workflows. Das war’s — etwa zehn Minuten, kein Server, keine Abhängigkeiten. Ab dann hinterlässt jeder Lauf einen signierten Beleg.', cta: 'Die n8n-Anleitung' },
+        { h3: 'Wenn Sie n8n nutzen', p: 'Setzen Sie einen Code-Knoten ans Ende Ihres Workflows. Das war’s — etwa zehn Minuten, kein Server, keine Abhängigkeiten. Ab dann hinterlässt jeder Lauf einen signierten Beleg.', cta: 'Die n8n-Anleitung' },
         { h3: 'Wenn (noch) nicht', p: 'Prüfen Sie zuerst selbst einen Beleg — ein Klick, kein Upload — damit Sie genau sehen, was das grüne Siegel bedeutet, bevor Sie einen erzeugen.', cta: 'Einen Beleg im Browser prüfen' },
       ],
     },
@@ -375,8 +375,8 @@ export const START: Record<string, any> = {
       label: 'Klare Antworten',
       h2Html: 'Das ehrliche <em>Kleingedruckte.</em>',
       items: [
-        { q: '„Mein Protokoll zeigt das doch schon. Wozu mehr?"', a: 'Dieses Protokoll haben Sie geschrieben, auf Ihrem eigenen Server. In einem Streit zählt es etwa so viel wie Ihr eigenes Wort. Ihre Protokolle bleiben Ihre erste Verteidigungslinie — ein AXR-Beleg macht sie nur unabhängig prüfbar: durch den Kunden, einen Prüfer oder ein Gericht, ohne Ihre Hilfe.' },
-        { q: '„Ist das nicht zu kompliziert für uns?"', a: 'Ein Klick im Browser, um einen Beleg zu prüfen. Oder ein Node am Ende Ihres n8n-Workflows. Keine Installation, kein Server, kein neues Konto. Es ist kostenlos und quelloffen. Wenn es in zehn Minuten nicht klickt, haben Sie zehn Minuten verloren.' },
+        { q: '„Mein Log zeigt das doch schon. Wozu mehr?"', a: 'Dieses Log haben Sie geschrieben, auf Ihrem eigenen Server. In einem Streit zählt es etwa so viel wie Ihr eigenes Wort. Ihre Logs bleiben Ihre erste Verteidigungslinie — ein AXR-Beleg macht sie nur unabhängig prüfbar: durch den Kunden, einen Prüfer oder ein Gericht, ohne Ihre Hilfe.' },
+        { q: '„Ist das nicht zu kompliziert für uns?"', a: 'Ein Klick im Browser, um einen Beleg zu prüfen. Oder ein Knoten am Ende Ihres n8n-Workflows. Keine Installation, kein Server, kein neues Konto. Es ist kostenlos und quelloffen. Wenn es in zehn Minuten nicht klickt, haben Sie zehn Minuten verloren.' },
         { q: '„Was, wenn ich es falsch einrichte?"', a: 'Der Beleg-Schritt blockiert Ihren Workflow nie. Schlägt das Signieren fehl, läuft Ihr Geschäftsprozess trotzdem durch — Sie erhalten eine ehrliche „unsignierte" Lücke im Datensatz, nie eine gefälschte. Es gibt kein stilles Versagen, das man hinterher aufräumen müsste.' },
         { q: '„KI ist neu — warum jetzt darüber nachdenken?"', a: 'Die Hochrisiko-Regeln des EU AI Act umfassen automatische Protokollierung; das Hauptregime gilt ab dem 2. August 2026. Und der erste Streit, in dem Sie nicht beweisen können, was Ihre KI getan hat, kostet mehr, als diese Einrichtung je kosten wird.' },
         { q: '„Verlangsamt es mein System?"', a: 'Nein. Das Schreiben des Belegs läuft neben Ihrem Workflow; die Verankerung läuft außerhalb. Sollte der Beleg-Schritt je fehlschlagen, läuft Ihr Geschäftsprozess trotzdem durch — es bleibt nur eine sichtbare, ehrliche Lücke.' },
@@ -485,7 +485,7 @@ export const START: Record<string, any> = {
       items: [
         { tag: 'Disputa', text: 'La captura de un cliente frente a tu registro — y ningún registro neutral que lo resuelva.' },
         { tag: 'Auditoría', text: '«Demuestre que la decisión automatizada siguió las reglas vigentes entonces.»' },
-        { tag: 'Ley', text: 'Las reglas de alto riesgo del Reglamento de IA de la UE incluyen registro automático y conservable; el régimen principal se aplica desde el 2 de agosto de 2026 — y debe ser auditable.' },
+        { tag: 'Ley', text: 'Las reglas de alto riesgo del Reglamento de IA de la UE incluyen registro automático que pueda conservarse; el régimen principal se aplica desde el 2 de agosto de 2026 — y debe ser auditable.' },
       ],
     },
     how: {
@@ -497,8 +497,8 @@ export const START: Record<string, any> = {
         { strong: 'Verificar.', text: 'Cualquiera puede verificar un recibo — en un navegador, sin subir nada — sin confiar en ti ni en tus sistemas.' },
       ],
       paths: [
-        { h3: 'Si usas n8n', p: 'Coloca un nodo Code al final de tu flujo. Eso es todo — unos diez minutos, sin servidor, sin dependencias. A partir de ahí cada ejecución deja un recibo firmado.', cta: 'La guía de n8n' },
-        { h3: 'Si (todavía) no', p: 'Empieza verificando un recibo tú mismo — un clic, sin subir nada — para ver exactamente qué significa el sello verde antes de generar uno.', cta: 'Verificar un recibo en tu navegador' },
+        { h3: 'Si usas n8n', p: 'Coloca un nodo de código (el «Code node» de n8n) al final de tu flujo. Eso es todo — unos diez minutos, sin servidor, sin dependencias. A partir de ahí cada ejecución deja un recibo firmado.', cta: 'La guía de n8n' },
+        { h3: 'Si aún no usas n8n', p: 'Empieza verificando un recibo tú mismo — un clic, sin subir nada — para ver exactamente qué significa el sello verde antes de generar uno.', cta: 'Verificar un recibo en tu navegador' },
       ],
     },
     faq: {
@@ -507,9 +507,9 @@ export const START: Record<string, any> = {
       items: [
         { q: '«Mi registro ya muestra esto. ¿Para qué más?»', a: 'Ese registro lo escribiste tú, en tu propio servidor. En una disputa vale más o menos como tu propia palabra. Tus registros siguen siendo tu primera línea de defensa — un recibo AXR solo los hace verificables de forma independiente: por el cliente, un auditor o un tribunal, sin tu ayuda.' },
         { q: '«¿No es esto demasiado complicado para nosotros?»', a: 'Un clic en tu navegador para verificar un recibo. O un nodo al final de tu flujo de n8n. Sin instalación, sin servidor, sin cuenta nueva. Es gratis y de código abierto. Si no encaja en diez minutos, has perdido diez minutos.' },
-        { q: '«¿Y si lo configuro mal?»', a: 'El paso del recibo nunca bloquea tu flujo. Si la firma falla, tu proceso de negocio se completa igualmente — obtienes un hueco honesto «sin firmar» en el registro, nunca uno falsificado. No hay fallo silencioso que limpiar después.' },
+        { q: '«¿Y si lo configuro mal?»', a: 'El paso del recibo nunca bloquea tu flujo. Si la firma falla, tu proceso de negocio se completa igualmente — obtienes un hueco honesto sin firmar en el registro, nunca uno falsificado. No hay fallo silencioso que limpiar después.' },
         { q: '«La IA es nueva — ¿por qué preocuparse ahora?»', a: 'Las reglas de alto riesgo del Reglamento de IA de la UE incluyen registro automático; el régimen principal se aplica desde el 2 de agosto de 2026. Y la primera disputa en la que no puedas probar qué hizo tu IA costará más de lo que jamás costará configurarlo.' },
-        { q: '«¿Ralentiza mi sistema?»', a: 'No. Escribir el recibo se ejecuta junto a tu flujo; el anclaje, fuera de él. Si el paso del recibo llegara a fallar, tu proceso de negocio se completa igualmente — solo queda un hueco visible y honesto.' },
+        { q: '«¿Ralentiza mi sistema?»', a: 'No. Escribir el recibo se ejecuta junto a tu flujo; el anclaje, fuera del flujo. Si el paso del recibo llegara a fallar, tu proceso de negocio se completa igualmente — solo queda un hueco visible y honesto.' },
       ],
       notClaimH3Html: 'Lo que <em>no</em> afirma',
       limits: [
