@@ -397,6 +397,8 @@ hr.rule {
   
   .mobile-only {
     display: block;
+    width: 50%;
+    margin-inline: auto;
   }
 }
 
